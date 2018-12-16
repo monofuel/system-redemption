@@ -46,7 +46,7 @@ export class ChunkTest extends HTMLElement {
     private async loadChunk() {
 
         const tileTex = await new Promise<Texture>((resolve, reject) => {
-            new TextureLoader().load('models/tile.png', resolve, noop, reject);
+            new TextureLoader().load('/models/tile.png', resolve, noop, reject);
         });
 
         const chunkGen = getChunkGenerator(5);
