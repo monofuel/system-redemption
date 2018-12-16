@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import {
-    Camera, DirectionalLight, Face3, Geometry, HemisphereLight, Line,
-    LineBasicMaterial, Mesh, MeshBasicMaterial,
-    MeshLambertMaterial, MeshPhongMaterial, PerspectiveCamera,
-    Scene, Texture, TextureLoader, Vector3, WebGLRenderer, WireframeGeometry,
+    Camera, DirectionalLight, DoubleSide, Face3, Geometry, HemisphereLight,
+    Line, LineBasicMaterial, Mesh,
+    MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial,
+    PerspectiveCamera, Scene, Texture, TextureLoader, Vector3, WebGLRenderer, WireframeGeometry,
 } from 'three';
 import { info } from '../logging';
 import { getChunkGenerator } from '../planet/chunk';
@@ -46,7 +46,7 @@ export class ChunkTest extends HTMLElement {
 
     private async loadChunk() {
 
-        const tileTex = await new Promise<THREE.Texture>((resolve, reject) => {
+        const tileTex = await new Promise<Texture>((resolve, reject) => {
             new TextureLoader().load('models/tile.png', resolve, _.noop, reject);
         });
 
@@ -113,6 +113,7 @@ function getChunkMesh(chunk: PlanetChunk, tileTex: Texture): Mesh {
         color: landColor,
         map: tileTex,
         shininess: 1,
+        side: DoubleSide,
     });
     const mesh = new Mesh(geom, material);
     return mesh;
