@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
       provider.api_key = ENV['VAGRANT_LINODE_KEY']
       provider.distribution = 'Debian 9'
       provider.datacenter = 'fremont'
-      provider.plan = 'Linode 1G'
+      provider.plan = '1'
 
       provider.label = 'system-redemption'
     end
