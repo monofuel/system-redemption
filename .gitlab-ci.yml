@@ -21,4 +21,4 @@ prod_deploy:
   script:
 
     - docker build -t deployer -f ./Dockerfile-deploy .
-    - docker run -e VAGRANT_LINODE_KEY -e ANSIBLE_ID_RSA deployer bash -c 'mkdir -p .vagrant/machines/gitlab-ci/libvirt; echo "fada4405-e691-488f-ae9f-e1d251748a3b" > .vagrant/machines/gitlab-ci/libvirt/id; echo $ANSIBLE_ID_RSA >> ~ansible/.ssh/id_rsa; echo $ANSIBLE_ID_RSA_PUB >> ~ansible/.ssh/id_rsa.pub; cd /vagrant && vagrant up --provision --provider=linode'
+    - docker run -e VAGRANT_LINODE_KEY -e ANSIBLE_ID_RSA deployer bash -c 'mkdir -p .vagrant/machines/sr/linode/id; echo "12037264" > .vagrant/machines/gitlab-ci/libvirt/id; echo $ANSIBLE_ID_RSA >> ~ansible/.ssh/id_rsa; echo $ANSIBLE_ID_RSA_PUB >> ~ansible/.ssh/id_rsa.pub; cd /vagrant && vagrant up --provision --provider=linode'
