@@ -3,7 +3,7 @@ import http from 'http';
 import path from 'path';
 import { info } from './logging';
 
-const hostname = '127.0.0.1';
+const hostname = process.env.SR_INTERFACE || '127.0.0.1';
 const port = 3000;
 
 let server: http.Server;

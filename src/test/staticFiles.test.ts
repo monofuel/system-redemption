@@ -6,7 +6,8 @@ describe('validate static files', () => {
     before(async () => {
         await initWeb();
     });
-    after(async () => {
+    after(async function() {
+        this.timeout(20000);
         await shutdownWeb();
     });
 

@@ -1,12 +1,13 @@
 import { assert } from 'chai';
 import { JSDOM } from 'jsdom';
 import { getURL, initWeb, shutdownWeb } from '../http';
-describe('validate static files', () => {
+describe('validate client files', () => {
 
     before(async () => {
         await initWeb();
     });
-    after(async () => {
+    after(async function() {
+        this.timeout(20000);
         await shutdownWeb();
     });
 

@@ -1,0 +1,22 @@
+before_script:
+  - docker info
+
+stages:
+  - build
+  - test
+  - deploy
+
+standalone_build:
+  stage: build
+  script:
+    - docker-compose build
+
+standalone_test:
+  stage: test
+  script:
+    - docker-compose run standalone yarn test
+
+prod_deploy:
+  stage: deploy
+  script:
+    - echo 'Not Implemented'
