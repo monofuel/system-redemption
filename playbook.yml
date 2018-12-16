@@ -59,7 +59,7 @@
       group: docker
       append: yes
   - name: compose up
-    shell: docker-compose up --build
+    shell: docker-compose up --build -d
     become: yes
     become_user: monofuel
     args:
