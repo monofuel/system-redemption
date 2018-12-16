@@ -25,5 +25,10 @@ Vagrant.configure("2") do |config|
     box.vm.provision :ansible do |ansible|
       ansible.playbook = "playbook.yml"
     end
+
+    box.vm.provision "up", type: "shell", run: "always", privileged: false, inline: <<-SHELL
+      cd /vagrant
+      docker-compose up
+    SHELL
   end
 end
