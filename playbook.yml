@@ -13,18 +13,18 @@
       - htop
       - sudo
       - make
-  - name: create group sr
+  - name: create group monofuel
     group:
-      name: sr
-      gid: 1050
+      name: monofuel
+      gid: 1000
       state: present
-  - name: Add the user sr
+  - name: Add the user monofuel
     user:
-      name: sr
+      name: monofuel
       shell: /usr/bin/fish
       comment: The Techromancer
-      uid: 1050
-      groups: sr
+      uid: 1000
+      groups: monofuel
       append: yes
   - name: fetch docker installer
     get_url:
@@ -40,9 +40,9 @@
   - name: install docker-compose
     pip:
       name: docker-compose
-  - name: add sr to docker group
+  - name: add monofuel to docker group
     user:
-      name: sr
+      name: monofuel
       group: docker
       append: yes
   - name: compose up
