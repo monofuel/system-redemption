@@ -1,4 +1,4 @@
-- hosts: system-redemption
+- hosts: all
   become: true
   tasks:
   - name: install useful tools
