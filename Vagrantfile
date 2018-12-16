@@ -9,9 +9,7 @@ Vagrant.configure("2") do |config|
     box.ssh.username = 'monofuel'
 
     box.vm.provider :linode do |provider, override|
-      key_path = File.exists?('./id_rsa') ? './id_rsa': '~ansible/.ssh/id_rsa'
-      puts(key_path)
-      override.ssh.private_key_path = key_path  
+      override.ssh.private_key_path = File.exists?('./id_rsa') ? './id_rsa': '~ansible/.ssh/id_rsa'  
 
       override.vm.box = 'system-redemption'
       override.vm.box_url = "https://github.com/displague/vagrant-linode/raw/master/box/linode.box"
