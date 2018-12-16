@@ -13,8 +13,7 @@
       - htop
       - sudo
       - make
-      - python3
-      - python3-pip
+      - python-pip
   - name: create group monofuel
     group:
       name: monofuel
