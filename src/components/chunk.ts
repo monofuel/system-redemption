@@ -49,7 +49,7 @@ export class ChunkTest extends HTMLElement {
             new TextureLoader().load('/models/tile.png', resolve, noop, reject);
         });
 
-        const chunkGen = getChunkGenerator(5);
+        const chunkGen = getChunkGenerator(116332);
         const chunk = await chunkGen({ x: 0, y: 0, size: 64 });
         this.chunkMesh = getChunkMesh(chunk, tileTex);
         this.chunkMesh.geometry.center();
