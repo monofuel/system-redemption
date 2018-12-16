@@ -47,5 +47,7 @@
       append: yes
   - name: compose up
     shell: docker-compose up --build
+    become: yes
+    become_user: monofuel
     args:
       chdir: /vagrant/
