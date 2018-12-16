@@ -1,0 +1,47 @@
+{
+  "name": "system-redemption",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "server": "ts-node src/server.ts",
+    "build": "concurrently 'yarn build:client' 'yarn build:server'",
+    "build:client": "webpack --debug",
+    "build:server": "tsc",
+    "watch": "concurrently 'yarn watch:client' 'yarn watch:server'",
+    "watch:client": "webpack --debug -w",
+    "watch:server": "tsc -w",
+    "prepare:client": "mkdir -p build/client; cp -r node_modules/@webcomponents/webcomponentsjs build/client/",
+    "test": "mocha -r ts-node/register src/test/**/*.test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.japura.net/monofuel/system-redemption"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/express": "^4.16.0",
+    "@types/jsdom": "^12.2.0",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.2.0",
+    "concurrently": "^4.1.0",
+    "jsdom": "^13.1.0",
+    "mocha": "^5.2.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "ts-loader": "^5.3.1",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "@types/three": "^0.93.13",
+    "@webcomponents/webcomponentsjs": "^2.2.1",
+    "css-loader": "^2.0.1",
+    "express": "^4.16.4",
+    "style-loader": "^0.23.1",
+    "three": "^0.99.0"
+  }
+}
