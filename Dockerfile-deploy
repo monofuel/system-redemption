@@ -4,4 +4,7 @@ RUN apt update
 RUN apt install -y vagrant ansible
 RUN vagrant plugin install vagrant-linode
 
+RUN useradd -m ansible
+RUN mkdir /home/ansible/.ssh
+
 ADD . /vagrant

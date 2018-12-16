@@ -19,5 +19,6 @@ standalone_test:
 prod_deploy:
   stage: deploy
   script:
+
     - docker build -t deployer -f ./Dockerfile-deploy .
-    - docker run -e VAGRANT_LINODE_KEY deployer bash -c 'cd /vagrant && vagrant up --provision --provider=linode'
+    - docker run -e VAGRANT_LINODE_KEY -e ANSIBLE_ID_RSA deployer bash -c 'echo $ANSIBLE_ID_RSA >> ~ansible/.ssh/id_rsa; cd /vagrant && vagrant up --provision --provider=linode'
