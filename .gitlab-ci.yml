@@ -20,4 +20,4 @@ prod_deploy:
   stage: deploy
   script:
     - docker build -t deployer -f ./Dockerfile-deploy .
-    - docker run deployer bash -c 'cd /vagrant && vagrant up --provision --provider=linode'
+    - docker run -e VAGRANT_LINODE_KEY deployer bash -c 'cd /vagrant && vagrant up --provision --provider=linode'
