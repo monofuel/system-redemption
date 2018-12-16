@@ -1,4 +1,3 @@
-import { Scene } from 'three';
 import { loadComponents } from './components';
 import { info } from './logging';
 import './styles/main.scss';

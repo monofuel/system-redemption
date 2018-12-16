@@ -1,0 +1,47 @@
+- hosts: system-redemption
+  become: true
+  tasks:
+  - name: install useful tools
+    apt: name={{item}} state=present
+    with_items:
+      - vim
+      - tmux
+      - curl
+      - wget
+      - git
+      - fish
+      - htop
+      - sudo
+      - make
+  - name: create group sr
+    group:
+      name: sr
+      gid: 1050
+      state: present
+  - name: Add the user sr
+    user:
+      name: sr
+      shell: /usr/bin/fish
+      comment: The Techromancer
+      uid: 1050
+      groups: sr
+      append: yes
+  - name: fetch docker installer
+    get_url:
+      url: https://get.docker.com
+      dest: /tmp/get-docker.sh
+      mode: 1770
+  - name: install docker
+    shell: "/tmp/get-docker.sh"
+  - name: start docker
+    service:
+      name: docker
+      enabled: yes
+  - name: install docker-compose
+    pip:
+      name: docker-compose
+  - name: add sr to docker group
+    user:
+      name: sr
+      group: docker
+      append: yes

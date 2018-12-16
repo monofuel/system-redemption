@@ -1,9 +1,8 @@
-import _ from 'lodash';
+import { noop } from 'lodash';
 import {
-    Camera, DirectionalLight, DoubleSide, Face3, Geometry, HemisphereLight,
-    Line, LineBasicMaterial, Mesh,
-    MeshBasicMaterial, MeshLambertMaterial, MeshPhongMaterial,
-    PerspectiveCamera, Scene, Texture, TextureLoader, Vector3, WebGLRenderer, WireframeGeometry,
+    Camera, DirectionalLight, DoubleSide, Face3, Geometry,
+    HemisphereLight, Line, LineBasicMaterial,
+    Mesh, MeshPhongMaterial, PerspectiveCamera, Scene, Texture, TextureLoader, Vector3, WebGLRenderer,
 } from 'three';
 import { info } from '../logging';
 import { getChunkGenerator } from '../planet/chunk';
@@ -47,12 +46,14 @@ export class ChunkTest extends HTMLElement {
     private async loadChunk() {
 
         const tileTex = await new Promise<Texture>((resolve, reject) => {
-            new TextureLoader().load('models/tile.png', resolve, _.noop, reject);
+            new TextureLoader().load('models/tile.png', resolve, noop, reject);
         });
 
         const chunkGen = getChunkGenerator(5);
-        const chunk = await chunkGen({ x: 0, y: 0, size: 16 });
+        const chunk = await chunkGen({ x: 0, y: 0, size: 64 });
         this.chunkMesh = getChunkMesh(chunk, tileTex);
+        this.chunkMesh.geometry.center();
+        this.chunkMesh.translateY(-10);
         this.scene.add(this.chunkMesh);
     }
 
@@ -62,11 +63,12 @@ export class ChunkTest extends HTMLElement {
             return;
         }
         if (this.chunkMesh) {
-            this.chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), Math.PI / 100);
+            this.chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), Math.PI / 200);
         }
         this.renderer.render(this.scene, this.camera);
         window.requestAnimationFrame(() => this.render());
     }
+
 }
 
 function getLine() {
