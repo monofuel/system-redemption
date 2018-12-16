@@ -39,8 +39,10 @@
   "dependencies": {
     "@types/three": "^0.93.13",
     "@webcomponents/webcomponentsjs": "^2.2.1",
+    "alea": "^1.0.0",
     "css-loader": "^2.0.1",
     "express": "^4.16.4",
+    "simplex-noise": "^2.4.0",
     "style-loader": "^0.23.1",
     "three": "^0.99.0"
   }
