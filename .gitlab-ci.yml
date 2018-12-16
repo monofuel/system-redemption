@@ -19,5 +19,5 @@ standalone_test:
 prod_deploy:
   stage: deploy
   script:
-    - docker build -t deployer -f ./Dockerfile-deploy 
+    - docker build -t deployer -f ./Dockerfile-deploy .
     - docker run -v $(pwd)/:/vagrant deployer bash -c 'cd /vagrant && vagrant up --provision --provider=linode'
