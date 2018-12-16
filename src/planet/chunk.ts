@@ -52,6 +52,7 @@ export function getChunkGenerator(seed: number) {
                     height = waterHeight + waterFudge;
                 }
                 grid[i].push(Math.round(height * smoothness) / smoothness);
+
             }
             // force a delay to make this async
             await delay(0);
