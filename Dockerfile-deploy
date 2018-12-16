@@ -1,7 +1,7 @@
 FROM debian
 
 RUN apt update
-RUN apt install -y vagrant ansible
+RUN apt install -y vagrant ansible rsync
 RUN vagrant plugin install vagrant-linode
 
 RUN useradd -m ansible
