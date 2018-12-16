@@ -19,4 +19,5 @@ standalone_test:
 prod_deploy:
   stage: deploy
   script:
-    - echo 'Not Implemented'
+    - docker build -t deployer ./Dockerfile-deploy
+    - docker run -v ./:/vagrant deployer bash -c 'cd /vagrant && vagrant up --provider=linode'
