@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
 
     box.vm.provision "up", type: "shell", run: "always", privileged: false, inline: <<-SHELL
       cd /vagrant
-      docker-compose up
+      docker-compose up -d
     SHELL
   end
 end
