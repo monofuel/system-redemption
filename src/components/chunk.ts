@@ -63,7 +63,7 @@ export class ChunkTest extends HTMLElement {
             return;
         }
         if (this.chunkMesh) {
-            this.chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), Math.PI / 200);
+            this.chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), Math.PI / 400);
         }
         this.renderer.render(this.scene, this.camera);
         window.requestAnimationFrame(() => this.render());
