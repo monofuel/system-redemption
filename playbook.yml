@@ -45,3 +45,7 @@
       name: sr
       group: docker
       append: yes
+  - name: compose up
+    shell: docker-compose up --build
+    args:
+      chdir: /vagrant/
