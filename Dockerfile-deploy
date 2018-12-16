@@ -1,4 +1,4 @@
 FROM debian
 
-RUN apt-get update
-RUN apk install -y vagrant ansible
+RUN apt update
+RUN apt install -y vagrant ansible
