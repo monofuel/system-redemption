@@ -27,6 +27,21 @@
       uid: 1000
       groups: monofuel
       append: yes
+  - name: DOCKER SUCKS
+    shell: |
+      # https://www.linode.com/community/questions/17114/docker-wont-start-using-the-latest-linode-kernel#answer-67343
+      # why does it suck so much
+      mkdir -p /etc/systemd/system/containerd.service.d/
+
+      cat << EOF > /etc/systemd/system/containerd.service.d/override.conf
+      [Service]
+      ExecStartPre=
+      EOF
+
+      systemctl daemon-reload
+
+      systemctl start docker
+
   - name: fetch docker installer
     get_url:
       url: https://get.docker.com
