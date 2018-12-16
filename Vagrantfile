@@ -4,6 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.define "sr" do |box|
 
+    box.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: ".git/"
     box.vm.hostname = "system-redemption"
     box.ssh.username = 'monofuel'
 
