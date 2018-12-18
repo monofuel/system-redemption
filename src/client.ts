@@ -1,8 +1,8 @@
-import { loadComponents } from './components';
+import { loadElements } from './elements';
 import { info } from './logging';
 import './styles/main.scss';
 
-loadComponents();
+loadElements();
 
 window.document.onload = function onLoad() {
     info('document loaded');

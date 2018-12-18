@@ -12,7 +12,8 @@
         "interface-name": false,
         "no-require-imports": false,
         "no-var-requires": false,
-        "prefer-for-of": false
+        "prefer-for-of": false,
+        "max-classes-per-file": false
     },
     "rulesDirectory": []
 }

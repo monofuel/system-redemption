@@ -1,4 +1,5 @@
-import { ChunkTest } from './chunk';
+import { ChunkTestElement } from './chunk';
+import { ThreeSceneElement } from './threeScene';
 
 class HelloWorld extends HTMLElement {
     constructor() {
@@ -13,7 +14,8 @@ class HelloWorld extends HTMLElement {
 
 }
 
-export function loadComponents() {
+export function loadElements() {
     window.customElements.define('hello-world', HelloWorld);
-    window.customElements.define('chunk-test', ChunkTest);
+    window.customElements.define('chunk-test', ChunkTestElement);
+    window.customElements.define('three-scene', ThreeSceneElement);
 }
