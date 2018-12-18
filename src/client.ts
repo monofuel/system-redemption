@@ -1,6 +1,5 @@
 import { loadElements } from './elements';
 import { info } from './logging';
-import './styles/main.scss';
 
 loadElements();
 

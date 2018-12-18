@@ -1,10 +1,11 @@
 import { Camera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { info } from '../logging';
+import './styles/threeScene.scss';
 
 export class ThreeSceneElement extends HTMLElement {
     public renderer: WebGLRenderer;
     public scene: Scene;
-    public camera: Camera;
+    public camera: PerspectiveCamera;
 
     private updateLoops: { [key: string]: UpdateLoop } = {};
 
@@ -12,12 +13,13 @@ export class ThreeSceneElement extends HTMLElement {
         super();
 
         this.renderer = new WebGLRenderer();
-        const height = 500;
-        const width = 500;
+        const height = this.offsetHeight;
+        const width = this.offsetWidth;
 
         this.renderer.setSize(height, width);
         this.scene = new Scene();
-        this.camera = new PerspectiveCamera(45, width / height, 1, 500);
+        const aspectRatio = this.offsetWidth / this.offsetHeight;
+        this.camera = new PerspectiveCamera(45, aspectRatio, 1, 500);
         this.camera.position.set(0, 0, 100);
         this.camera.lookAt(0, 0, 0);
 
@@ -33,7 +35,27 @@ export class ThreeSceneElement extends HTMLElement {
         loop.start();
     }
 
+    private resize() {
+        const renderSize = this.renderer.getSize();
+        if (renderSize.width === this.offsetWidth &&
+            renderSize.height === this.offsetHeight) {
+            return;
+        }
+        /*
+        info('detecting size', {
+            offsetHeight: this.offsetHeight,
+            offsetWidth: this.offsetWidth,
+            renderWidth: renderSize.width,
+            renderHeight: renderSize.height,
+        });
+        */
+        this.camera.aspect = this.offsetWidth / this.offsetHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(this.offsetWidth, this.offsetHeight);
+    }
+
     private render() {
+        this.resize();
         if (!this.isConnected) {
             info('detaching scene render');
             return;
