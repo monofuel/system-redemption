@@ -17,6 +17,7 @@ export class ChunkTestElement extends ThreeSceneElement {
     constructor() {
         super();
         this.loadChunk();
+        info('foo');
         this.scene.add(new HemisphereLight(0xffffff, 0xFFBF00, 0.3));
         this.scene.add(new DirectionalLight(sunColor, 1));
     }

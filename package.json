@@ -11,7 +11,7 @@
     "watch": "concurrently 'yarn watch:client' 'yarn watch:server'",
     "watch:client": "webpack --debug -w",
     "watch:server": "tsc -w",
-    "prepare:client": "mkdir -p build/client; cp -r node_modules/@webcomponents/webcomponentsjs build/client/",
+    "prepare:client": "mkdir -p build/client; cp -r node_modules/@webcomponents/webcomponentsjs build/client/;  cp -r node_modules/three/build build/client/three; cp node_modules/lodash/lodash.* build/client/",
     "test": "mocha -r ts-node/register src/test/**/*.test.ts"
   },
   "repository": {

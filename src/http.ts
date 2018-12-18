@@ -14,6 +14,9 @@ export async function initWeb() {
     app.use(
         express.static(path.join(__dirname, '../public')),
     );
+    app.use('/scripts/static/',
+        express.static(path.join(__dirname, '../build/client'), { maxAge: 1000 * 60 * 60 }),
+    );
     app.use('/scripts/',
         express.static(path.join(__dirname, '../build/client')),
     );

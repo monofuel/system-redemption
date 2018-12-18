@@ -5,6 +5,10 @@ module.exports = {
   entry: './src/client.ts',
   devtool: 'inline-source-map',
   mode: 'development',
+  externals: {
+    lodash: '_',
+    three: 'THREE'
+  },
   plugins: [
     // new BundleAnalyzerPlugin()
   ],
