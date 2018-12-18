@@ -8,6 +8,7 @@ RUN yarn
 ADD . /sr
 
 RUN yarn build
+RUN yarn prepare:client
 
 EXPOSE 3000
 
