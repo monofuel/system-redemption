@@ -48,7 +48,7 @@ export class ChunkTestElement extends ThreeSceneElement {
         });
 
         const chunkGen = getChunkGenerator(seed);
-        const chunk = await chunkGen({ x: 0, y: 0, size: 32 });
+        const chunk = await chunkGen({ x: 0, y: 0, size: 64 });
         const chunkMesh = getChunkMesh(chunk, this.opts.landColor, tileTex);
         chunkMesh.name = chunkName;
         chunkMesh.geometry.center();
