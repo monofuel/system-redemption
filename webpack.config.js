@@ -7,7 +7,8 @@ module.exports = {
   mode: 'development',
   externals: {
     lodash: '_',
-    three: 'THREE'
+    three: 'THREE',
+    'dat.gui': 'dat'
   },
   plugins: [
     // new BundleAnalyzerPlugin()

@@ -1,40 +1,66 @@
 import { noop } from 'lodash';
 import {
-    DirectionalLight, DoubleSide, Face3, Geometry,
-    HemisphereLight, Line, LineBasicMaterial,
-    Mesh, MeshPhongMaterial, Texture, TextureLoader, Vector3,
+    Color, DirectionalLight, DoubleSide, Face3,
+    Geometry, HemisphereLight, Line,
+    LineBasicMaterial, Mesh, MeshPhongMaterial, Texture, TextureLoader, Vector3,
 } from 'three';
 import { info } from '../logging';
 import { getChunkGenerator } from '../planet/chunk';
 import { PlanetChunk } from '../types/SR';
 import { ThreeSceneElement } from './threeScene';
 
-const landColor = 0x37DB67;
-const sunColor = 0xcccccc;
+interface ChunkTestOpts {
+    landColor: number;
+    sunColor: number;
+    seed: number;
+    rpm: number;
+}
 
 export class ChunkTestElement extends ThreeSceneElement {
 
+    private opts: ChunkTestOpts = {
+        landColor: 0x37DB67,
+        sunColor: 0xcccccc,
+        seed: 116332,
+        rpm: 1,
+    };
+
     constructor() {
         super();
+        const { sunColor } = this.opts;
         this.loadChunk();
         info('foo');
         this.scene.add(new HemisphereLight(0xffffff, 0xFFBF00, 0.3));
         this.scene.add(new DirectionalLight(sunColor, 1));
+
+        this.dat.add(this.opts, 'seed').onFinishChange(() => {
+            this.loadChunk();
+        });
+        this.dat.add(this.opts, 'rpm', 0, 10);
     }
 
     private async loadChunk() {
+        const chunkName = 'chunk-1';
+
+        const { seed } = this.opts;
         const tileTex = await new Promise<Texture>((resolve, reject) => {
             new TextureLoader().load('/models/tile.png', resolve, noop, reject);
         });
 
-        const chunkGen = getChunkGenerator(116332);
+        const chunkGen = getChunkGenerator(seed);
         const chunk = await chunkGen({ x: 0, y: 0, size: 64 });
-        const chunkMesh = getChunkMesh(chunk, tileTex);
+        const chunkMesh = getChunkMesh(chunk, this.opts.landColor, tileTex);
+        chunkMesh.name = chunkName;
         chunkMesh.geometry.center();
         chunkMesh.translateY(-10);
+        const prevChunk = this.scene.getObjectByName(chunkName);
+        if (prevChunk) {
+            this.scene.remove(prevChunk);
+        }
         this.scene.add(chunkMesh);
-        this.addUpdateLoop('rotation', () => {
-            chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), Math.PI / 200);
+        this.addUpdateLoop('rotation', (delta: number) => {
+            const rps = this.opts.rpm / 60;
+            chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), (Math.PI / (500 / delta)) * rps);
             return false;
         }, 40);
     }
@@ -51,7 +77,7 @@ function getLine() {
     return new Line(geometry, material);
 }
 
-function getChunkMesh(chunk: PlanetChunk, tileTex: Texture): Mesh {
+function getChunkMesh(chunk: PlanetChunk, landColor: number, tileTex: Texture): Mesh {
     const { grid, size } = chunk;
     const geom = new Geometry();
     for (let y = 0; y <= size; y++) {

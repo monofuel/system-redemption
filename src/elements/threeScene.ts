@@ -1,4 +1,5 @@
-import { Camera, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import dat, { GUI } from 'dat.gui';
+import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import { info } from '../logging';
 import './styles/threeScene.scss';
 
@@ -7,6 +8,8 @@ export class ThreeSceneElement extends HTMLElement {
     public scene: Scene;
     public camera: PerspectiveCamera;
 
+    public dat: dat.GUI;
+    private root: ShadowRoot;
     private updateLoops: { [key: string]: UpdateLoop } = {};
 
     constructor() {
@@ -23,12 +26,14 @@ export class ThreeSceneElement extends HTMLElement {
         this.camera.position.set(0, 0, 100);
         this.camera.lookAt(0, 0, 0);
 
+        this.dat = new dat.GUI();
         this.render();
-        const shadow = this.attachShadow({ mode: 'open' });
-        shadow.appendChild(this.renderer.domElement);
+        this.root = this.attachShadow({ mode: 'open' });
+        this.root.appendChild(this.renderer.domElement);
+
     }
 
-    public addUpdateLoop(name: string, fn: () => boolean, freq: number) {
+    public addUpdateLoop(name: string, fn: (delta: number) => boolean, freq: number) {
         info('attaching update loop', { name, freq });
         const loop = new UpdateLoop(name, fn, freq);
         this.updateLoops[name] = loop;
@@ -41,14 +46,11 @@ export class ThreeSceneElement extends HTMLElement {
             renderSize.height === this.offsetHeight) {
             return;
         }
-        /*
-        info('detecting size', {
-            offsetHeight: this.offsetHeight,
-            offsetWidth: this.offsetWidth,
-            renderWidth: renderSize.width,
-            renderHeight: renderSize.height,
-        });
-        */
+
+        this.dat.domElement.style.position = 'absolute';
+        this.dat.domElement.style.top = `${this.offsetTop}px`;
+        this.dat.domElement.style.left = `${this.offsetLeft + this.offsetWidth - this.dat.domElement.offsetWidth}px`;
+
         this.camera.aspect = this.offsetWidth / this.offsetHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(this.offsetWidth, this.offsetHeight);
@@ -68,29 +70,31 @@ export class ThreeSceneElement extends HTMLElement {
 
 export class UpdateLoop {
     private name: string;
-    private fn: () => boolean;
+    private fn: (delta: number) => boolean;
     private freq: number;
     private stopFlag: boolean = false;
 
-    constructor(name: string, fn: () => boolean, freq: number) {
+    constructor(name: string, fn: (delta: number) => boolean, freq: number) {
         this.name = name;
         this.fn = fn;
         this.freq = freq;
     }
 
     public start() {
+        let lastTime = Date.now();
         const loopFn = () => {
             if (this.stopFlag) {
                 info('detaching loop', { name: this.name });
                 return;
             }
             const startTime = Date.now();
-            const end = this.fn();
+            const end = this.fn(startTime - lastTime);
             if (end) {
                 info('detaching loop', { name: this.name });
                 return;
             }
-            setTimeout(loopFn, (1000 / this.freq) - (Date.now() - startTime));
+            lastTime = Date.now();
+            setTimeout(loopFn, (1000 / this.freq) - (lastTime - startTime));
 
         };
         loopFn();
