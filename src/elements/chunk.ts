@@ -2,7 +2,7 @@ import { noop } from 'lodash';
 import {
     Color, DirectionalLight, DoubleSide, Face3,
     Geometry, HemisphereLight, Line,
-    LineBasicMaterial, Mesh, MeshPhongMaterial, Texture, TextureLoader, Vector3,
+    LineBasicMaterial, Mesh, MeshPhongMaterial, Texture, TextureLoader, Vector2, Vector3,
 } from 'three';
 import { info } from '../logging';
 import { getChunkGenerator } from '../planet/chunk';
@@ -48,7 +48,7 @@ export class ChunkTestElement extends ThreeSceneElement {
         });
 
         const chunkGen = getChunkGenerator(seed);
-        const chunk = await chunkGen({ x: 0, y: 0, size: 64 });
+        const chunk = await chunkGen({ x: 0, y: 0, size: 32 });
         const chunkMesh = getChunkMesh(chunk, this.opts.landColor, tileTex);
         chunkMesh.name = chunkName;
         chunkMesh.geometry.center();
@@ -104,6 +104,38 @@ function getChunkMesh(chunk: PlanetChunk, landColor: number, tileTex: Texture): 
     geom.computeBoundingSphere();
     geom.computeFaceNormals();
     geom.computeVertexNormals();
+
+    // fiddle with the normals to give a nice 'tiled' look
+    for (let i = 0; i < geom.faces.length; i += 2) {
+
+        const vec1 = geom.faces[i].normal;
+        const vec2 = geom.faces[i + 1].normal;
+        const newVec = vec1.clone();
+        newVec.add(vec2);
+        newVec.divideScalar(2);
+
+        for (let j = 0; j < 2; j++) {
+            geom.faces[i].vertexNormals[j].copy(newVec);
+            geom.faces[i + 1].vertexNormals[j].copy(newVec);
+        }
+
+        // set texture UV
+        geom.faceVertexUvs[0][i] = [
+            new Vector2(0, 1),
+            new Vector2(0, 0),
+            new Vector2(1, 1),
+        ];
+
+        geom.faceVertexUvs[0][i + 1] = [
+            new Vector2(0, 0),
+            new Vector2(1, 0),
+            new Vector2(1, 1),
+        ];
+
+    }
+
+    geom.normalsNeedUpdate = true;
+    geom.uvsNeedUpdate = true;
 
     geom.rotateX(Math.PI / 2);
 
