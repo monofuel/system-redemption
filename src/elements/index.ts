@@ -1,5 +1,6 @@
 import { ChunkTestElement } from './chunk';
 import { ThreeSceneElement } from './threeScene';
+import { TileTestElement } from './tiles';
 
 class HelloWorld extends HTMLElement {
     constructor() {
@@ -16,6 +17,7 @@ class HelloWorld extends HTMLElement {
 
 export function loadElements() {
     window.customElements.define('hello-world', HelloWorld);
+    window.customElements.define('tile-test', TileTestElement);
     window.customElements.define('chunk-test', ChunkTestElement);
     window.customElements.define('three-scene', ThreeSceneElement);
 }
