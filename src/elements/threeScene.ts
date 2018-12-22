@@ -37,7 +37,13 @@ export class ThreeSceneElement extends HTMLElement {
     fn: (delta: number) => boolean,
     freq: number,
   ) {
-    info('attaching update loop', { name, freq });
+    if (this.updateLoops[name]) {
+      this.updateLoops[name].stop();
+      info('replacing update loop', { name, freq });
+    } else {
+      info('attaching update loop', { name, freq });
+    }
+
     const loop = new UpdateLoop(name, fn, freq);
     this.updateLoops[name] = loop;
     loop.start();

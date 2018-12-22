@@ -27,3 +27,9 @@ export interface PlanetTiles {
   grid: TileHeights[][];
   // navGrid: TileType[][];
 }
+
+export interface FiniteMap {
+  name: string;
+  size: number; // number of PlanetTiles
+  grid: PlanetTiles[][];
+}
