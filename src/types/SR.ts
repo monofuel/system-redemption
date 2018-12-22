@@ -30,6 +30,7 @@ export interface PlanetTiles {
 
 export interface FiniteMap {
   name: string;
+  version: number;
   size: number; // number of PlanetTiles
   grid: PlanetTiles[][];
 }

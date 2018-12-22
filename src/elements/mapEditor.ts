@@ -5,7 +5,7 @@ import {
   HemisphereLight,
   Object3D,
 } from 'three';
-import { getTileMesh } from '../mesh/tiles';
+import { getTileMesh, getTileTexture } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
 import { FiniteMap } from '../types/SR';
 import { toHexColor } from '../util';
@@ -43,7 +43,10 @@ export class MapEditorElement extends ThreeSceneElement {
     const { name, size, chunkSize } = this.opts;
     const gameMap = getFlatMap(name, size, chunkSize);
 
-    const tileTexture = this.getTileTexture();
+    const tileTexture = getTileTexture(
+      this.opts.landColor,
+      this.opts.edgeColor,
+    );
     const mapObj = new Object3D();
     mapObj.name = gameMap.name;
 
@@ -60,20 +63,5 @@ export class MapEditorElement extends ThreeSceneElement {
 
     mapObj.position.set(offset, 0, offset + chunkSize);
     this.scene.add(mapObj);
-  }
-
-  private getTileTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.height = 32;
-    canvas.width = 32;
-    canvas.style.position = 'absolute';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    const ctx = canvas.getContext('2d')!;
-    ctx.fillStyle = toHexColor(this.opts.edgeColor);
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = toHexColor(this.opts.landColor);
-    ctx.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
-    return new CanvasTexture(canvas);
   }
 }

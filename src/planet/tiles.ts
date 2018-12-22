@@ -32,6 +32,7 @@ export function getFlatMap(
   }
   return {
     name,
+    version: 1,
     size,
     grid,
   };

@@ -1,4 +1,5 @@
 import {
+  CanvasTexture,
   Face3,
   FrontSide,
   Geometry,
@@ -10,6 +11,7 @@ import {
   Vector3,
 } from 'three';
 import { PlanetTiles, TileHeights } from '../types/SR';
+import { toHexColor } from '../util';
 
 interface MeshOpts {
   wireframe: boolean;
@@ -112,4 +114,22 @@ function getGeomForTile(corners: TileHeights, zScale: number = 0): Geometry {
 
   geom.uvsNeedUpdate = true;
   return geom;
+}
+
+export function getTileTexture(
+  landColor: number,
+  edgeColor: number,
+): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.height = 32;
+  canvas.width = 32;
+  canvas.style.position = 'absolute';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = toHexColor(edgeColor);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = toHexColor(landColor);
+  ctx.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
+  return new CanvasTexture(canvas);
 }

@@ -1,8 +1,11 @@
-import { loadElements } from './elements';
+import { loadAsyncElements, loadElements } from './elements';
 import { info } from './logging';
 
-loadElements();
+async function loadClient() {
+  info('loading async elements');
+  loadElements();
+  await loadAsyncElements();
+  info('document loaded');
+}
 
-window.document.onload = function onLoad() {
-    info('document loaded');
-};
+loadClient();
