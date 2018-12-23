@@ -13,6 +13,7 @@ export async function getLandControlsElement() {
       this.appendChild(template.content.cloneNode(true));
       this.getButtons();
     }
+
     public onButtonPress(id: string) {
       this.selected = id;
       info('button pressed', { id });
@@ -21,6 +22,7 @@ export async function getLandControlsElement() {
       }
       this.buttonMap[id].classList.add('pressed');
     }
+
     private getButtons() {
       const buttons: NodeListOf<HTMLSpanElement> = document.querySelectorAll(
         'land-controls .ui-button',
