@@ -1,26 +1,33 @@
 import { filter } from 'lodash';
-import { loadTemplate } from '.';
+import { getParentContext, loadTemplate } from '.';
+import { EditorSelection } from '../events';
 import { info } from '../logging';
+import { EventContextElement } from './eventContext';
+import { ThreeSceneElement } from './threeScene';
 
 export async function getLandControlsElement() {
   const template = await loadTemplate('landControls');
 
   return class LandControlsElement extends HTMLElement {
     private buttonMap: { [key: string]: Element } = {};
-    private selected: string | undefined;
+    private ctx: EventContextElement;
     constructor() {
       super();
+      this.ctx = getParentContext(this);
       this.appendChild(template.content.cloneNode(true));
       this.getButtons();
     }
 
     public onButtonPress(id: string) {
-      this.selected = id;
+      const selection: EditorSelection = id as any;
       info('button pressed', { id });
       for (const button of Object.values(this.buttonMap)) {
         button.classList.remove('pressed');
       }
       this.buttonMap[id].classList.add('pressed');
+      this.ctx.uiQueue.post('editorMode', {
+        selection,
+      });
     }
 
     private getButtons() {

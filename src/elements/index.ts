@@ -1,4 +1,5 @@
 import { ChunkTestElement } from './chunk';
+import { EventContextElement } from './eventContext';
 import { getLandControlsElement } from './landControls';
 import { MapEditorElement } from './mapEditor';
 import { ThreeSceneElement } from './threeScene';
@@ -18,6 +19,7 @@ class HelloWorld extends HTMLElement {
 
 export function loadElements() {
   window.customElements.define('hello-world', HelloWorld);
+  window.customElements.define('event-context', EventContextElement);
   window.customElements.define('tile-test', TileTestElement);
   window.customElements.define('chunk-test', ChunkTestElement);
   window.customElements.define('three-scene', ThreeSceneElement);
@@ -40,6 +42,17 @@ export async function loadTemplate(name: string): Promise<HTMLTemplateElement> {
   const el = head.querySelector('template');
   if (!el) {
     throw new Error(`missing template for ${name}`);
+  }
+  return el;
+}
+
+export function getParentContext(el: HTMLElement) {
+  while (el && !(el instanceof EventContextElement)) {
+    const parent = el.parentElement;
+    if (!parent) {
+      throw new Error('null parent when searching for scene');
+    }
+    el = parent;
   }
   return el;
 }

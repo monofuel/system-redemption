@@ -1,6 +1,9 @@
-import dat, { GUI } from 'dat.gui';
+import dat from 'dat.gui';
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+
+import { getParentContext } from '.';
 import { info } from '../logging';
+import { EventContextElement } from './eventContext';
 import './styles/threeScene.scss';
 
 export class ThreeSceneElement extends HTMLElement {
@@ -10,10 +13,12 @@ export class ThreeSceneElement extends HTMLElement {
 
   public dat: dat.GUI;
   protected root: ShadowRoot;
+  private ctx: EventContextElement;
   private updateLoops: { [key: string]: UpdateLoop } = {};
 
   constructor() {
     super();
+    this.ctx = getParentContext(this);
 
     this.renderer = new WebGLRenderer();
     const height = this.offsetHeight;
