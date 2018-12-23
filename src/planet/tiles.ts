@@ -6,7 +6,7 @@ export function getFlatTiles(x: number, y: number, size: number): PlanetTiles {
     const row: TileHeights[] = [];
     grid.push(row);
     for (let j = 0; j < size; j++) {
-      row.push([0, 0, 0, 0]);
+      row.push([2, 2, 2, 2]);
     }
   }
   return {

@@ -80,7 +80,6 @@ export class ThreeSceneElement extends HTMLElement {
       info('detaching scene render');
       return;
     }
-
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(() => this.render());
   }

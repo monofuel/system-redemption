@@ -1,3 +1,4 @@
+import { Vector2 } from 'three';
 import { ChunkTestElement } from './chunk';
 import { EventContextElement } from './eventContext';
 import { getLandControlsElement } from './landControls';
@@ -55,4 +56,11 @@ export function getParentContext(el: HTMLElement) {
     el = parent;
   }
   return el;
+}
+
+export function mouseToVec(ev: MouseEvent, width: number, height: number) {
+  const mouseVec = new Vector2();
+  mouseVec.x = (ev.offsetX / width) * 2 - 1;
+  mouseVec.y = -(ev.offsetY / height) * 2 + 1;
+  return mouseVec;
 }

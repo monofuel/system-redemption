@@ -22,7 +22,15 @@ export interface NewFiniteMap {
   map: FiniteMap;
 }
 
+export interface EditMap {
+  mapName: string;
+  selection: EditorSelection;
+  x: number;
+  y: number;
+}
+
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
+  editMap: EditMap;
 }
 export type ServerEventType = keyof ServerEvents;

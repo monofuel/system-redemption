@@ -61,7 +61,7 @@ export function getTileMesh(
   return mesh;
 }
 
-function getGeomForTile(corners: TileHeights, zScale: number = 0): Geometry {
+function getGeomForTile(corners: TileHeights, zScale: number = 0.4): Geometry {
   const geom = new Geometry();
 
   geom.vertices.push(
