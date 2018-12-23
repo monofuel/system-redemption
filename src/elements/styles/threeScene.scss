@@ -5,6 +5,7 @@ three-scene {
 }
 
 .ui-wrapper {
+  pointer-events: none;
   z-index: 10;
   display: block;
   position: absolute;
@@ -16,6 +17,7 @@ three-scene {
 }
 
 @mixin ui-component {
+  pointer-events: all;
   display: block;
   position: relative;
 

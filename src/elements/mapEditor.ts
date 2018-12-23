@@ -1,19 +1,11 @@
-import {
-  AxesHelper,
-  CanvasTexture,
-  DirectionalLight,
-  HemisphereLight,
-  Object3D,
-} from 'three';
-import { EditorMode } from '../events';
-import { info } from '../logging';
+import { AxesHelper, DirectionalLight, HemisphereLight, Object3D } from 'three';
+import { EditorMode, EditorSelection } from '../events';
 import { getTileMesh, getTileTexture } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
-import { FiniteMap } from '../types/SR';
-import { toHexColor } from '../util';
 import { ThreeSceneElement } from './threeScene';
 
 export class MapEditorElement extends ThreeSceneElement {
+  private editorSelection: EditorSelection = EditorSelection.clear;
   private opts = {
     landColor: 0x405136,
     edgeColor: 0x6f9240,
@@ -23,7 +15,7 @@ export class MapEditorElement extends ThreeSceneElement {
     size: 4,
     chunkSize: 8,
   };
-
+  private dragStart: MouseEvent | undefined;
   constructor() {
     super();
 
@@ -44,11 +36,49 @@ export class MapEditorElement extends ThreeSceneElement {
       this.onEditorModeChange.bind(this),
     );
 
+    this.onmousedown = (ev: MouseEvent) => {
+      ev.preventDefault();
+      switch (this.editorSelection) {
+        case EditorSelection.raise:
+        case EditorSelection.lower:
+          this.dragStart = ev;
+          return;
+        case EditorSelection.clear:
+        default:
+          return;
+      }
+    };
+    this.onmousemove = (ev: MouseEvent) => {
+      ev.preventDefault();
+      switch (this.editorSelection) {
+        case EditorSelection.raise:
+        case EditorSelection.lower:
+          return;
+        case EditorSelection.clear:
+        default:
+          return;
+      }
+    };
+
+    const mouseEnd = (ev: MouseEvent) => {
+      switch (this.editorSelection) {
+        case EditorSelection.raise:
+        case EditorSelection.lower:
+          delete this.dragStart;
+          return;
+        case EditorSelection.clear:
+        default:
+          return;
+      }
+    };
+    this.onmouseleave = mouseEnd;
+    this.onmouseup = mouseEnd;
+
     this.loadMap();
   }
 
   public onEditorModeChange(event: EditorMode) {
-    info('EDITOR | mode change', { mode: event.selection as any });
+    this.editorSelection = event.selection;
   }
 
   private loadMap() {

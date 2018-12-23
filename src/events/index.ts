@@ -2,7 +2,11 @@ import { FiniteMap } from '../types/SR';
 
 // UI events
 
-export type EditorSelection = 'raise' | 'lower';
+export enum EditorSelection {
+  raise = 'raise',
+  lower = 'lower',
+  clear = 'clear',
+}
 export interface EditorMode {
   selection: EditorSelection;
 }

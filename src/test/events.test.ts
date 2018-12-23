@@ -1,11 +1,11 @@
 import { assert } from 'chai';
-import { EditorMode, UIEvents, UIEventType } from '../events';
+import { EditorMode, EditorSelection, UIEvents, UIEventType } from '../events';
 import { EventQueue } from '../events/queues';
 
 describe('test event system', () => {
   const uiQueue = new EventQueue<UIEventType, UIEvents>();
   const expectedEvent: EditorMode = {
-    selection: 'raise',
+    selection: EditorSelection.raise,
   };
   let callCount = 0;
   const fn = (event: EditorMode) => {
