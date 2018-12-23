@@ -36,8 +36,11 @@ export class MapEditorElement extends ThreeSceneElement {
       this.onEditorModeChange.bind(this),
     );
 
-    this.onmousedown = (ev: MouseEvent) => {
+    this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
+    };
+
+    this.onmousedown = (ev: MouseEvent) => {
       switch (this.editorSelection) {
         case EditorSelection.raise:
         case EditorSelection.lower:
