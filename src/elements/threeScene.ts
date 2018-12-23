@@ -13,8 +13,8 @@ export class ThreeSceneElement extends HTMLElement {
 
   public dat: dat.GUI;
   protected root: ShadowRoot;
-  private ctx: EventContextElement;
-  private updateLoops: { [key: string]: UpdateLoop } = {};
+  protected ctx: EventContextElement;
+  protected updateLoops: { [key: string]: UpdateLoop } = {};
 
   constructor() {
     super();

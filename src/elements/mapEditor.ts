@@ -5,6 +5,8 @@ import {
   HemisphereLight,
   Object3D,
 } from 'three';
+import { EditorMode } from '../events';
+import { info } from '../logging';
 import { getTileMesh, getTileTexture } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
 import { FiniteMap } from '../types/SR';
@@ -26,7 +28,6 @@ export class MapEditorElement extends ThreeSceneElement {
     super();
 
     this.camera.position.set(20, 20, 20);
-
     this.camera.lookAt(0, 0, 0);
 
     this.scene.add(new HemisphereLight(0xffffff, undefined, 0.3));
@@ -37,8 +38,19 @@ export class MapEditorElement extends ThreeSceneElement {
 
     this.scene.add(new AxesHelper());
     this.scene.add(sun);
+
+    this.ctx.uiQueue.addListener(
+      'editorMode',
+      this.onEditorModeChange.bind(this),
+    );
+
     this.loadMap();
   }
+
+  public onEditorModeChange(event: EditorMode) {
+    info('EDITOR | mode change', { mode: event.selection as any });
+  }
+
   private loadMap() {
     const { name, size, chunkSize } = this.opts;
     const gameMap = getFlatMap(name, size, chunkSize);
