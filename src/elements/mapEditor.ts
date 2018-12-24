@@ -4,10 +4,10 @@ import {
   HemisphereLight,
   Object3D,
   Raycaster,
-  Vector2
+  Vector2,
 } from 'three';
 import { mouseToVec } from '.';
-import { EditMap, EditorMode, EditorSelection } from '../events';
+import { EditorMode, EditorSelection, MapEdit, MapEditType } from '../events';
 import { info } from '../logging';
 import { getTileMesh, getTileTexture } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
@@ -26,8 +26,6 @@ export class MapEditorElement extends ThreeSceneElement {
     chunkSize: 8,
   };
   private gameMap: FiniteMap;
-  private dragStart: MouseEvent | undefined;
-  private dragStartLoc: { x: number; y: number } | null | undefined;
   constructor() {
     super();
 
@@ -65,46 +63,31 @@ export class MapEditorElement extends ThreeSceneElement {
     };
 
     this.onmousedown = (ev: MouseEvent) => {
-      switch (this.editorSelection) {
-        case EditorSelection.raise:
-        case EditorSelection.lower:
-          this.dragStart = ev;
-          this.dragStartLoc = this.getTileAtRay(
-            mouseToVec(ev, this.offsetWidth, this.offsetHeight),
-          );
-          if (this.dragStartLoc) {
-            this.ctx.serverQueue.post('editMap', {
-              mapName: this.opts.name,
-              selection: this.editorSelection,
-              x: this.dragStartLoc.x,
-              y: this.dragStartLoc.y,
-            });
-          }
-
-          return;
-        case EditorSelection.clear:
-        default:
-          return;
-      }
+      // TODO
     };
 
     this.onmousemove = (ev: MouseEvent) => {
       ev.preventDefault();
-      switch (this.editorSelection) {
-        case EditorSelection.raise:
-        case EditorSelection.lower:
-        case EditorSelection.clear:
-        default:
-          return;
-      }
     };
 
     const mouseEnd = (ev: MouseEvent) => {
       switch (this.editorSelection) {
-        case EditorSelection.raise:
-        case EditorSelection.lower:
-          delete this.dragStart;
-          delete this.dragStartLoc;
+        case EditorSelection.raiselower:
+          let editType = MapEditType.raise;
+          if (ev.button === 2) {
+            editType = MapEditType.lower;
+          }
+          const loc = this.getTileAtRay(
+            mouseToVec(ev, this.offsetWidth, this.offsetHeight),
+          );
+          if (loc) {
+            this.ctx.serverQueue.post('editMap', {
+              mapName: this.opts.name,
+              editType,
+              x: loc.x,
+              y: loc.y,
+            });
+          }
           return;
         case EditorSelection.clear:
         default:
@@ -121,7 +104,7 @@ export class MapEditorElement extends ThreeSceneElement {
     this.editorSelection = event.selection;
   }
 
-  public onEditMap(event: EditMap) {
+  public onEditMap(event: MapEdit) {
     const { name, size, chunkSize } = this.opts;
     if (event.mapName !== name) {
       return;
@@ -133,9 +116,9 @@ export class MapEditorElement extends ThreeSceneElement {
     const tileY = event.y % chunkSize;
     const tile = chunk.grid[tileY][tileX];
     let delta = [0, 0, 0, 0];
-    if (event.selection === EditorSelection.raise) {
+    if (event.editType === MapEditType.raise) {
       delta = [1, 1, 1, 1];
-    } else if (event.selection === EditorSelection.lower) {
+    } else if (event.editType === MapEditType.lower) {
       delta = [-1, -1, -1, -1];
     }
     for (let i = 0; i < tile.length; i++) {

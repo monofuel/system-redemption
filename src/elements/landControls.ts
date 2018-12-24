@@ -1,9 +1,6 @@
-import { filter } from 'lodash';
 import { getParentContext, loadTemplate } from '.';
 import { EditorSelection } from '../events';
-import { info } from '../logging';
 import { EventContextElement } from './eventContext';
-import { ThreeSceneElement } from './threeScene';
 
 export async function getLandControlsElement() {
   const template = await loadTemplate('landControls');

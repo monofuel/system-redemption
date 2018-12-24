@@ -1,10 +1,10 @@
 import { FiniteMap } from '../types/SR';
 
+// ----------------------
 // UI events
 
 export enum EditorSelection {
-  raise = 'raise',
-  lower = 'lower',
+  raiselower = 'raiselower',
   clear = 'clear',
 }
 export interface EditorMode {
@@ -16,21 +16,28 @@ export interface UIEvents {
 }
 
 export type UIEventType = keyof UIEvents;
+
+// ----------------------
 // server events
 
 export interface NewFiniteMap {
   map: FiniteMap;
 }
 
-export interface EditMap {
+export enum MapEditType {
+  raise = 'raise',
+  lower = 'lower',
+}
+
+export interface MapEdit {
   mapName: string;
-  selection: EditorSelection;
+  editType: MapEditType;
   x: number;
   y: number;
 }
 
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
-  editMap: EditMap;
+  editMap: MapEdit;
 }
 export type ServerEventType = keyof ServerEvents;
