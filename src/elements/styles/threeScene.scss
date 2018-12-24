@@ -52,6 +52,16 @@ $ui5: #8e7c6c;
   border-radius: 3px;
 }
 
+.ui-title {
+  border-color: $ui5;
+  color: $ui5;
+  margin: 3px;
+  border-radius: 5px;
+  border-style: solid;
+  flex: 1;
+  border-width: 2px;
+}
+
 .ui-button {
   border-color: $ui3;
   border-radius: 5px;

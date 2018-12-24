@@ -6,6 +6,8 @@ import { FiniteMap } from '../types/SR';
 export enum EditorSelection {
   raiselower = 'raiselower',
   clear = 'clear',
+  raiseWater = 'raiseWater',
+  lowerWater = 'lowerWater',
 }
 export interface EditorMode {
   selection: EditorSelection;
