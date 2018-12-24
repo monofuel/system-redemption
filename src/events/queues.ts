@@ -1,15 +1,35 @@
-import { ServerEvents, ServerEventType, UIEvents, UIEventType } from '.';
 import { info } from '../logging';
 
-export class EventQueue<Type extends keyof Events, Events> {
-  private listenerMap: {
-    [type: string]: Array<(event: Events[Type]) => void>;
-  } = {};
+interface EventQueueOpts {
+  postSyncronous: boolean; // post event syncronously to listeners, or wait until flush
+}
 
-  public post(eventType: Type, event: Events[Type]) {
-    const listeners = this.listenerMap[eventType as any];
+const defaultOpts: EventQueueOpts = {
+  postSyncronous: true,
+};
+
+export class EventQueue<
+  Kinds extends keyof EventMap,
+  EventMap extends Record<Kinds, { kind: Kinds }>
+> {
+  public opts: EventQueueOpts;
+  private listenerMap: Partial<
+    Record<Kinds, Array<(event: EventMap[Kinds]) => void>>
+  > = {};
+
+  constructor(opts: Partial<EventQueueOpts> = {}) {
+    this.opts = {
+      ...defaultOpts,
+      ...opts,
+    };
+  }
+
+  public post(event: EventMap[Kinds]) {
+    const kind = event.kind;
+    const listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this
+      .listenerMap[kind];
     info('event posted', {
-      eventType: eventType as string,
+      kind: kind as string,
       listeners: listeners ? listeners.length : 0,
     });
     if (!listeners) {
@@ -19,21 +39,37 @@ export class EventQueue<Type extends keyof Events, Events> {
       fn(event);
     }
   }
-  public addListener(eventType: Type, fn: (event: Events[Type]) => void) {
-    let listeners = this.listenerMap[eventType as any];
-    if (!listeners) {
-      listeners = this.listenerMap[eventType as any] = [];
-    }
-    listeners.push(fn);
+  public flush(kind?: Kinds) {
+    // TODO
   }
-  public removeListener(eventType: Type, fn: (event: Events[Type]) => void) {
-    const listeners = this.listenerMap[eventType as any];
+
+  /**
+   * Attach a new listening function for kind
+   * @param kind enum value for kind
+   * @param fn function to handle events of that kind
+   */
+  public addListener<Kind extends Kinds>(
+    kind: Kind,
+    fn: (event: EventMap[Kind]) => void,
+  ) {
+    let listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this
+      .listenerMap[kind];
     if (!listeners) {
-      throw new Error(`no listener for ${eventType}`);
+      listeners = this.listenerMap[kind] = [] as any;
+    }
+    (listeners as any).push(fn);
+  }
+  public removeListener<Kind extends Kinds>(
+    kind: Kind,
+    fn: (event: EventMap[Kind]) => void,
+  ) {
+    const listeners = this.listenerMap[kind];
+    if (!listeners) {
+      throw new Error(`no listener for ${kind}`);
     }
     const idx = listeners.findIndex((fn2) => fn === fn2);
     if (idx < 0) {
-      throw new Error(`listener not found for ${eventType}`);
+      throw new Error(`listener not found for ${kind}`);
     }
     listeners.splice(idx, 1);
   }

@@ -54,9 +54,7 @@ export class MapEditorElement extends ThreeSceneElement {
       'editorMode',
       this.onEditorModeChange.bind(this),
     );
-    this.ctx.serverQueue.addListener('editMap', this.onEditMap.bind(
-      this,
-    ) as any);
+    this.ctx.serverQueue.addListener('mapEdit', this.onEditMap.bind(this));
 
     this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
@@ -81,7 +79,8 @@ export class MapEditorElement extends ThreeSceneElement {
             mouseToVec(ev, this.offsetWidth, this.offsetHeight),
           );
           if (loc) {
-            this.ctx.serverQueue.post('editMap', {
+            this.ctx.serverQueue.post({
+              kind: 'mapEdit',
               mapName: this.opts.name,
               editType,
               x: loc.x,

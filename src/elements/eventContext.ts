@@ -1,14 +1,14 @@
 import {
+  ServerEventKinds,
   ServerEvents,
-  ServerEventType,
+  UIEventKinds,
   UIEvents,
-  UIEventType,
 } from '../events';
 import { EventQueue } from '../events/queues';
 
 export class EventContextElement extends HTMLElement {
-  public uiQueue: EventQueue<UIEventType, UIEvents>;
-  public serverQueue: EventQueue<ServerEventType, ServerEvents>;
+  public uiQueue: EventQueue<UIEventKinds, UIEvents>;
+  public serverQueue: EventQueue<ServerEventKinds, ServerEvents>;
   constructor() {
     super();
     this.uiQueue = new EventQueue();

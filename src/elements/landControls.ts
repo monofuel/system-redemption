@@ -23,7 +23,8 @@ export async function getLandControlsElement() {
       if (id !== 'clear' && id !== 'help') {
         this.buttonMap[id].classList.add('pressed');
       }
-      this.ctx.uiQueue.post('editorMode', {
+      this.ctx.uiQueue.post({
+        kind: 'editorMode',
         selection,
       });
     }

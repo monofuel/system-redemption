@@ -10,19 +10,31 @@ export enum EditorSelection {
   lowerWater = 'lowerWater',
 }
 export interface EditorMode {
+  kind: 'editorMode';
   selection: EditorSelection;
+}
+
+export enum WaterChangeType {
+  raise = 'raise',
+  lower = 'lower',
+}
+
+export interface WaterChange {
+  kind: 'waterChange';
+  changeType: WaterChangeType;
 }
 
 export interface UIEvents {
   editorMode: EditorMode;
+  waterChange: WaterChange;
 }
-
-export type UIEventType = keyof UIEvents;
+export type UIEventKinds = keyof UIEvents;
 
 // ----------------------
 // server events
 
 export interface NewFiniteMap {
+  kind: 'newFiniteMap';
   map: FiniteMap;
 }
 
@@ -32,6 +44,7 @@ export enum MapEditType {
 }
 
 export interface MapEdit {
+  kind: 'mapEdit';
   mapName: string;
   editType: MapEditType;
   x: number;
@@ -40,6 +53,9 @@ export interface MapEdit {
 
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
-  editMap: MapEdit;
+  mapEdit: MapEdit;
 }
-export type ServerEventType = keyof ServerEvents;
+export type ServerEventKinds = keyof ServerEvents;
+
+export type EventKinds = ServerEventKinds | UIEventKinds;
+export type Events = ServerEvents & UIEvents;
