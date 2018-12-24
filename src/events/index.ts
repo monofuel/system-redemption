@@ -23,10 +23,15 @@ export interface WaterChange {
   kind: 'waterChange';
   changeType: WaterChangeType;
 }
+export interface ToggleLogViewer {
+  kind: 'toggleLogViewer';
+  state: 'open' | 'closed';
+}
 
 export interface FrontendEvents {
   editorMode: EditorMode;
   waterChange: WaterChange;
+  toggleLogViewer: ToggleLogViewer;
 }
 export type FrontendEventKinds = keyof FrontendEvents;
 export type FrontendEvent = FrontendEvents[FrontendEventKinds];

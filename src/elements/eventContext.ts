@@ -1,75 +1,64 @@
-import { json } from 'body-parser';
-import {
-  FrontendEvent,
-  FrontendEventKinds,
-  FrontendEvents,
-  ServerEventKinds,
-  ServerEvents,
-} from '../events';
+import { EventKinds, Events, FrontendEvent, ServerEvent } from '../events';
 import { EventQueue } from '../events/queues';
 import { info } from '../logging';
+import { delay } from '../util';
 import { UpdateLoop } from './threeScene';
 
+interface LoggedEvent {
+  event: ServerEvent | FrontendEvent;
+  timestamp: number;
+  listeners: number;
+}
+
 export class EventContextElement extends HTMLElement {
-  public uiQueue: EventQueue<FrontendEventKinds, FrontendEvents>;
-  public serverQueue: EventQueue<ServerEventKinds, ServerEvents>;
+  public queue: EventQueue<EventKinds, Events>;
 
-  private uiFlushLoop: UpdateLoop;
-  private serverFlushLoop: UpdateLoop;
+  public events: LoggedEvent[] = [];
 
-  private uiEvents: Array<{
-    event: FrontendEvent;
-    timestamp: number;
-    listeners: number;
-  }> = [];
-  private serverEvents: Array<{
-    event: ServerEvents;
-    timestamp: number;
-    listeners: number;
-  }> = [];
+  private flushLoop: UpdateLoop;
 
   constructor() {
     super();
     (window as any).ctx = this;
-    this.uiQueue = new EventQueue({
+
+    this.queue = new EventQueue({
       postSyncronous: false,
       logger: (event, timestamp, listeners) => {
-        this.uiEvents.push({ event, timestamp, listeners });
-        info('ui event posted', {
+        this.events.push({ event, timestamp, listeners });
+        info('event posted', {
           event: JSON.stringify(event),
           timestamp,
           listeners,
         });
       },
     });
-    this.serverQueue = new EventQueue({
-      postSyncronous: false,
-      logger: (event, timestamp, listeners) => {
-        this.serverEvents.push({ event, timestamp, listeners });
-        info('server event posted', {
-          event: JSON.stringify(event),
-          timestamp,
-          listeners,
-        });
-      },
-    });
-    this.uiFlushLoop = new UpdateLoop(
-      'uiQueueFlush',
+    this.flushLoop = new UpdateLoop(
+      'queueFlush',
       (delta: number) => {
-        this.uiQueue.flushAll();
+        this.queue.flushAll();
         return false;
       },
       30,
     );
-    this.serverFlushLoop = new UpdateLoop(
-      'uiQueueFlush',
-      (delta: number) => {
-        this.serverQueue.flushAll();
-        return false;
-      },
-      30,
-    );
-    this.uiFlushLoop.start();
-    this.serverFlushLoop.start();
+    this.flushLoop.start();
+  }
+  public async replayFromFile(url: string, realtime: boolean) {
+    const resp = await fetch(url);
+    const eventLog: LoggedEvent[] = JSON.parse(await resp.text());
+    if (eventLog.length === 0) {
+      return;
+    }
+    const startTime = Date.now();
+    const offset = startTime - eventLog[0].timestamp;
+
+    for (const log of eventLog) {
+      if (realtime) {
+        while (log.timestamp > Date.now() - offset) {
+          await delay(100);
+        }
+      }
+      this.queue.post(log.event);
+      // await delay(100);
+    }
   }
 }

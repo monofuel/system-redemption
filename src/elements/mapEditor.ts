@@ -1,5 +1,4 @@
 import {
-  AxesHelper,
   DirectionalLight,
   HemisphereLight,
   Object3D,
@@ -50,11 +49,11 @@ export class MapEditorElement extends ThreeSceneElement {
     */
     this.scene.add(sun);
 
-    this.ctx.uiQueue.addListener(
+    this.ctx.queue.addListener(
       'editorMode',
       this.onEditorModeChange.bind(this),
     );
-    this.ctx.serverQueue.addListener('mapEdit', this.onEditMap.bind(this));
+    this.ctx.queue.addListener('mapEdit', this.onEditMap.bind(this));
 
     this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
@@ -79,7 +78,7 @@ export class MapEditorElement extends ThreeSceneElement {
             mouseToVec(ev, this.offsetWidth, this.offsetHeight),
           );
           if (loc) {
-            this.ctx.serverQueue.post({
+            this.ctx.queue.post({
               kind: 'mapEdit',
               mapName: this.opts.name,
               editType,

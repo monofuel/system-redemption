@@ -26,6 +26,7 @@ $ui5: #8e7c6c;
   pointer-events: all;
   display: block;
   position: relative;
+  border-radius: 3px;
 
   color: $ui3;
   background: $ui1;
@@ -39,6 +40,26 @@ $ui5: #8e7c6c;
   span {
     margin: 3px;
   }
+  textarea {
+    flex: 1;
+  }
+}
+
+.ui-popup {
+  @include ui-component;
+  border: $ui5;
+  border-style: solid;
+  position: absolute;
+  top: 10%;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  right: 15%;
+  width: 70%;
+  height: 70%;
+}
+.ui-popup.open {
+  visibility: visible;
 }
 
 .ui-leftbar {
@@ -49,12 +70,11 @@ $ui5: #8e7c6c;
   margin: 20px;
   padding: 5px;
   height: auto;
-  border-radius: 3px;
 }
 
 .ui-title {
   border-color: $ui5;
-  color: $ui5;
+  color: $ui4;
   margin: 3px;
   border-radius: 5px;
   border-style: solid;
@@ -70,6 +90,7 @@ $ui5: #8e7c6c;
   border-width: 2px;
   font-size: large;
   text-align: center;
+  cursor: pointer;
 }
 .ui-button:hover {
   border-color: $ui4;

@@ -2,6 +2,7 @@ import { Vector2 } from 'three';
 import { ChunkTestElement } from './chunk';
 import { EventContextElement } from './eventContext';
 import { getLandControlsElement } from './landControls';
+import { getLogViewerElement } from './logViewer';
 import { MapEditorElement } from './mapEditor';
 import { ThreeSceneElement } from './threeScene';
 import { TileTestElement } from './tiles';
@@ -32,6 +33,7 @@ export function loadElements() {
 export async function loadAsyncElements() {
   // TODO: with more elements, should load them in parallel
   window.customElements.define('land-controls', await getLandControlsElement());
+  window.customElements.define('log-viewer', await getLogViewerElement());
 }
 
 export async function loadTemplate(name: string): Promise<HTMLTemplateElement> {

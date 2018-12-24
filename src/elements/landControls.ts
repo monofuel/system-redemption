@@ -20,13 +20,29 @@ export async function getLandControlsElement() {
       for (const button of Object.values(this.buttonMap)) {
         button.classList.remove('pressed');
       }
-      if (id !== 'clear' && id !== 'help') {
+      if (
+        id !== 'clear' &&
+        id !== 'help' &&
+        id !== 'toggleLogViewer' &&
+        !id.startsWith('replay')
+      ) {
         this.buttonMap[id].classList.add('pressed');
       }
-      this.ctx.uiQueue.post({
-        kind: 'editorMode',
-        selection,
-      });
+      if (id === 'toggleLogViewer') {
+        this.ctx.queue.post({
+          kind: 'toggleLogViewer',
+          state: 'open',
+        });
+      } else if (id === 'replay-fast') {
+        this.ctx.replayFromFile('/test/chunk/testLog.json', false);
+      } else if (id === 'replay-realtime') {
+        this.ctx.replayFromFile('/test/chunk/testLog.json', true);
+      } else {
+        this.ctx.queue.post({
+          kind: 'editorMode',
+          selection,
+        });
+      }
     }
 
     private getButtons() {
