@@ -20,7 +20,9 @@ export async function getLandControlsElement() {
       for (const button of Object.values(this.buttonMap)) {
         button.classList.remove('pressed');
       }
-      this.buttonMap[id].classList.add('pressed');
+      if (id !== 'clear' && id !== 'help') {
+        this.buttonMap[id].classList.add('pressed');
+      }
       this.ctx.uiQueue.post('editorMode', {
         selection,
       });

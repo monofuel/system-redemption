@@ -16,20 +16,29 @@ three-scene {
   margin: 0;
 }
 
+$ui1: #4f4b45;
+$ui2: #7a8f77;
+$ui3: #cfcfb6;
+$ui4: #cbbc9c;
+$ui5: #8e7c6c;
+
 @mixin ui-component {
   pointer-events: all;
   display: block;
   position: relative;
 
-  color: white;
-  background: green;
+  color: $ui3;
+  background: $ui1;
 }
 
 .ui-row {
   flex: 1;
   flex-direction: row;
+  display: flex;
   width: 100%;
-  padding: 5px;
+  span {
+    margin: 3px;
+  }
 }
 
 .ui-leftbar {
@@ -40,19 +49,40 @@ three-scene {
   margin: 20px;
   padding: 5px;
   height: auto;
+  border-radius: 3px;
 }
 
 .ui-button {
-  border: solid white;
+  border-color: $ui3;
+  border-radius: 5px;
+  border-style: solid;
   flex: 1;
   border-width: 2px;
-  width: 100%;
-  margin: 20px;
+  font-size: large;
+  text-align: center;
 }
 .ui-button:hover {
-  border: solid grey;
+  border-color: $ui4;
+  color: $ui4;
+  .tooltip {
+    visibility: visible;
+  }
 }
 
 .ui-button.pressed {
-  border: solid black;
+  border-color: $ui5;
+  color: $ui5;
+}
+
+.tooltip {
+  visibility: hidden;
+  position: absolute;
+  z-index: 1;
+  width: 120px;
+  font-size: medium;
+  background-color: $ui2;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
 }
