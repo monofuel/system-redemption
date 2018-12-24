@@ -24,11 +24,12 @@ export interface WaterChange {
   changeType: WaterChangeType;
 }
 
-export interface UIEvents {
+export interface FrontendEvents {
   editorMode: EditorMode;
   waterChange: WaterChange;
 }
-export type UIEventKinds = keyof UIEvents;
+export type FrontendEventKinds = keyof FrontendEvents;
+export type FrontendEvent = FrontendEvents[FrontendEventKinds];
 
 // ----------------------
 // server events
@@ -56,6 +57,7 @@ export interface ServerEvents {
   mapEdit: MapEdit;
 }
 export type ServerEventKinds = keyof ServerEvents;
+export type ServerEvent = ServerEvents[ServerEventKinds];
 
-export type EventKinds = ServerEventKinds | UIEventKinds;
-export type Events = ServerEvents & UIEvents;
+export type EventKinds = ServerEventKinds | FrontendEventKinds;
+export type Events = ServerEvents & FrontendEvents;
