@@ -13,6 +13,8 @@ interface ChunkTestOpts {
   landColor: number;
   cliffColor: number;
   edgeColor: number;
+  waterColor: number;
+  waterHeight: number;
   sunColor: number;
   wireframe: boolean;
   zScale: number;
@@ -33,6 +35,8 @@ export class TileTestElement extends ThreeSceneElement {
     landColor: 0x405136,
     edgeColor: 0x6f9240,
     cliffColor: 0x362e26,
+    waterColor: 0x53b0e2,
+    waterHeight: 0.8,
     sunColor: 0xcccccc,
     wireframe: false,
     zScale: 0.5,
@@ -84,10 +88,17 @@ export class TileTestElement extends ThreeSceneElement {
 
     const tileTex = new CanvasTexture(this.canvas);
 
-    const chunkMesh = getTileMesh(testTiles, this.opts.cliffColor, tileTex, {
-      wireframe: this.opts.wireframe,
-      zScale: this.opts.zScale,
-    });
+    const chunkMesh = getTileMesh(
+      testTiles,
+      this.opts.waterHeight,
+      this.opts.cliffColor,
+      this.opts.waterColor,
+      tileTex,
+      {
+        wireframe: this.opts.wireframe,
+        zScale: this.opts.zScale,
+      },
+    );
     chunkMesh.name = chunkName;
     chunkMesh.geometry.center();
     chunkMesh.translateY(-10);

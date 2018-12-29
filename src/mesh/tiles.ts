@@ -5,6 +5,7 @@ import {
   Geometry,
   Matrix4,
   Mesh,
+  MeshBasicMaterial,
   MeshPhongMaterial,
   Texture,
   Vector2,
@@ -20,7 +21,9 @@ interface MeshOpts {
 
 export function getTileMesh(
   tiles: PlanetTiles,
+  waterHeight: number,
   cliffColor: number,
+  waterColor: number,
   tileTex: Texture,
   opts: Partial<MeshOpts> = {},
 ): Mesh {
@@ -31,6 +34,10 @@ export function getTileMesh(
       const tile = tiles.grid[x][y];
       const matrix = new Matrix4().makeTranslation(x, y, 0);
       geom.merge(getGeomForTile(tile, opts.zScale), matrix);
+      const waterGeom = getWaterGeomForTile(tile, waterHeight, opts.zScale);
+      if (waterGeom) {
+        geom.merge(waterGeom, matrix);
+      }
     }
   }
 
@@ -57,7 +64,17 @@ export function getTileMesh(
     wireframe: opts.wireframe || false,
   });
 
-  const mesh = new Mesh(geom, [landMaterial, cliffMaterial]);
+  const waterMaterial = new MeshBasicMaterial({
+    color: waterColor,
+    side: FrontSide,
+    flatShading: true,
+    transparent: true,
+    opacity: 0.8,
+    // shininess: 0,
+    wireframe: opts.wireframe || false,
+  });
+
+  const mesh = new Mesh(geom, [landMaterial, cliffMaterial, waterMaterial]);
   return mesh;
 }
 
@@ -113,6 +130,53 @@ function getGeomForTile(corners: TileHeights, zScale: number = 0.4): Geometry {
   geom.computeFlatVertexNormals();
 
   geom.uvsNeedUpdate = true;
+  return geom;
+}
+
+function getWaterGeomForTile(
+  corners: TileHeights,
+  waterHeight: number,
+  zScale: number = 0.4,
+): Geometry | null {
+  if (corners.filter((corner) => corner > waterHeight).length === 4) {
+    // if all 4 corners are above the water height, no water!
+    return null;
+  }
+  const geom = new Geometry();
+
+  geom.vertices.push(
+    new Vector3(0, 0, waterHeight * zScale), // 0
+    new Vector3(0, 1, waterHeight * zScale), // 1
+    new Vector3(1, 0, waterHeight * zScale), // 2
+    new Vector3(1, 1, waterHeight * zScale), // 3
+  );
+
+  geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 2));
+  geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 2));
+
+  // from water to tile underneath
+
+  geom.vertices.push(
+    new Vector3(0, 0, Math.min(corners[0] * zScale, waterHeight * zScale)), // 4
+    new Vector3(0, 1, Math.min(corners[1] * zScale, waterHeight * zScale)), // 5
+    new Vector3(1, 0, Math.min(corners[2] * zScale, waterHeight * zScale)), // 6
+    new Vector3(1, 1, Math.min(corners[3] * zScale, waterHeight * zScale)), // 7
+  );
+
+  geom.faces.push(new Face3(4, 0, 5, undefined, undefined, 2));
+  geom.faces.push(new Face3(0, 1, 5, undefined, undefined, 2));
+
+  geom.faces.push(new Face3(2, 4, 6, undefined, undefined, 2));
+  geom.faces.push(new Face3(4, 2, 0, undefined, undefined, 2));
+
+  geom.faces.push(new Face3(3, 2, 6, undefined, undefined, 2));
+  geom.faces.push(new Face3(6, 7, 3, undefined, undefined, 2));
+
+  geom.faces.push(new Face3(1, 3, 7, undefined, undefined, 2));
+  geom.faces.push(new Face3(5, 1, 7, undefined, undefined, 2));
+
+  geom.computeFaceNormals();
+  geom.computeFlatVertexNormals();
   return geom;
 }
 

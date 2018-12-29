@@ -19,6 +19,8 @@ export class MapEditorElement extends ThreeSceneElement {
     landColor: 0x405136,
     edgeColor: 0x6f9240,
     cliffColor: 0x362e26,
+    waterColor: 0x53b0e2,
+    waterHeight: 1.5,
     sunColor: 0xcccccc,
     name: 'foobar',
     size: 2,
@@ -166,7 +168,13 @@ export class MapEditorElement extends ThreeSceneElement {
     for (let y = 0; y < gameMap.size; y++) {
       for (let x = 0; x < gameMap.size; x++) {
         const tiles = gameMap.grid[y][x];
-        const chunk = getTileMesh(tiles, this.opts.cliffColor, tileTexture);
+        const chunk = getTileMesh(
+          tiles,
+          this.opts.waterHeight,
+          this.opts.cliffColor,
+          this.opts.waterColor,
+          tileTexture,
+        );
         chunk.translateX(x * chunkSize);
         chunk.translateZ(y * chunkSize);
         chunk.rotateY(-Math.PI / 2);
