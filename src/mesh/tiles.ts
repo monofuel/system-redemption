@@ -1,5 +1,7 @@
 import {
+  BackSide,
   CanvasTexture,
+  DoubleSide,
   Face3,
   FrontSide,
   Geometry,
@@ -33,15 +35,50 @@ export function getTileMesh(
     for (let x = 0; x < tiles.size; x++) {
       const tile = tiles.grid[x][y];
       const matrix = new Matrix4().makeTranslation(x, y, 0);
-      geom.merge(getGeomForTile(tile, opts.zScale), matrix);
+
+      const tileGeom = getGeomForTile(tile, opts.zScale);
+      const oldTileFaces = tileGeom.faces;
+      tileGeom.faces = oldTileFaces.slice(0, 2);
+      if (y === 0) {
+        tileGeom.faces.push(...oldTileFaces.slice(4, 6));
+      }
+      if (x === 0) {
+        tileGeom.faces.push(...oldTileFaces.slice(2, 4));
+      }
+      if (x === tiles.size - 1) {
+        tileGeom.faces.push(...oldTileFaces.slice(6, 8));
+      }
+      if (y === tiles.size - 1) {
+        tileGeom.faces.push(...oldTileFaces.slice(8, 10));
+      }
+
       const waterGeom = getWaterGeomForTile(tile, waterHeight, opts.zScale);
+
+      // Remove internal edges before merging into chunk
+
+      geom.merge(tileGeom, matrix);
       if (waterGeom) {
+        const oldWaterFaces = waterGeom.faces;
+        waterGeom.faces = oldWaterFaces.slice(0, 2);
+        if (y === 0) {
+          waterGeom.faces.push(...oldWaterFaces.slice(4, 6));
+        }
+        if (x === 0) {
+          waterGeom.faces.push(...oldWaterFaces.slice(2, 4));
+        }
+        if (x === tiles.size - 1) {
+          waterGeom.faces.push(...oldWaterFaces.slice(6, 8));
+        }
+        if (y === tiles.size - 1) {
+          waterGeom.faces.push(...oldWaterFaces.slice(8, 10));
+        }
+
         geom.merge(waterGeom, matrix);
       }
     }
   }
 
-  // geom.mergeVertices();
+  geom.mergeVertices();
   geom.computeFaceNormals();
   geom.computeVertexNormals();
 

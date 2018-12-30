@@ -40,7 +40,7 @@ export class TileTestElement extends ThreeSceneElement {
     sunColor: 0xcccccc,
     wireframe: false,
     zScale: 0.5,
-    rpm: 2,
+    rpm: 6,
   };
 
   private canvas: HTMLCanvasElement;
