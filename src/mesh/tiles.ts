@@ -37,6 +37,8 @@ export function getTileMesh(
       const matrix = new Matrix4().makeTranslation(x, y, 0);
 
       const tileGeom = getGeomForTile(tile, opts.zScale);
+
+      // Remove internal edges before merging into chunk
       const oldTileFaces = tileGeom.faces;
       tileGeom.faces = oldTileFaces.slice(0, 2);
       if (y === 0) {
@@ -54,10 +56,9 @@ export function getTileMesh(
 
       const waterGeom = getWaterGeomForTile(tile, waterHeight, opts.zScale);
 
-      // Remove internal edges before merging into chunk
-
       geom.merge(tileGeom, matrix);
       if (waterGeom) {
+        // Remove internal edges before merging into chunk
         const oldWaterFaces = waterGeom.faces;
         waterGeom.faces = oldWaterFaces.slice(0, 2);
         if (y === 0) {
