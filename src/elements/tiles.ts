@@ -6,6 +6,7 @@ import {
 } from 'three';
 import { getTileMesh } from '../mesh/tiles';
 import { testTiles } from '../planet/tiles';
+import { Direction } from '../types/SR';
 import { toHexColor } from '../util';
 import { ThreeSceneElement } from './threeScene';
 
@@ -88,17 +89,17 @@ export class TileTestElement extends ThreeSceneElement {
 
     const tileTex = new CanvasTexture(this.canvas);
 
-    const chunkMesh = getTileMesh(
-      testTiles,
-      this.opts.waterHeight,
-      this.opts.cliffColor,
-      this.opts.waterColor,
+    const chunkMesh = getTileMesh({
+      tiles: testTiles,
+      waterHeight: this.opts.waterHeight,
+      cliffColor: this.opts.cliffColor,
+      waterColor: this.opts.waterColor,
+      skipSides: [] as Direction[],
       tileTex,
-      {
-        wireframe: this.opts.wireframe,
-        zScale: this.opts.zScale,
-      },
-    );
+
+      wireframe: this.opts.wireframe,
+      zScale: this.opts.zScale,
+    });
     chunkMesh.name = chunkName;
     chunkMesh.geometry.center();
     chunkMesh.translateY(-10);

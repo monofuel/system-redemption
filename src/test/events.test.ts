@@ -5,6 +5,7 @@ import {
   FrontendEvent,
   FrontendEventKinds,
   FrontendEvents,
+  ToggleLogViewer,
 } from '../events';
 import { EventQueue } from '../events/queues';
 
@@ -61,24 +62,24 @@ describe('test event system', () => {
           eventLog.push(event);
         },
       });
-      const expectedEvent: EditorMode = {
-        kind: 'editorMode',
-        selection: EditorSelection.raiselower,
+      const expectedEvent: ToggleLogViewer = {
+        kind: 'toggleLogViewer',
+        state: 'open',
       };
       let callCount = 0;
       const eventLog: FrontendEvent[] = [];
-      const fn = (event: EditorMode) => {
+      const fn = (event: ToggleLogViewer) => {
         assert.deepEqual(event, expectedEvent);
         callCount++;
       };
 
       it('attach listeners', () => {
-        uiQueue.addListener('editorMode', fn);
+        uiQueue.addListener('toggleLogViewer', fn);
         uiQueue.post(expectedEvent);
         assert.equal(callCount, 0);
         assert.equal(eventLog.length, 0);
 
-        uiQueue.flush('waterChange');
+        uiQueue.flush('toggleLogViewer');
         assert.equal(callCount, 0);
         assert.equal(eventLog.length, 0);
 

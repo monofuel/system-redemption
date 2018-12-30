@@ -1,4 +1,5 @@
 {
     "editor.formatOnSave": true,
-    "tslint.autoFixOnSave": true
+    "tslint.autoFixOnSave": true,
+    "prettier.requireConfig": true
 }

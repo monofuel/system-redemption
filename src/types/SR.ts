@@ -5,6 +5,8 @@ export enum TileType {
   cliff,
 }
 
+export type Direction = 'N' | 'S' | 'E' | 'W';
+
 export interface PlanetChunk {
   x: number;
   y: number;

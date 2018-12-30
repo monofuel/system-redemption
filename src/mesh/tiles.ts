@@ -1,7 +1,5 @@
 import {
-  BackSide,
   CanvasTexture,
-  DoubleSide,
   Face3,
   FrontSide,
   Geometry,
@@ -9,26 +7,90 @@ import {
   Mesh,
   MeshBasicMaterial,
   MeshPhongMaterial,
+  Object3D,
   Texture,
   Vector2,
   Vector3,
 } from 'three';
-import { PlanetTiles, TileHeights } from '../types/SR';
+import { Direction, FiniteMap, PlanetTiles, TileHeights } from '../types/SR';
 import { toHexColor } from '../util';
 
-interface MeshOpts {
-  wireframe: boolean;
-  zScale: number;
+interface PlanetMeshOpts {
+  gameMap: FiniteMap;
+  waterHeight: number;
+  cliffColor: number;
+  waterColor: number;
+  landColor: number;
+  edgeColor: number;
 }
 
-export function getTileMesh(
-  tiles: PlanetTiles,
-  waterHeight: number,
-  cliffColor: number,
-  waterColor: number,
-  tileTex: Texture,
-  opts: Partial<MeshOpts> = {},
-): Mesh {
+export function getPlanetObject({
+  gameMap,
+  waterHeight,
+  cliffColor,
+  landColor,
+  edgeColor,
+  waterColor,
+}: PlanetMeshOpts): Object3D {
+  const tileTexture = getTileTexture(landColor, edgeColor);
+
+  const mapObj = new Object3D();
+  mapObj.name = gameMap.name;
+
+  for (let y = 0; y < gameMap.size; y++) {
+    for (let x = 0; x < gameMap.size; x++) {
+      const sides: Direction[] = [];
+      if (x !== 0) {
+        sides.push('W');
+      }
+      if (y !== 0) {
+        sides.push('N');
+      }
+      if (x !== gameMap.size - 1) {
+        sides.push('E');
+      }
+      if (y !== gameMap.size - 1) {
+        sides.push('S');
+      }
+
+      const tiles = gameMap.grid[y][x];
+      const chunk = getTileMesh({
+        tiles,
+        waterHeight,
+        cliffColor,
+        waterColor,
+        skipSides: sides,
+        tileTex: tileTexture,
+      });
+      chunk.translateX(x * tiles.size);
+      chunk.translateZ(y * tiles.size);
+      chunk.rotateY(-Math.PI / 2);
+      mapObj.add(chunk);
+    }
+  }
+  return mapObj;
+}
+
+interface MeshOpts {
+  tiles: PlanetTiles;
+  waterHeight: number;
+  cliffColor: number;
+  waterColor: number;
+  skipSides: Direction[];
+  tileTex: Texture;
+  wireframe?: boolean;
+  zScale?: number;
+}
+export function getTileMesh({
+  tiles,
+  waterHeight,
+  cliffColor,
+  waterColor,
+  skipSides: sides,
+  tileTex,
+  wireframe = false,
+  zScale,
+}: MeshOpts): Mesh {
   const geom = new Geometry();
 
   for (let y = 0; y < tiles.size; y++) {
@@ -36,7 +98,7 @@ export function getTileMesh(
       const tile = tiles.grid[x][y];
       const matrix = new Matrix4().makeTranslation(x, y, 0);
 
-      const tileGeom = getGeomForTile(tile, opts.zScale);
+      const tileGeom = getGeomForTile(tile, zScale);
 
       /*
       // Remove internal edges before merging into chunk
@@ -58,23 +120,23 @@ export function getTileMesh(
       }
       */
 
-      const waterGeom = getWaterGeomForTile(tile, waterHeight, opts.zScale);
+      const waterGeom = getWaterGeomForTile(tile, waterHeight, zScale);
 
       geom.merge(tileGeom, matrix);
       if (waterGeom) {
         // Remove internal edges before merging into chunk
         const oldWaterFaces = waterGeom.faces;
         waterGeom.faces = oldWaterFaces.slice(0, 2);
-        if (y === 0) {
+        if (!sides.includes('W') && y === 0) {
           waterGeom.faces.push(...oldWaterFaces.slice(4, 6));
         }
-        if (x === 0) {
+        if (!sides.includes('N') && x === 0) {
           waterGeom.faces.push(...oldWaterFaces.slice(2, 4));
         }
-        if (x === tiles.size - 1) {
+        if (!sides.includes('S') && x === tiles.size - 1) {
           waterGeom.faces.push(...oldWaterFaces.slice(6, 8));
         }
-        if (y === tiles.size - 1) {
+        if (!sides.includes('E') && y === tiles.size - 1) {
           waterGeom.faces.push(...oldWaterFaces.slice(8, 10));
         }
 
@@ -96,14 +158,14 @@ export function getTileMesh(
     map: tileTex,
     flatShading: true,
 
-    wireframe: opts.wireframe || false,
+    wireframe,
   });
   const cliffMaterial = new MeshPhongMaterial({
     color: cliffColor,
     side: FrontSide,
     flatShading: true,
     shininess: 0,
-    wireframe: opts.wireframe || false,
+    wireframe,
   });
 
   const waterMaterial = new MeshBasicMaterial({
@@ -113,7 +175,7 @@ export function getTileMesh(
     transparent: true,
     opacity: 0.8,
     // shininess: 0,
-    wireframe: opts.wireframe || false,
+    wireframe,
   });
 
   const mesh = new Mesh(geom, [landMaterial, cliffMaterial, waterMaterial]);

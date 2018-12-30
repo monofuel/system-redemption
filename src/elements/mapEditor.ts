@@ -6,9 +6,15 @@ import {
   Vector2,
 } from 'three';
 import { mouseToVec } from '.';
-import { EditorMode, EditorSelection, MapEdit, MapEditType } from '../events';
+import {
+  EditorMode,
+  EditorSelection,
+  MapEdit,
+  MapEditType,
+  WaterChangeType,
+} from '../events';
 import { info } from '../logging';
-import { getTileMesh, getTileTexture } from '../mesh/tiles';
+import { getPlanetObject, getTileMesh, getTileTexture } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
 import { FiniteMap } from '../types/SR';
 import { ThreeSceneElement } from './threeScene';
@@ -20,7 +26,7 @@ export class MapEditorElement extends ThreeSceneElement {
     edgeColor: 0x6f9240,
     cliffColor: 0x362e26,
     waterColor: 0x53b0e2,
-    waterHeight: 1.5,
+    waterHeight: 10,
     sunColor: 0xcccccc,
     name: 'foobar',
     size: 2,
@@ -56,6 +62,14 @@ export class MapEditorElement extends ThreeSceneElement {
       this.onEditorModeChange.bind(this),
     );
     this.ctx.queue.addListener('mapEdit', this.onEditMap.bind(this));
+    this.ctx.queue.addListener('waterChange', (e) => {
+      if (e.changeType === WaterChangeType.raise) {
+        this.opts.waterHeight += e.amount;
+      } else {
+        this.opts.waterHeight -= e.amount;
+      }
+      this.loadMap();
+    });
 
     this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
@@ -101,6 +115,18 @@ export class MapEditorElement extends ThreeSceneElement {
   }
 
   public onEditorModeChange(event: EditorMode) {
+    if (['raiseWater', 'lowerWater'].includes(event.selection)) {
+      this.ctx.queue.post({
+        kind: 'waterChange',
+        mapName: this.opts.name,
+        amount: 0.2,
+        changeType:
+          event.selection === 'raiseWater'
+            ? WaterChangeType.raise
+            : WaterChangeType.lower,
+      });
+      return;
+    }
     this.editorSelection = event.selection;
   }
 
@@ -154,33 +180,18 @@ export class MapEditorElement extends ThreeSceneElement {
     const gameMap = this.gameMap;
 
     info('loading map', { name });
-    const tileTexture = getTileTexture(
-      this.opts.landColor,
-      this.opts.edgeColor,
-    );
     const existing = this.scene.getObjectByName(gameMap.name);
     if (existing) {
       this.scene.remove(existing);
     }
-    const mapObj = new Object3D();
-    mapObj.name = gameMap.name;
-
-    for (let y = 0; y < gameMap.size; y++) {
-      for (let x = 0; x < gameMap.size; x++) {
-        const tiles = gameMap.grid[y][x];
-        const chunk = getTileMesh(
-          tiles,
-          this.opts.waterHeight,
-          this.opts.cliffColor,
-          this.opts.waterColor,
-          tileTexture,
-        );
-        chunk.translateX(x * chunkSize);
-        chunk.translateZ(y * chunkSize);
-        chunk.rotateY(-Math.PI / 2);
-        mapObj.add(chunk);
-      }
-    }
+    const mapObj = getPlanetObject({
+      gameMap: this.gameMap,
+      waterHeight: this.opts.waterHeight,
+      cliffColor: this.opts.cliffColor,
+      waterColor: this.opts.waterColor,
+      edgeColor: this.opts.edgeColor,
+      landColor: this.opts.landColor,
+    });
     mapObj.rotateY(Math.PI);
     const offset = (size * chunkSize) / 2;
 

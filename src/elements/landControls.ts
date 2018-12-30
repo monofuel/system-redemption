@@ -2,6 +2,8 @@ import { getParentContext, loadTemplate } from '.';
 import { EditorSelection } from '../events';
 import { EventContextElement } from './eventContext';
 
+const holdingButtons = ['raiselower'];
+
 export async function getLandControlsElement() {
   const template = await loadTemplate('landControls');
 
@@ -20,12 +22,7 @@ export async function getLandControlsElement() {
       for (const button of Object.values(this.buttonMap)) {
         button.classList.remove('pressed');
       }
-      if (
-        id !== 'clear' &&
-        id !== 'help' &&
-        id !== 'toggleLogViewer' &&
-        !id.startsWith('replay')
-      ) {
+      if (holdingButtons.includes(id)) {
         this.buttonMap[id].classList.add('pressed');
       }
       if (id === 'toggleLogViewer') {

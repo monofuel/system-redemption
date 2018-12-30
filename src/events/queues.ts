@@ -61,7 +61,7 @@ export class EventQueue<
       }
       if (onlyBefore && log.timestamp > onlyBefore) {
         eventLog.unshift(log);
-        continue;
+        return;
       }
       this.publishEvent(log.event, log.timestamp);
     }

@@ -6,23 +6,14 @@ import { FiniteMap } from '../types/SR';
 export enum EditorSelection {
   raiselower = 'raiselower',
   clear = 'clear',
-  raiseWater = 'raiseWater',
   lowerWater = 'lowerWater',
+  raiseWater = 'raiseWater',
 }
 export interface EditorMode {
   kind: 'editorMode';
   selection: EditorSelection;
 }
 
-export enum WaterChangeType {
-  raise = 'raise',
-  lower = 'lower',
-}
-
-export interface WaterChange {
-  kind: 'waterChange';
-  changeType: WaterChangeType;
-}
 export interface ToggleLogViewer {
   kind: 'toggleLogViewer';
   state: 'open' | 'closed';
@@ -30,7 +21,6 @@ export interface ToggleLogViewer {
 
 export interface FrontendEvents {
   editorMode: EditorMode;
-  waterChange: WaterChange;
   toggleLogViewer: ToggleLogViewer;
 }
 export type FrontendEventKinds = keyof FrontendEvents;
@@ -57,9 +47,22 @@ export interface MapEdit {
   y: number;
 }
 
+export enum WaterChangeType {
+  raise = 'raise',
+  lower = 'lower',
+}
+
+export interface WaterChange {
+  kind: 'waterChange';
+  mapName: string;
+  changeType: WaterChangeType;
+  amount: number;
+}
+
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
   mapEdit: MapEdit;
+  waterChange: WaterChange;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];
