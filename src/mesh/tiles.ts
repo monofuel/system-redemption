@@ -168,7 +168,7 @@ export function getTileMesh({
     wireframe,
   });
 
-  const waterMaterial = new MeshBasicMaterial({
+  const waterMaterial = new MeshPhongMaterial({
     color: waterColor,
     side: FrontSide,
     flatShading: true,
