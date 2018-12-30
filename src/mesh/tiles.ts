@@ -38,8 +38,10 @@ export function getTileMesh(
 
       const tileGeom = getGeomForTile(tile, opts.zScale);
 
-      // Remove internal edges before merging into chunk
       /*
+      // Remove internal edges before merging into chunk
+      // TODO this needs to check if the sides of the tile are
+      // exposed as a cliff
       const oldTileFaces = tileGeom.faces;
       tileGeom.faces = oldTileFaces.slice(0, 2);
       if (y === 0) {
@@ -217,6 +219,24 @@ function getWaterGeomForTile(
 
   geom.computeFaceNormals();
   geom.computeFlatVertexNormals();
+
+  // set texture UV
+  // water doesn't have a texture yet, but this makes three.js happy.
+  for (let i = 0; i < geom.faces.length; i += 2) {
+    geom.faceVertexUvs[0][i] = [
+      new Vector2(0, 0),
+      new Vector2(0, 1),
+      new Vector2(1, 1),
+    ];
+
+    geom.faceVertexUvs[0][i + 1] = [
+      new Vector2(0, 0),
+      new Vector2(1, 0),
+      new Vector2(1, 1),
+    ];
+  }
+
+  geom.uvsNeedUpdate = true;
   return geom;
 }
 
