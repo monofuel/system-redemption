@@ -26,7 +26,7 @@ export class MapEditorElement extends ThreeSceneElement {
     edgeColor: 0x6f9240,
     cliffColor: 0x362e26,
     waterColor: 0x53b0e2,
-    waterHeight: 10,
+    waterHeight: 1.8,
     sunColor: 0xcccccc,
     name: 'foobar',
     size: 2,
