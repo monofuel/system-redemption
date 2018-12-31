@@ -1,15 +1,13 @@
 before_script:
   - docker info
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-  - node_modules/
+#cache:
+#  key: ${CI_COMMIT_REF_SLUG}
+#  paths:
+#  - node_modules/
 
-before_script:
-  - docker run -v `pwd`:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1001:1001 ./*'
-  - echo `pwd`
-  - ls
+# before_script:
+#   - docker run -v `pwd`:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1001:1001 ./*'
 
 stages:
   - build
@@ -19,8 +17,6 @@ stages:
 standalone_build:
   stage: build
   script:
-    - echo `pwd`
-    - ls
     - docker-compose build
 
 standalone_test:
