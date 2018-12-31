@@ -4,7 +4,7 @@ RUN mkdir /sr
 ADD ./package.json /sr
 ADD ./yarn.lock /sr
 # hack - cache node_modules in CI and include it in the container to improve performance
-ADD ./node_modules /sr
+ADD ./node_modules /sr/node_modules
 WORKDIR /sr
 RUN yarn
 ADD . /sr

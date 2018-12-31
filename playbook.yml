@@ -58,6 +58,9 @@
       name: monofuel
       group: docker
       append: yes
+  - name: cleanup
+    shell: docker system prune -af
+    become: yes
   - name: fetch deps
     shell: docker run -v `pwd`:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1000:1000 ./*'
     become: yes
