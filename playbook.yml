@@ -51,6 +51,7 @@
     when: docker_exists.rc == 1
   - name: install docker
     shell: "/tmp/get-docker.sh"
+    when: docker_exists.rc == 1
   - name: start docker
     service:
       name: docker
