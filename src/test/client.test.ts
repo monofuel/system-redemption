@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { JSDOM } from 'jsdom';
 import { getURL, initWeb, shutdownWeb } from '../http';
-describe('validate client files', () => {
+xdescribe('validate client files', () => {
 
     before(async () => {
         await initWeb();
