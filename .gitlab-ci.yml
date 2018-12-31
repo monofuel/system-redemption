@@ -6,6 +6,9 @@ cache:
   paths:
   - node_modules/
 
+before_script:
+  - docker run -v (pwd):/sr node:alpine bash -c 'cd /sr && yarn'
+
 stages:
   - build
   - test
