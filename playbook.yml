@@ -58,6 +58,12 @@
       name: monofuel
       group: docker
       append: yes
+  - name: fetch deps
+    shell: docker run -v (pwd):/sr node:alpine bash -c 'cd /sr && yarn'
+    become: yes
+    become_user: monofuel
+    args:
+      chdir: /vagrant/
   - name: compose build
     shell: docker-compose build
     become: yes
