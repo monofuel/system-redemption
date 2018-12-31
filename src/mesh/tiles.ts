@@ -62,8 +62,8 @@ export function getPlanetObject({
         skipSides: sides,
         tileTex: tileTexture,
       });
-      chunk.translateX(x * tiles.size);
-      chunk.translateZ(y * tiles.size);
+      chunk.translateX(x * gameMap.chunkSize);
+      chunk.translateZ(y * gameMap.chunkSize);
       chunk.rotateY(-Math.PI / 2);
       mapObj.add(chunk);
     }
@@ -93,8 +93,8 @@ export function getTileMesh({
 }: MeshOpts): Mesh {
   const geom = new Geometry();
 
-  for (let y = 0; y < tiles.size; y++) {
-    for (let x = 0; x < tiles.size; x++) {
+  for (let y = 0; y < tiles.grid.length; y++) {
+    for (let x = 0; x < tiles.grid.length; x++) {
       const tile = tiles.grid[x][y];
       const matrix = new Matrix4().makeTranslation(x, y, 0);
 
@@ -133,10 +133,10 @@ export function getTileMesh({
         if (!sides.includes('N') && x === 0) {
           waterGeom.faces.push(...oldWaterFaces.slice(2, 4));
         }
-        if (!sides.includes('S') && x === tiles.size - 1) {
+        if (!sides.includes('S') && x === tiles.grid.length - 1) {
           waterGeom.faces.push(...oldWaterFaces.slice(6, 8));
         }
-        if (!sides.includes('E') && y === tiles.size - 1) {
+        if (!sides.includes('E') && y === tiles.grid.length - 1) {
           waterGeom.faces.push(...oldWaterFaces.slice(8, 10));
         }
 
@@ -146,18 +146,17 @@ export function getTileMesh({
   }
 
   geom.mergeVertices();
+  geom.computeBoundingBox();
   geom.computeFaceNormals();
   geom.computeVertexNormals();
 
   geom.rotateX(-Math.PI / 2);
 
   const landMaterial = new MeshPhongMaterial({
-    // color: landColor,
     shininess: 0,
     side: FrontSide,
     map: tileTex,
     flatShading: true,
-
     wireframe,
   });
   const cliffMaterial = new MeshPhongMaterial({

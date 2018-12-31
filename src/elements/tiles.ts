@@ -1,6 +1,7 @@
 import {
   CanvasTexture,
   DirectionalLight,
+  Group,
   HemisphereLight,
   Vector3,
 } from 'three';
@@ -88,7 +89,7 @@ export class TileTestElement extends ThreeSceneElement {
     const chunkName = 'chunk-1';
 
     const tileTex = new CanvasTexture(this.canvas);
-
+    const chunkObj = new Group();
     const chunkMesh = getTileMesh({
       tiles: testTiles,
       waterHeight: this.opts.waterHeight,
@@ -100,22 +101,25 @@ export class TileTestElement extends ThreeSceneElement {
       wireframe: this.opts.wireframe,
       zScale: this.opts.zScale,
     });
-    chunkMesh.name = chunkName;
     chunkMesh.geometry.center();
-    chunkMesh.translateY(-10);
+    chunkMesh.geometry.scale(10, 10, 10);
+
+    chunkObj.add(chunkMesh);
+    chunkObj.name = chunkName;
+    chunkObj.translateY(-10);
+    chunkObj.rotateOnAxis(new Vector3(0, 1, 0), Math.PI);
     const prevChunk = this.scene.getObjectByName(chunkName);
     if (prevChunk) {
       this.scene.remove(prevChunk);
     }
-    chunkMesh.geometry.scale(10, 10, 10);
-    chunkMesh.rotateOnAxis(new Vector3(0, 1, 0), Math.PI);
-    this.scene.add(chunkMesh);
+    this.scene.add(chunkObj);
     // TODO this listener leaks on seed changes
+
     this.addUpdateLoop(
       'rotation',
       (delta: number) => {
         const rps = this.opts.rpm / 60;
-        chunkMesh.rotateOnAxis(
+        chunkObj.rotateOnAxis(
           new Vector3(0, 1, 0),
           (Math.PI / (500 / delta)) * rps,
         );
@@ -123,5 +127,6 @@ export class TileTestElement extends ThreeSceneElement {
       },
       40,
     );
+
   }
 }

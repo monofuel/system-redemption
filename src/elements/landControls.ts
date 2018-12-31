@@ -2,7 +2,7 @@ import { getParentContext, loadTemplate } from '.';
 import { EditorSelection } from '../events';
 import { EventContextElement } from './eventContext';
 
-const holdingButtons = ['raiselower'];
+const holdingButtons = ['raiselower', 'rampRaiseLower'];
 
 export async function getLandControlsElement() {
   const template = await loadTemplate('landControls');

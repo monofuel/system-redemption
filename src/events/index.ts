@@ -47,15 +47,9 @@ export interface MapEdit {
   y: number;
 }
 
-export enum WaterChangeType {
-  raise = 'raise',
-  lower = 'lower',
-}
-
 export interface WaterChange {
   kind: 'waterChange';
   mapName: string;
-  changeType: WaterChangeType;
   amount: number;
 }
 

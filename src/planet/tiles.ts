@@ -12,7 +12,6 @@ export function getFlatTiles(x: number, y: number, size: number): PlanetTiles {
   return {
     x,
     y,
-    size,
     grid,
   };
 }
@@ -21,6 +20,7 @@ export function getFlatMap(
   name: string,
   size: number,
   chunkSize: number,
+  waterHeight: number,
 ): FiniteMap {
   const grid: PlanetTiles[][] = [];
   for (let i = 0; i < size; i++) {
@@ -34,6 +34,8 @@ export function getFlatMap(
     name,
     version: 1,
     size,
+    chunkSize,
+    waterHeight,
     grid,
   };
 }
@@ -41,11 +43,19 @@ export function getFlatMap(
 export const testTiles: PlanetTiles = {
   x: 0,
   y: 0,
-  size: 4,
   grid: [
     [[1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
     [[1, 1, 1, 1], [1, 1, 1, 1], [1, 0, 1, 0], [0, 0, 0, 0]],
     [[0, 0, 0, 0], [1, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 0]],
     [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
   ],
+};
+
+export const testTilesMap: FiniteMap = {
+  name: 'testTilesMap',
+  version: 1,
+  size: 1,
+  chunkSize: 4,
+  waterHeight: 0.8,
+  grid: [[testTiles]],
 };

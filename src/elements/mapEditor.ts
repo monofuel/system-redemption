@@ -11,7 +11,6 @@ import {
   EditorSelection,
   MapEdit,
   MapEditType,
-  WaterChangeType,
 } from '../events';
 import { info } from '../logging';
 import { getPlanetObject, getTileMesh, getTileTexture } from '../mesh/tiles';
@@ -42,6 +41,7 @@ export class MapEditorElement extends ThreeSceneElement {
       this.opts.name,
       this.opts.size,
       this.opts.chunkSize,
+      1.8,
     );
     this.gameMap.grid[0][0].grid[0][0] = [1, 1, 1, 1];
 
@@ -63,11 +63,7 @@ export class MapEditorElement extends ThreeSceneElement {
     );
     this.ctx.queue.addListener('mapEdit', this.onEditMap.bind(this));
     this.ctx.queue.addListener('waterChange', (e) => {
-      if (e.changeType === WaterChangeType.raise) {
-        this.opts.waterHeight += e.amount;
-      } else {
-        this.opts.waterHeight -= e.amount;
-      }
+      this.opts.waterHeight += e.amount;
       this.loadMap();
     });
 
@@ -119,11 +115,7 @@ export class MapEditorElement extends ThreeSceneElement {
       this.ctx.queue.post({
         kind: 'waterChange',
         mapName: this.opts.name,
-        amount: 0.2,
-        changeType:
-          event.selection === 'raiseWater'
-            ? WaterChangeType.raise
-            : WaterChangeType.lower,
+        amount: event.selection === 'raiseWater' ? 0.2 : -0.2,
       });
       return;
     }
