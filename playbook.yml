@@ -59,7 +59,7 @@
       group: docker
       append: yes
   - name: fetch deps
-    shell: docker run -v (pwd):/sr node:alpine bash -c 'cd /sr && yarn'
+    shell: docker run -v `pwd`:/sr node:alpine bash -c 'cd /sr && yarn'
     become: yes
     become_user: monofuel
     args:
