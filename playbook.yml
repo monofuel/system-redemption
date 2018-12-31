@@ -66,10 +66,11 @@
   - name: cleanup
     shell: docker system prune -af
     become: yes
-  - name: fetch deps
-    shell: docker run -v /vagrant:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1000:1000 ./*'
-    become: yes
-    become_user: monofuel
+  # deps get copied over by deployment
+  #- name: fetch deps
+  #  shell: docker run -v /vagrant:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1000:1000 ./*'
+  #  become: yes
+  #  become_user: monofuel
   - name: compose build
     shell: docker-compose build
     become: yes
