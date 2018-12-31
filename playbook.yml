@@ -39,11 +39,16 @@
 
   - name: reload
     shell: systemctl daemon-reload
+  - name: check if docker is installed
+    shell: command -v docker >/dev/null 2>&1
+    register: docker_exists
+    ignore_errors: yes
   - name: fetch docker installer
     get_url:
       url: https://get.docker.com
       dest: /tmp/get-docker.sh
       mode: 1770
+    when: docker_exists.rc == 1
   - name: install docker
     shell: "/tmp/get-docker.sh"
   - name: start docker
@@ -62,11 +67,9 @@
     shell: docker system prune -af
     become: yes
   - name: fetch deps
-    shell: docker run -v `pwd`:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1000:1000 ./*'
+    shell: docker run -v /vagrant:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1000:1000 ./*'
     become: yes
     become_user: monofuel
-    args:
-      chdir: /vagrant/
   - name: compose build
     shell: docker-compose build
     become: yes
