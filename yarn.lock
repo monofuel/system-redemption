@@ -333,11 +333,6 @@ ajv@^6.1.0, ajv@^6.5.5:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-alea@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/alea/-/alea-1.0.0.tgz#0c6f2421a03a98963431366583a1112ea7c28ccc"
-  integrity sha512-LSvpz/wLJWC6P19Eogz0IgysHgb46DKhHx4VfNWSCQua3usAYDpmrYxqqlqdy4Ozhd2ras2Km+zc26yBB36EaA==
-
 amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"

@@ -1,5 +1,4 @@
 import { Vector2 } from 'three';
-import { ChunkTestElement } from './chunk';
 import { EventContextElement } from './eventContext';
 import { getLandControlsElement } from './landControls';
 import { getLogViewerElement } from './logViewer';
@@ -23,7 +22,6 @@ export function loadElements() {
   window.customElements.define('hello-world', HelloWorld);
   window.customElements.define('event-context', EventContextElement);
   window.customElements.define('tile-test', TileTestElement);
-  window.customElements.define('chunk-test', ChunkTestElement);
   window.customElements.define('three-scene', ThreeSceneElement);
   window.customElements.define('map-editor', MapEditorElement);
 }
