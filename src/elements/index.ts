@@ -1,10 +1,12 @@
 import { Vector2 } from 'three';
 import { EventContextElement } from './eventContext';
 import { getLandControlsElement } from './landControls';
+import { LogPlayerElement } from './logPlayer';
 import { getLogViewerElement } from './logViewer';
 import { MapEditorElement } from './mapEditor';
 import { ThreeSceneElement } from './threeScene';
 import { TileTestElement } from './tiles';
+import { LogTestElement } from './log-tests';
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -22,8 +24,10 @@ export function loadElements() {
   window.customElements.define('hello-world', HelloWorld);
   window.customElements.define('event-context', EventContextElement);
   window.customElements.define('tile-test', TileTestElement);
+  window.customElements.define('log-player', LogPlayerElement);
   window.customElements.define('three-scene', ThreeSceneElement);
   window.customElements.define('map-editor', MapEditorElement);
+  window.customElements.define('log-tests', LogTestElement);
 }
 
 // NB. loading elements asyncronously kind of sucks, but

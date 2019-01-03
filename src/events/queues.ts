@@ -3,6 +3,8 @@ interface EventQueueOpts {
   postSyncronous: boolean;
   // maximum number of events to publish per queue when flushing (0 for unlimited)
   flushLength: number;
+  // function to run before processing the event
+  preHandler: (event: any, timestamp: number, listenerCount: number) => void;
   // function to log events after they have been processed
   logger: (event: any, timestamp: number, listenerCount: number) => void;
 }
@@ -10,6 +12,9 @@ interface EventQueueOpts {
 const defaultOpts: EventQueueOpts = {
   postSyncronous: true,
   flushLength: 0,
+  preHandler: () => {
+    return;
+  },
   logger: () => {
     return;
   },
@@ -18,7 +23,7 @@ const defaultOpts: EventQueueOpts = {
 export class EventQueue<
   Kinds extends keyof EventMap,
   EventMap extends Record<Kinds, { kind: Kinds }>
-> {
+  > {
   private opts: EventQueueOpts;
   private listenerMap: Partial<
     Record<Kinds, Array<(event: EventMap[Kinds]) => void>>
@@ -127,12 +132,12 @@ export class EventQueue<
     const kind = event.kind;
     const listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this
       .listenerMap[kind];
-    if (!listeners) {
-      return;
+    this.opts.preHandler(event, timestamp, listeners ? listeners.length : 0);
+    if (listeners) {
+      for (const fn of listeners) {
+        fn(event);
+      }
     }
-    for (const fn of listeners) {
-      fn(event);
-    }
-    this.opts.logger(event, timestamp, listeners.length);
+    this.opts.logger(event, timestamp, listeners ? listeners.length : 0);
   }
 }

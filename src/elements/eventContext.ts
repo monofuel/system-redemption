@@ -3,6 +3,7 @@ import { EventQueue } from '../events/queues';
 import { info } from '../logging';
 import { delay } from '../util';
 import { UpdateLoop } from './threeScene';
+import { GameState, newGameState, applyEvent } from '../events/state';
 
 interface LoggedEvent {
   event: ServerEvent | FrontendEvent;
@@ -10,19 +11,28 @@ interface LoggedEvent {
   listeners: number;
 }
 
+interface EventContextOpts {
+  autoStart: boolean;
+}
+
 export class EventContextElement extends HTMLElement {
   public queue: EventQueue<EventKinds, Events>;
 
   public events: LoggedEvent[] = [];
 
+  public gameState: GameState;
   private flushLoop: UpdateLoop;
 
-  constructor() {
+  constructor({ autoStart }: EventContextOpts = { autoStart: true }) {
     super();
     (window as any).ctx = this;
+    this.gameState = newGameState();
 
     this.queue = new EventQueue({
       postSyncronous: false,
+      preHandler: (event) => {
+        applyEvent(this.gameState, event);
+      },
       logger: (event, timestamp, listeners) => {
         this.events.push({ event, timestamp, listeners });
         info('event posted', {
@@ -32,6 +42,8 @@ export class EventContextElement extends HTMLElement {
         });
       },
     });
+
+
     this.flushLoop = new UpdateLoop(
       'queueFlush',
       (delta: number) => {
@@ -40,8 +52,29 @@ export class EventContextElement extends HTMLElement {
       },
       30,
     );
+    if (autoStart) {
+      this.flushLoop.start();
+    }
+  }
+
+  public start() {
     this.flushLoop.start();
   }
+
+  public async replayLog(title: string, repeat: boolean, events: Array<ServerEvent | FrontendEvent>) {
+    do {
+      this.gameState = newGameState();
+      info('starting event log', { title });
+      for (const event of events) {
+
+        this.queue.post(event);
+        this.queue.flushAll();
+        await delay(500);
+      }
+      info('completed event log', { title });
+    } while (repeat);
+  }
+
   public async replayFromFile(url: string, realtime: boolean) {
     const resp = await fetch(url);
     const eventLog: LoggedEvent[] = JSON.parse(await resp.text());

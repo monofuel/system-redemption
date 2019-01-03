@@ -5,19 +5,26 @@ import {
   ServerEvent,
   ServerEventKinds,
   WaterChange,
+  FrontendEvent,
+  EventKinds,
+  EditorMode,
+  ToggleLogViewer,
 } from '.';
+import _ from 'lodash'
 import { FiniteMap } from '../types/SR';
 
 export interface GameState {
   planets: { [key: string]: FiniteMap };
 }
-const serverEventApply: Record<
-  ServerEventKinds,
+const eventApply: Record<
+  EventKinds,
   (state: GameState, event: any) => void
 > = {
   newFiniteMap: applyNewMap,
   mapEdit: applyMapEdit,
   waterChange: applyWaterChange,
+  editorMode: editorModeChange,
+  toggleLogViewer: toggleLogViewerChange
 };
 
 export function newGameState(): GameState {
@@ -26,8 +33,8 @@ export function newGameState(): GameState {
   };
 }
 
-export function applyServerEvent(state: GameState, event: ServerEvent) {
-  const applyFN = serverEventApply[event.kind];
+export function applyEvent(state: GameState, event: ServerEvent | FrontendEvent) {
+  const applyFN = eventApply[event.kind];
   if (!applyFN) {
     throw new Error(`missing apply function for event ${event.kind}`);
   }
@@ -38,7 +45,7 @@ export function applyNewMap(state: GameState, event: NewFiniteMap) {
   if (state.planets[event.map.name]) {
     throw new Error(`map ${event.map.name} already exists`);
   }
-  state.planets[event.map.name] = event.map;
+  state.planets[event.map.name] = _.cloneDeep(event.map);
 }
 
 export function applyMapEdit(state: GameState, event: MapEdit) {
@@ -73,4 +80,12 @@ export function applyWaterChange(state: GameState, event: WaterChange) {
     throw new Error(`map ${event.mapName} does not exist`);
   }
   map.waterHeight += event.amount;
+}
+
+export function editorModeChange(state: GameState, event: EditorMode) {
+
+}
+
+export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) {
+
 }

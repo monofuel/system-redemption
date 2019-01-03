@@ -3,6 +3,7 @@ import { FiniteMap } from '../types/SR';
 // ----------------------
 // UI events
 
+
 export enum EditorSelection {
   raiselower = 'raiselower',
   clear = 'clear',

@@ -16,9 +16,9 @@ export class ThreeSceneElement extends HTMLElement {
   protected ctx: EventContextElement;
   protected updateLoops: { [key: string]: UpdateLoop } = {};
 
-  constructor() {
+  constructor(ctx?: EventContextElement) {
     super();
-    this.ctx = getParentContext(this);
+    this.ctx = ctx || getParentContext(this);
 
     this.renderer = new WebGLRenderer();
     const height = this.offsetHeight;
@@ -75,12 +75,10 @@ export class ThreeSceneElement extends HTMLElement {
   }
 
   private render() {
-    this.resize();
-    if (!this.isConnected) {
-      info('detaching scene render');
-      return;
+    if (this.isConnected) {
+      this.resize();
+      this.renderer.render(this.scene, this.camera);
     }
-    this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(() => this.render());
   }
 }

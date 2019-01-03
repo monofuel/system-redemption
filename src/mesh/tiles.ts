@@ -17,21 +17,14 @@ import { toHexColor } from '../util';
 
 interface PlanetMeshOpts {
   gameMap: FiniteMap;
-  waterHeight: number;
-  cliffColor: number;
-  waterColor: number;
-  landColor: number;
-  edgeColor: number;
 }
 
 export function getPlanetObject({
   gameMap,
-  waterHeight,
-  cliffColor,
-  landColor,
-  edgeColor,
-  waterColor,
 }: PlanetMeshOpts): Object3D {
+  const {
+    landColor, edgeColor, cliffColor, waterColor, waterHeight
+  } = gameMap;
   const tileTexture = getTileTexture(landColor, edgeColor);
 
   const mapObj = new Object3D();

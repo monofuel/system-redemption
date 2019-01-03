@@ -178,11 +178,6 @@ export class MapEditorElement extends ThreeSceneElement {
     }
     const mapObj = getPlanetObject({
       gameMap: this.gameMap,
-      waterHeight: this.opts.waterHeight,
-      cliffColor: this.opts.cliffColor,
-      waterColor: this.opts.waterColor,
-      edgeColor: this.opts.edgeColor,
-      landColor: this.opts.landColor,
     });
     mapObj.rotateY(Math.PI);
     const offset = (size * chunkSize) / 2;
