@@ -9,6 +9,7 @@ import {
   EventKinds,
   EditorMode,
   ToggleLogViewer,
+  NewUnit,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap } from '../types/SR';
@@ -24,7 +25,8 @@ const eventApply: Record<
   mapEdit: applyMapEdit,
   waterChange: applyWaterChange,
   editorMode: editorModeChange,
-  toggleLogViewer: toggleLogViewerChange
+  toggleLogViewer: toggleLogViewerChange,
+  newUnit: applyNewUnit,
 };
 
 export function newGameState(): GameState {
@@ -81,5 +83,8 @@ export function editorModeChange(state: GameState, event: EditorMode) {
 }
 
 export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) {
+
+}
+export function applyNewUnit(state: GameState, event: NewUnit) {
 
 }

@@ -1,4 +1,4 @@
-import { FiniteMap, TileHeights } from '../types/SR';
+import { FiniteMap, TileHeights, Unit } from '../types/SR';
 
 // ----------------------
 // UI events
@@ -55,10 +55,17 @@ export interface WaterChange {
   amount: number;
 }
 
+export interface NewUnit {
+  kind: 'newUnit';
+  unit: Unit;
+}
+
+
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
   mapEdit: MapEdit;
   waterChange: WaterChange;
+  newUnit: NewUnit;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];
