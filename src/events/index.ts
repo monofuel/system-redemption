@@ -1,4 +1,4 @@
-import { FiniteMap } from '../types/SR';
+import { FiniteMap, TileHeights } from '../types/SR';
 
 // ----------------------
 // UI events
@@ -35,15 +35,16 @@ export interface NewFiniteMap {
   map: FiniteMap;
 }
 
-export enum MapEditType {
-  raise = 'raise',
-  lower = 'lower',
+export const MapEditType = {
+  raise: [1, 1, 1, 1] as TileHeights,
+  lower: [-1, -1, -1, -1] as TileHeights,
 }
 
 export interface MapEdit {
   kind: 'mapEdit';
   mapName: string;
-  editType: MapEditType;
+  // added to the existing tile
+  edit: TileHeights;
   x: number;
   y: number;
 }

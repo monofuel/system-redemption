@@ -93,7 +93,7 @@ export class MapEditorElement extends ThreeSceneElement {
             this.ctx.queue.post({
               kind: 'mapEdit',
               mapName: this.opts.name,
-              editType,
+              edit: editType,
               x: loc.x,
               y: loc.y,
             });
@@ -134,9 +134,9 @@ export class MapEditorElement extends ThreeSceneElement {
     const tileY = event.y % chunkSize;
     const tile = chunk.grid[tileY][tileX];
     let delta = [0, 0, 0, 0];
-    if (event.editType === MapEditType.raise) {
+    if (event.edit === MapEditType.raise) {
       delta = [1, 1, 1, 1];
-    } else if (event.editType === MapEditType.lower) {
+    } else if (event.edit === MapEditType.lower) {
       delta = [-1, -1, -1, -1];
     }
     for (let i = 0; i < tile.length; i++) {

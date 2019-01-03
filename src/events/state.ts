@@ -60,14 +60,8 @@ export function applyMapEdit(state: GameState, event: MapEdit) {
   const tileX = event.x % map.chunkSize;
   const tileY = event.y % map.chunkSize;
   const tile = chunk.grid[tileY][tileX];
-  let delta = [0, 0, 0, 0];
-  if (event.editType === MapEditType.raise) {
-    delta = [1, 1, 1, 1];
-  } else if (event.editType === MapEditType.lower) {
-    delta = [-1, -1, -1, -1];
-  }
   for (let i = 0; i < tile.length; i++) {
-    tile[i] += delta[i];
+    tile[i] += event.edit[i];
     if (tile[i] <= 0) {
       tile[i] = 0;
     }
