@@ -1,9 +1,21 @@
 
-import fs from 'fs';
-import { ncp } from 'ncp';
-import { promisify } from 'util';
+import fs, { Stats } from 'fs';
+import { ncp, Options } from 'ncp';
+import JSZip from 'jszip';
+// @ts-ignore
+const zipdir = require('zip-dir');
 
-const copyDir = promisify(ncp);
+async function copyDir(source: string, destination: string, options: Options) {
+    await new Promise((resolve, reject) => {
+        ncp(source, destination, options, (err: Error) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+            resolve();
+        })
+    })
+}
 
 async function main() {
     console.log('starting build script');
@@ -12,18 +24,82 @@ async function main() {
     if (!stat || !stat.isDirectory) {
         throw new Error('main.ts must be ran from project root');
     }
+    if (!fs.existsSync('./build')) {
+        fs.mkdirSync('./build');
+    }
     if (!fs.existsSync('./build/client')) {
         fs.mkdirSync('./build/client');
     }
-    await copyDir("node_modules/@webcomponents/webcomponentsjs", "build/client/webcomponentsjs");
-    await copyDir("node_modules/@fortawesome/fontawesome-free", "build/client/fontawesome-free");
-    await copyDir("node_modules/three/build", "build/client/three");
-    await copyDir("node_modules/lodash/lodash.min.js", "build/client/lodash.min.js");
-    await copyDir("node_modules/lodash/lodash.js", "build/client/lodash.js");
-    await copyDir("node_modules/dat.gui/build/dat.gui.min.js", "build/client/dat.gui.min.js");
 
-    // TODO package 3D assets
+
+    await copyFiles();
+
+    await packageAssets();
 }
+
+async function copyFiles() {
+    const opts: Options = {
+        clobber: false,
+        stopOnErr: true,
+    }
+    await copyDir("node_modules/@webcomponents/webcomponentsjs", "build/client/webcomponentsjs", opts);
+    await copyDir("node_modules/@fortawesome/fontawesome-free", "build/client/fontawesome-free", opts);
+
+    await copyDir("node_modules/three/build", "build/client/three", opts);
+    fs.copyFileSync("node_modules/lodash/lodash.min.js", "build/client/lodash.min.js");
+    fs.copyFileSync("node_modules/lodash/lodash.js", "build/client/lodash.js");
+    fs.copyFileSync("node_modules/dat.gui/build/dat.gui.min.js", "build/client/dat.gui.min.js");
+
+    console.log('copied files');
+}
+
+async function packageAssets() {
+    const zip = new JSZip();
+
+    const folders = [
+        /tanks$/,
+        /tanks\/FBX$/,
+        /tanks\\FBX$/, // windows style
+        /tanks\/FBX\/LightTankLvl1/,
+        /tanks\\FBX\\LightTankLvl1/
+    ];
+
+    await new Promise((resolve, reject) => {
+        zipdir('./rts-assets/', {
+            saveTo: './build/client/assets.zip',
+            each: (filePath: string) => {
+                console.log('packaging: ' + filePath);
+            },
+            filter: (filePath: string, stat: Stats) => {
+
+                for (const re of folders) {
+                    const match = re.test(filePath);
+                    if (match) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }, (err: Error) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        })
+    })
+    /*
+    await new Promise((resolve, reject) => {
+        zip
+            .generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+            .pipe(fs.createWriteStream('build/client/assets.zip'))
+            .on('finish', resolve)
+            .on('error', reject);
+    });
+    */
+    console.log('prepared assets');
+
+}
+
 
 main().catch((err) => {
     console.error(err);
