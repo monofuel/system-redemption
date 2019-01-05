@@ -1,3 +1,3 @@
 [submodule "rts-assets"]
 	path = rts-assets
-	url = ../rts-assets.git
+	url = git@gitlab.japura.net:monofuel/rts-assets.git
