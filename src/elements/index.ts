@@ -7,6 +7,7 @@ import { MapEditorElement } from './mapEditor';
 import { ThreeSceneElement } from './threeScene';
 import { TileTestElement } from './tiles';
 import { LogTestElement } from './log-tests';
+import { ModelViewElement } from './modelView';
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -28,6 +29,7 @@ export function loadElements() {
   window.customElements.define('three-scene', ThreeSceneElement);
   window.customElements.define('map-editor', MapEditorElement);
   window.customElements.define('log-tests', LogTestElement);
+  window.customElements.define('model-view', ModelViewElement);
 }
 
 // NB. loading elements asyncronously kind of sucks, but
