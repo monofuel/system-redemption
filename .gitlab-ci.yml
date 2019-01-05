@@ -6,7 +6,8 @@ before_script:
 #  paths:
 #  - node_modules/
 
-# before_script:
+before_script:
+   - ls rts-assets/
 #   - docker run -v `pwd`:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1001:1001 ./*'
 
 stages:

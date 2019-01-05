@@ -11,7 +11,7 @@
     "watch": "concurrently 'yarn watch:client' 'yarn watch:server'",
     "watch:client": "yarn prepare:client; webpack --debug -w",
     "watch:server": "tsc -w",
-    "prepare:client": "mkdir -p build/client; cp -r node_modules/@webcomponents/webcomponentsjs build/client/; cp -r node_modules/@fortawesome/fontawesome-free build/client/; cp -r node_modules/three/build build/client/three; cp node_modules/lodash/lodash.* build/client/; cp node_modules/dat.gui/build/dat.gui.min.js build/client/",
+    "prepare:client": "ts-node ./build-src/main.ts",
     "test": "mocha -r ts-node/register src/test/**/*.test.ts"
   },
   "repository": {
@@ -26,7 +26,9 @@
     "@types/jsdom": "^12.2.0",
     "@types/lodash": "^4.14.119",
     "@types/mocha": "^5.2.5",
+    "@types/ncp": "^2.0.1",
     "@types/three": "^0.93.13",
+    "@types/uuid": "^3.4.4",
     "@webcomponents/webcomponentsjs": "^2.2.1",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
@@ -40,16 +42,15 @@
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.2.2",
-    "webpack": "^4.27.1",
     "webpack-bundle-analyzer": "^3.0.3",
-    "webpack-cli": "^3.1.2"
+    "webpack-cli": "^3.1.2",
+    "webpack": "^4.27.1"
   },
   "dependencies": {
-    "@types/uuid": "^3.4.4",
     "dat.gui": "^0.7.3",
     "express": "^4.16.4",
     "lodash": "^4.17.11",
-    "simplex-noise": "^2.4.0",
+    "ncp": "^2.0.0",
     "three": "^0.99.0",
     "uuid": "^3.3.2"
   }
