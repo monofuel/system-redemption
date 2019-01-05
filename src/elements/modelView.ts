@@ -1,11 +1,11 @@
 import { ThreeSceneElement } from "./threeScene";
-import { HemisphereLight, FBXLoader, LoadingManager, IFbxSceneGraph } from "three";
+import { HemisphereLight, FBXLoader, LoadingManager, IFbxSceneGraph, AxesHelper, Mesh, BoxHelper, BoundingBoxHelper } from "three";
 
 export class ModelViewElement extends ThreeSceneElement {
     constructor() {
         super();
 
-        this.camera.position.set(-7, 5, -7);
+        this.camera.position.set(-100, 100, -100);
         this.camera.lookAt(0, 0, 0);
         this.scene.add(new HemisphereLight(0xffffff, undefined, 0.3));
         this.loadModel();
@@ -24,6 +24,11 @@ export class ModelViewElement extends ThreeSceneElement {
         loader.load(str[0], (obj: IFbxSceneGraph) => {
             console.log('loaded');
             console.log(obj);
+            this.scene.add(new AxesHelper());
+            const mesh: Mesh = obj.children[0] as any;
+            mesh.geometry.computeBoundingBox();
+            this.scene.add(new BoundingBoxHelper(obj));
+
             this.scene.add(obj);
         }, () => { }, (event: ErrorEvent) => {
             console.log(event);
