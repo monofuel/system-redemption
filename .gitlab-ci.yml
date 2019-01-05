@@ -1,13 +1,15 @@
 before_script:
   - docker info
 
-#cache:
-#  key: ${CI_COMMIT_REF_SLUG}
-#  paths:
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - rts-assets/
 #  - node_modules/
 
 before_script:
-   - ls rts-assets/
+  - git submodule sync
+  - ls rts-assets/
 #   - docker run -v `pwd`:/sr node:alpine sh -c 'cd /sr && yarn; chown -R 1001:1001 ./*'
 
 stages:
