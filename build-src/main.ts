@@ -63,7 +63,11 @@ async function packageAssets() {
         /tanks\/FBX$/,
         /tanks\\FBX$/, // windows style
         /tanks\/FBX\/LightTankLvl1/,
-        /tanks\\FBX\\LightTankLvl1/
+        /tanks\\FBX\\LightTankLvl1/,
+        /tanks\/Textures$/,
+        /tanks\\Textures$/,
+        /tanks\/Textures\/LightTankLvl1/,
+        /tanks\\Textures\\LightTankLvl1/,
     ];
 
     await new Promise((resolve, reject) => {
