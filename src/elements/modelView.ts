@@ -11,9 +11,10 @@ export class ModelViewElement extends ThreeSceneElement {
 
         this.camera.position.set(7, 5, -7);
         this.camera.lookAt(0, 0, 0);
-        this.scene.add(new HemisphereLight(0xffffff, undefined, 0.3));
+        const hemisphereLight = new HemisphereLight(0xcccccc, undefined, 1);
+        this.scene.add(hemisphereLight);
 
-        const sun = new DirectionalLight(0xffffff, 1);
+        const sun = new DirectionalLight(0xffffff, 3);
         sun.translateY(10);
         sun.translateX(10);
         sun.lookAt(0, 0, 0);
