@@ -46,7 +46,7 @@ async function copyFiles() {
     await copyDir("node_modules/@fortawesome/fontawesome-free", "build/client/fontawesome-free", opts);
 
     await copyDir("node_modules/three/build", "build/client/three", opts);
-    fs.copyFileSync("node_modules/three/examples/js/loaders/FBXLoader.js", "build/client/FBXLoader.js");
+    fs.copyFileSync("node_modules/three/examples/js/loaders/GLTFLoader.js", "build/client/GLTFLoader.js");
     fs.copyFileSync("node_modules/lodash/lodash.min.js", "build/client/lodash.min.js");
     fs.copyFileSync("node_modules/lodash/lodash.js", "build/client/lodash.js");
     fs.copyFileSync("node_modules/dat.gui/build/dat.gui.min.js", "build/client/dat.gui.min.js");
@@ -59,15 +59,7 @@ async function packageAssets() {
     const zip = new JSZip();
 
     const folders = [
-        /tanks$/,
-        /tanks\/FBX$/,
-        /tanks\\FBX$/, // windows style
-        /tanks\/FBX\/LightTankLvl1/,
-        /tanks\\FBX\\LightTankLvl1/,
-        /tanks\/Textures$/,
-        /tanks\\Textures$/,
-        /tanks\/Textures\/LightTankLvl1/,
-        /tanks\\Textures\\LightTankLvl1/,
+        /gltf/,
     ];
 
     await new Promise((resolve, reject) => {
@@ -77,14 +69,8 @@ async function packageAssets() {
                 console.log('packaging: ' + filePath);
             },
             filter: (filePath: string, stat: Stats) => {
+                return /gltf/.test(filePath);
 
-                for (const re of folders) {
-                    const match = re.test(filePath);
-                    if (match) {
-                        return true;
-                    }
-                }
-                return false;
             }
         }, (err: Error) => {
             if (err) {
