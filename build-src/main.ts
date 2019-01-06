@@ -46,6 +46,7 @@ async function copyFiles() {
     await copyDir("node_modules/@fortawesome/fontawesome-free", "build/client/fontawesome-free", opts);
 
     await copyDir("node_modules/three/build", "build/client/three", opts);
+    fs.copyFileSync("node_modules/three/examples/js/controls/OrbitControls.js", "build/client/OrbitControls.js");
     fs.copyFileSync("node_modules/three/examples/js/loaders/GLTFLoader.js", "build/client/GLTFLoader.js");
     fs.copyFileSync("node_modules/lodash/lodash.min.js", "build/client/lodash.min.js");
     fs.copyFileSync("node_modules/lodash/lodash.js", "build/client/lodash.js");
