@@ -26,8 +26,10 @@ export class LogPlayerElement extends ThreeSceneElement {
             this.ctx.queue.addListener('newUnit', (event) => {
                 this.addUnit(event.unit);
             });
-            // TODO load units from game state
-
+            for (const unit of Object.values(this.ctx.gameState.units)) {
+                this.addUnit(unit);
+            }
+            console.log('FOOB');
         }
     }
 

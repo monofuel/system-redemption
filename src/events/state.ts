@@ -10,11 +10,11 @@ import {
   NewUnit,
 } from '.';
 import _ from 'lodash'
-import { FiniteMap } from '../types/SR';
-import { getFlatMap } from '../planet/tiles';
+import { FiniteMap, Unit } from '../types/SR';
 
 export interface GameState {
   planet?: FiniteMap;
+  units: { [key: string]: Unit };
 }
 const eventApply: Record<
   EventKinds,
@@ -29,7 +29,9 @@ const eventApply: Record<
 };
 
 export function newGameState(): GameState {
-  return {};
+  return {
+    units: {};
+  };
 }
 
 export function applyEvent(state: GameState, event: ServerEvent | FrontendEvent) {
