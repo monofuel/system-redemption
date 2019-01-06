@@ -1,10 +1,10 @@
-import { Unit } from "../types/SR";
+import { Unit, UnitType } from "../types/SR";
 import uuid from 'uuid';
 
 export function newTank(): Unit {
     return {
         uuid: uuid.v4(),
-        type: 'tank',
+        type: UnitType.tank,
         size: 1,
         x: 0,
         y: 0,

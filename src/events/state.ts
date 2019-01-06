@@ -30,7 +30,7 @@ const eventApply: Record<
 
 export function newGameState(): GameState {
   return {
-    units: {};
+    units: {},
   };
 }
 
@@ -85,5 +85,5 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
-
+  state.units[event.unit.uuid] = event.unit;
 }

@@ -26,6 +26,10 @@ export const unitMoveTestLog: ServerEvent[] = [
     },
     {
         kind: 'newUnit',
-        unit: newTank()
+        unit: {
+            ...newTank(),
+            x: 0,
+            y: 5,
+        }
     }
 ];

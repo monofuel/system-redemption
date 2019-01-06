@@ -167,7 +167,7 @@ export class MapEditorElement extends ThreeSceneElement {
     const { name, size, chunkSize } = this.opts;
     const gameMap = this.gameMap;
 
-    info('loading map', { name });
+    info('loading map', { name: gameMap.name });
     const existing = this.scene.getObjectByName(gameMap.name);
     if (existing) {
       this.scene.remove(existing);

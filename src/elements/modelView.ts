@@ -6,10 +6,6 @@ export class ModelViewElement extends ThreeSceneElement {
     constructor() {
         super();
 
-        const controls = new OrbitControls(this.camera);
-        controls.target.set(0, 0, 0);
-        controls.update();
-
         this.camera.position.set(7, 5, -7);
         this.camera.lookAt(0, 0, 0);
         const hemisphereLight = new HemisphereLight(0xcccccc, undefined, 1);

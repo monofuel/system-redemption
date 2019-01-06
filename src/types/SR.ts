@@ -2,37 +2,39 @@ export type Direction = 'N' | 'S' | 'E' | 'W';
 
 // corner heights: TL TR BL BR
 export type TileHeights = [number, number, number, number];
-export type UnitType = string;
+export enum UnitType {
+        tank = 'tank'
+}
 
 export interface PlanetTiles {
-  x: number;
-  y: number;
+        x: number;
+        y: number;
 
-  grid: TileHeights[][];
-  // navGrid: TileType[][];
+        grid: TileHeights[][];
+        // navGrid: TileType[][];
 }
 
 export interface FiniteMap {
-  name: string;
-  version: number;
-  waterHeight: number;
-  landColor: number;
-  edgeColor: number;
-  waterColor: number;
-  cliffColor: number;
-  sunColor: number;
-  size: number; // number of PlanetTile chunks
-  chunkSize: number; // size of each PlanetTiles chunk
-  grid: PlanetTiles[][];
+        name: string;
+        version: number;
+        waterHeight: number;
+        landColor: number;
+        edgeColor: number;
+        waterColor: number;
+        cliffColor: number;
+        sunColor: number;
+        size: number; // number of PlanetTile chunks
+        chunkSize: number; // size of each PlanetTiles chunk
+        grid: PlanetTiles[][];
 }
 
 export interface Unit {
-  uuid: string;
-  type: UnitType;
-  size: 1 | 2 | 3;
-  x: number;
-  y: number;
-  map: string;
+        uuid: string;
+        type: UnitType;
+        size: 1 | 2 | 3;
+        x: number;
+        y: number;
+        map: string;
 }
 
 /*

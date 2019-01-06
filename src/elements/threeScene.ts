@@ -1,5 +1,5 @@
 import dat from 'dat.gui';
-import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { PerspectiveCamera, Scene, WebGLRenderer, OrbitControls } from 'three';
 
 import { getParentContext } from '.';
 import { info } from '../logging';
@@ -14,11 +14,11 @@ export class ThreeSceneElement extends HTMLElement {
 
   public dat: dat.GUI;
   protected root: ShadowRoot;
-  protected ctx: EventContextElement;
+  public ctx: EventContextElement;
   protected updateLoops: { [key: string]: UpdateLoop } = {};
 
   // assets is null until onAssetsLoaded is called
-  protected assets!: Record<ModelType, Asset>;
+  public assets!: Record<ModelType, Asset>;
   public onAssetsLoaded?: () => void;
 
   constructor(ctx?: EventContextElement) {
@@ -36,6 +36,10 @@ export class ThreeSceneElement extends HTMLElement {
     this.camera = new PerspectiveCamera(45, aspectRatio, 1, 500);
     this.camera.position.set(0, 50, 100);
     this.camera.lookAt(0, 0, 0);
+
+    const controls = new OrbitControls(this.camera);
+    controls.target.set(0, 0, 0);
+    controls.update();
 
     this.dat = new dat.GUI();
     this.render();

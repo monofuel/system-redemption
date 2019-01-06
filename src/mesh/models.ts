@@ -39,7 +39,17 @@ export interface Asset {
 }
 export type OnProgress = (current: number, total: number) => void;
 
+let fetch: Promise<Record<ModelType, Asset>> | null = null;
+
+// NB only the first caller gets onProgress
 export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelType, Asset>> {
+    if (!fetch) {
+        fetch = fetchAssets(onProgress);
+    }
+    return fetch;
+}
+
+async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, Asset>> {
 
     const total = Object.keys(ModelType).length * (Object.keys(GameColors).length + 1);
     let current = 0;
@@ -66,8 +76,7 @@ export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelTy
         const tex = await new Promise<Texture>((resolve, reject) => {
             new TextureLoader(manager).load(path, resolve, () => { }, reject);
         })
-        current++;
-        onProgress(current, total);
+        onProgress(++current, total);
         return tex;
     }
     async function loadModel(str: string): Promise<Mesh> {
@@ -82,8 +91,7 @@ export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelTy
                 resolve(gltf.scene.children[0] as Mesh);
             }, () => { }, reject);
         });
-        current++;
-        onProgress(current, total);
+        onProgress(++current, total);
         return mesh;
     }
 
