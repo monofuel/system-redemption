@@ -33,7 +33,7 @@ const assetsPaths: Record<ModelType, AssetPath> = {
     }
 }
 
-interface Asset {
+export interface Asset {
     model: Mesh;
     skins: Record<GameColors, Texture>;
 }

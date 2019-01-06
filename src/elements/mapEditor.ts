@@ -92,7 +92,6 @@ export class MapEditorElement extends ThreeSceneElement {
           if (loc) {
             this.ctx.queue.post({
               kind: 'mapEdit',
-              mapName: this.opts.name,
               edit: editType,
               x: loc.x,
               y: loc.y,
@@ -114,7 +113,6 @@ export class MapEditorElement extends ThreeSceneElement {
     if (['raiseWater', 'lowerWater'].includes(event.selection)) {
       this.ctx.queue.post({
         kind: 'waterChange',
-        mapName: this.opts.name,
         amount: event.selection === 'raiseWater' ? 0.2 : -0.2,
       });
       return;
@@ -123,10 +121,8 @@ export class MapEditorElement extends ThreeSceneElement {
   }
 
   public onEditMap(event: MapEdit) {
-    const { name, size, chunkSize } = this.opts;
-    if (event.mapName !== name) {
-      return;
-    }
+    const { size, chunkSize } = this.opts;
+
     const chunkX = Math.floor(event.x / chunkSize);
     const chunkY = Math.floor(event.y / chunkSize);
     const chunk = this.gameMap.grid[chunkY][chunkX];

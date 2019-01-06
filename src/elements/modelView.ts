@@ -1,6 +1,6 @@
 import { ThreeSceneElement } from "./threeScene";
-import { HemisphereLight, FBXLoader, LoadingManager, IFbxSceneGraph, AxesHelper, Mesh, BoxHelper, BoundingBoxHelper, GLTFLoader, GLTF, Object3D, OrbitControls, PlaneHelper, Plane, Vector3, TextureLoader, MeshStandardMaterial, DirectionalLight, Texture } from "three";
-import { getZipManager, loadAssets, coloredModel, GameColors } from "../mesh/models";
+import { HemisphereLight, AxesHelper, OrbitControls, PlaneHelper, Plane, Vector3, DirectionalLight } from "three";
+import { loadAssets, coloredModel, GameColors } from "../mesh/models";
 
 export class ModelViewElement extends ThreeSceneElement {
     constructor() {
@@ -30,9 +30,9 @@ export class ModelViewElement extends ThreeSceneElement {
         });
 
         this.scene.add(new AxesHelper());
-        this.scene.add(new PlaneHelper(new Plane(new Vector3(0, 1, 0)), 3))
+        this.scene.add(new PlaneHelper(new Plane(new Vector3(0, 1, 0)), 3));
 
-        const mesh = coloredModel(assets.LightTankLvl1, GameColors.blue);
+        const mesh = coloredModel(assets.LightTankLvl1, GameColors.green);
         this.scene.add(mesh);
     }
 }

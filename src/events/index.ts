@@ -3,7 +3,6 @@ import { FiniteMap, TileHeights, Unit } from '../types/SR';
 // ----------------------
 // UI events
 
-
 export enum EditorSelection {
   raiselower = 'raiselower',
   clear = 'clear',
@@ -42,7 +41,6 @@ export const MapEditType = {
 
 export interface MapEdit {
   kind: 'mapEdit';
-  mapName: string;
   // added to the existing tile
   edit: TileHeights;
   x: number;
@@ -51,7 +49,6 @@ export interface MapEdit {
 
 export interface WaterChange {
   kind: 'waterChange';
-  mapName: string;
   amount: number;
 }
 

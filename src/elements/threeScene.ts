@@ -5,6 +5,7 @@ import { getParentContext } from '.';
 import { info } from '../logging';
 import { EventContextElement } from './eventContext';
 import './styles/threeScene.scss';
+import { Asset, ModelType, loadAssets } from '../mesh/models';
 
 export class ThreeSceneElement extends HTMLElement {
   public renderer: WebGLRenderer;
@@ -16,8 +17,13 @@ export class ThreeSceneElement extends HTMLElement {
   protected ctx: EventContextElement;
   protected updateLoops: { [key: string]: UpdateLoop } = {};
 
+  // assets is null until onAssetsLoaded is called
+  protected assets!: Record<ModelType, Asset>;
+  public onAssetsLoaded?: () => void;
+
   constructor(ctx?: EventContextElement) {
     super();
+
     this.ctx = ctx || getParentContext(this);
 
     this.renderer = new WebGLRenderer();
@@ -35,6 +41,15 @@ export class ThreeSceneElement extends HTMLElement {
     this.render();
     this.root = this.attachShadow({ mode: 'open' });
     this.root.appendChild(this.renderer.domElement);
+
+    loadAssets((current: number, total: number) => {
+      console.log(`ASSETS: ${current}/${total}`);
+    }).then((assets) => {
+      this.assets = assets;
+      if (this.onAssetsLoaded) {
+        this.onAssetsLoaded();
+      }
+    })
   }
 
   public addUpdateLoop(

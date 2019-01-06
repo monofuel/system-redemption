@@ -3,6 +3,7 @@ import { DirectionalLight, HemisphereLight } from 'three';
 import { info } from '../logging';
 import { getPlanetObject } from '../mesh/tiles';
 import { EventContextElement } from './eventContext';
+import { Unit } from '../types/SR';
 
 export class LogPlayerElement extends ThreeSceneElement {
     constructor(ctx?: EventContextElement) {
@@ -20,10 +21,25 @@ export class LogPlayerElement extends ThreeSceneElement {
         });
         this.ctx.queue.addListener('mapEdit', (event) => {
             this.loadMap();
-        })
+        });
+        this.onAssetsLoaded = () => {
+            this.ctx.queue.addListener('newUnit', (event) => {
+                this.addUnit(event.unit);
+            });
+            // TODO load units from game state
+
+        }
     }
+
+    private addUnit(unit: Unit) {
+
+    }
+
     private loadMap() {
-        const gameMap = this.ctx.gameState.planets['testTilesMap'];
+        const gameMap = this.ctx.gameState.planet;
+        if (!gameMap) {
+            throw new Error('game map not loaded');
+        }
         info('loading map', { name });
         const sun = new DirectionalLight(gameMap.sunColor, 0.8);
         sun.name = 'gameMap-sun';

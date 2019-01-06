@@ -1,9 +1,7 @@
 import {
   MapEdit,
-  MapEditType,
   NewFiniteMap,
   ServerEvent,
-  ServerEventKinds,
   WaterChange,
   FrontendEvent,
   EventKinds,
@@ -13,9 +11,10 @@ import {
 } from '.';
 import _ from 'lodash'
 import { FiniteMap } from '../types/SR';
+import { getFlatMap } from '../planet/tiles';
 
 export interface GameState {
-  planets: { [key: string]: FiniteMap };
+  planet?: FiniteMap;
 }
 const eventApply: Record<
   EventKinds,
@@ -30,9 +29,7 @@ const eventApply: Record<
 };
 
 export function newGameState(): GameState {
-  return {
-    planets: {},
-  };
+  return {};
 }
 
 export function applyEvent(state: GameState, event: ServerEvent | FrontendEvent) {
@@ -44,16 +41,16 @@ export function applyEvent(state: GameState, event: ServerEvent | FrontendEvent)
 }
 
 export function applyNewMap(state: GameState, event: NewFiniteMap) {
-  if (state.planets[event.map.name]) {
-    throw new Error(`map ${event.map.name} already exists`);
+  if (state.planet) {
+    throw new Error(`map ${state.planet.name} already exists`);
   }
-  state.planets[event.map.name] = _.cloneDeep(event.map);
+  state.planet = _.cloneDeep(event.map);
 }
 
 export function applyMapEdit(state: GameState, event: MapEdit) {
-  const map = state.planets[event.mapName];
+  const map = state.planet
   if (!map) {
-    throw new Error(`map ${event.mapName} does not exist`);
+    throw new Error(`map does not exist`);
   }
 
   const chunkX = Math.floor(event.x / map.chunkSize);
@@ -71,9 +68,9 @@ export function applyMapEdit(state: GameState, event: MapEdit) {
 }
 
 export function applyWaterChange(state: GameState, event: WaterChange) {
-  const map = state.planets[event.mapName];
+  const map = state.planet;
   if (!map) {
-    throw new Error(`map ${event.mapName} does not exist`);
+    throw new Error(`map does not exist`);
   }
   map.waterHeight += event.amount;
 }

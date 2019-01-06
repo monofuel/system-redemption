@@ -8,7 +8,7 @@ export class LogTestElement extends HTMLElement {
 
     constructor() {
         super();
-        const repeat = true;
+        const repeat = false;
         this.style.display = 'flex';
         this.style.flexWrap = 'wrap';
         for (const key of Object.keys(logs)) {
