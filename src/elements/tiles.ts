@@ -72,7 +72,7 @@ export class TileTestElement extends ThreeSceneElement {
     ctx.fillStyle = toHexColor(this.opts.landColor);
     ctx.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
 
-    this.root.appendChild(canvas);
+    this.appendChild(canvas);
 
     this.loadChunk();
 

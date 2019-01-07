@@ -8,6 +8,7 @@ import {
   EditorMode,
   ToggleLogViewer,
   NewUnit,
+  MoveUnit,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit } from '../types/SR';
@@ -86,4 +87,10 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
   state.units[event.unit.uuid] = event.unit;
+}
+export function applyMoveUnit(state: GameState, event: MoveUnit) {
+  const unit = state.units[event.uuid];
+  if (!unit) {
+    throw new Error(`missing unit ${event.uuid}`);
+  }
 }

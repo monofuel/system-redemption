@@ -57,6 +57,13 @@ export interface NewUnit {
   unit: Unit;
 }
 
+export interface MoveUnit {
+  kind: 'moveUnit';
+  uuid: string;
+  x: number;
+  y: number;
+}
+
 
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;

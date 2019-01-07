@@ -1,7 +1,7 @@
 import dat from 'dat.gui';
 import { PerspectiveCamera, Scene, WebGLRenderer, OrbitControls } from 'three';
 
-import { getParentContext } from '.';
+import { getParentContext, RollingStats } from '.';
 import { info } from '../logging';
 import { EventContextElement } from './eventContext';
 import './styles/threeScene.scss';
@@ -13,9 +13,17 @@ export class ThreeSceneElement extends HTMLElement {
   public camera: PerspectiveCamera;
 
   public dat: dat.GUI;
-  protected root: ShadowRoot;
   public ctx: EventContextElement;
   protected updateLoops: { [key: string]: UpdateLoop } = {};
+
+  public frameTimeStats: RollingStats;
+  public frameDeltaStats: RollingStats;
+
+  public lastFrameTime: number = 0;
+
+  protected perfText: HTMLUListElement;
+  protected frameTimeLi: HTMLLIElement;
+  protected frameDeltaLi: HTMLLIElement;
 
   // assets is null until onAssetsLoaded is called
   public assets!: Record<ModelType, Asset>;
@@ -40,11 +48,27 @@ export class ThreeSceneElement extends HTMLElement {
     const controls = new OrbitControls(this.camera);
     controls.target.set(0, 0, 0);
     controls.update();
+    this.frameTimeStats = new RollingStats(60);
+    this.frameDeltaStats = new RollingStats(60);
 
     this.dat = new dat.GUI();
+    this.appendChild(this.renderer.domElement);
     this.render();
-    this.root = this.attachShadow({ mode: 'open' });
-    this.root.appendChild(this.renderer.domElement);
+
+
+    this.perfText = document.createElement('ul');
+    this.perfText.classList.add('hover-text');
+    this.frameTimeLi = document.createElement('li');
+    this.frameDeltaLi = document.createElement('li');
+    this.perfText.appendChild(this.frameTimeLi);
+    this.perfText.append(this.frameDeltaLi);
+    const perfFolder = this.dat.addFolder('Performance');
+    (perfFolder as any).__ul.appendChild(this.perfText);
+
+    this.addUpdateLoop('stats', (delta: number) => {
+      this.updateHoverText();
+      return false;
+    }, 1);
 
     loadAssets((current: number, total: number) => {
       console.log(`ASSETS: ${current}/${total}`);
@@ -96,9 +120,23 @@ export class ThreeSceneElement extends HTMLElement {
   private render() {
     if (this.isConnected) {
       this.resize();
+      const start = Date.now();
       this.renderer.render(this.scene, this.camera);
+      const end = Date.now();
+      this.frameTimeStats.add(end - start);
+      if (this.lastFrameTime !== 0) {
+        this.frameDeltaStats.add(end - this.lastFrameTime);
+      }
+      this.lastFrameTime = end;
     }
     window.requestAnimationFrame(() => this.render());
+  }
+  private updateHoverText() {
+
+
+    this.frameTimeLi.innerText = `FrameTime: ${this.frameTimeStats.get().toFixed(3)}ms`;
+    this.frameDeltaLi.innerText = `FrameDelta: ${this.frameDeltaStats.get().toFixed(3)}ms`;
+
   }
 }
 

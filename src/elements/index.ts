@@ -8,6 +8,7 @@ import { ThreeSceneElement } from './threeScene';
 import { TileTestElement } from './tiles';
 import { LogTestElement } from './log-tests';
 import { ModelViewElement } from './modelView';
+import _ from 'lodash';
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -69,4 +70,26 @@ export function mouseToVec(ev: MouseEvent, width: number, height: number) {
   mouseVec.x = (ev.offsetX / width) * 2 - 1;
   mouseVec.y = -(ev.offsetY / height) * 2 + 1;
   return mouseVec;
+}
+
+// simple rolling average statistics
+export class RollingStats {
+  stats: number[] = [];
+  size: number;
+  constructor(size: number = 10) {
+    this.size = size;
+  }
+  add(x: number) {
+    this.stats.push(x);
+    if (this.stats.length > this.size) {
+      this.stats.shift();
+    }
+  }
+  get(): number {
+    const avg = _.mean(this.stats);
+    if (isNaN(avg)) {
+      return 0;
+    }
+    return avg;
+  }
 }
