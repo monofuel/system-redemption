@@ -65,6 +65,7 @@ export class EventContextElement extends HTMLElement {
     do {
       this.gameState = newGameState();
       info('starting event log', { title });
+
       for (const event of events) {
 
         this.queue.post(event);

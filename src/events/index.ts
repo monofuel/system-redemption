@@ -1,4 +1,5 @@
-import { FiniteMap, TileHeights, Unit } from '../types/SR';
+import { FiniteMap, TileHeights, Unit, Direction } from '../types/SR';
+import { GameState } from './state';
 
 // ----------------------
 // UI events
@@ -60,16 +61,22 @@ export interface NewUnit {
 export interface MoveUnit {
   kind: 'moveUnit';
   uuid: string;
-  x: number;
-  y: number;
+  dir: Direction;
 }
 
+// Only for testing
+export interface Assertion {
+  kind: 'assertion';
+  fn: (gameState: GameState) => void;
+}
 
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
   mapEdit: MapEdit;
   waterChange: WaterChange;
   newUnit: NewUnit;
+  moveUnit: MoveUnit;
+  assertion: Assertion;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

@@ -3,16 +3,18 @@ import { logs } from '../test/eventLogs';
 import { EventContextElement } from './eventContext';
 import { LogPlayerElement } from './logPlayer';
 import { delay } from '../util';
+import _ from 'lodash';
+import { FrontendEvent, ServerEvent } from '../events';
 
 export class LogTestElement extends HTMLElement {
 
     constructor() {
         super();
-        const repeat = false;
+        const repeat = true;
         this.style.display = 'flex';
         this.style.flexWrap = 'wrap';
         for (const key of Object.keys(logs)) {
-            const log = (logs as any)[key];
+            const log: Array<ServerEvent | FrontendEvent> = (logs as any)[key];
             const context = new EventContextElement({ autoStart: false });
             const logPlayer = new LogPlayerElement(context);
             context.style.display = 'block';

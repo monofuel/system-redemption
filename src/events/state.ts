@@ -9,9 +9,11 @@ import {
   ToggleLogViewer,
   NewUnit,
   MoveUnit,
+  Assertion,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit } from '../types/SR';
+import { getTile } from '../planet';
 
 export interface GameState {
   planet?: FiniteMap;
@@ -27,6 +29,8 @@ const eventApply: Record<
   editorMode: editorModeChange,
   toggleLogViewer: toggleLogViewerChange,
   newUnit: applyNewUnit,
+  moveUnit: applyMoveUnit,
+  assertion: applyAssertion,
 };
 
 export function newGameState(): GameState {
@@ -86,11 +90,40 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
-  state.units[event.unit.uuid] = event.unit;
+  state.units[event.unit.uuid] = _.cloneDeep(event.unit);
 }
 export function applyMoveUnit(state: GameState, event: MoveUnit) {
   const unit = state.units[event.uuid];
   if (!unit) {
     throw new Error(`missing unit ${event.uuid}`);
   }
+  let nextX = unit.x;
+  let nextY = unit.y;
+  switch (event.dir) {
+    case 'N':
+      nextY = unit.y + 1;
+      break;
+    case 'S':
+      nextY = unit.y - 1;
+      break;
+    case 'E':
+      nextX = unit.x + 1;
+      break;
+    case 'W':
+      nextX = unit.x - 1;
+      break;
+    default:
+      throw new Error(`invalid direction ${event.dir}`)
+  }
+
+  const prev = getTile(state.planet!, unit.x, unit.y);
+  const next = getTile(state.planet!, nextX, nextY);
+
+
+  unit.x = nextX;
+  unit.y = nextY;
+  unit.facing = event.dir;
+}
+export function applyAssertion(state: GameState, event: Assertion) {
+  event.fn(state);
 }

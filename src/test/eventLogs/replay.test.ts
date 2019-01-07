@@ -11,5 +11,11 @@ describe('replay tests', () => {
                 applyEvent(state, event);
             }
         });
+        it(`replay event log twice ${key}`, () => {
+            const state = newGameState();
+            for (const event of log) {
+                applyEvent(state, event);
+            }
+        });
     }
 });

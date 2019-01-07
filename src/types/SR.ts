@@ -31,6 +31,7 @@ export interface FiniteMap {
 export interface Unit {
         uuid: string;
         type: UnitType;
+        facing: Direction;
         size: 1 | 2 | 3;
         x: number;
         y: number;

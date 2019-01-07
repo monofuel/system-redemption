@@ -5,19 +5,21 @@ import { getPlanetObject } from '../mesh/tiles';
 import { EventContextElement } from './eventContext';
 import { Unit, UnitType } from '../types/SR';
 import { GameColors, Asset, ModelType, coloredModel } from '../mesh/models';
+import { getTile } from '../planet';
 
 export class LogPlayerElement extends ThreeSceneElement {
-    private entities: Entity[] = [];
+    private entities: { [key: string]: Entity } = {};
     animationLoop: UpdateLoop;
     constructor(ctx?: EventContextElement) {
         super(ctx);
 
         this.animationLoop = new UpdateLoop('animation', (delta: number): boolean => {
-            for (const entity of this.entities) {
+            for (const entity of Object.values(this.entities)) {
                 entity.updateLoc();
+
             }
             return false;
-        }, 30);
+        }, 40);
         this.animationLoop.start();
 
         this.camera.position.set(7, 5, 7);
@@ -31,6 +33,10 @@ export class LogPlayerElement extends ThreeSceneElement {
         this.scene.add(sun);
 
         this.ctx.queue.addListener('newFiniteMap', (event) => {
+            for (const entity of Object.values(this.entities)) {
+                entity.remove();
+                this.entities = {};
+            }
             this.loadMap();
         })
         this.ctx.queue.addListener('waterChange', (event) => {
@@ -40,9 +46,15 @@ export class LogPlayerElement extends ThreeSceneElement {
             this.loadMap();
         });
 
+        this.ctx.queue.addListener('moveUnit', (event) => {
+            console.log(event);
+            console.log(this.ctx.gameState.units[event.uuid]);
+        })
+
+
         this.onAssetsLoaded = () => {
             this.ctx.queue.addListener('newUnit', (event) => {
-                this.addUnit(event.unit);
+                this.addUnit(this.ctx.gameState.units[event.unit.uuid]);
             });
             for (const unit of Object.values(this.ctx.gameState.units)) {
                 this.addUnit(unit);
@@ -51,8 +63,11 @@ export class LogPlayerElement extends ThreeSceneElement {
     }
 
     private addUnit(unit: Unit) {
+        if (this.entities[unit.uuid]) {
+            this.entities[unit.uuid]
+        }
         const entity = new Entity(this, unit);
-        this.entities.push(entity);
+        this.entities[unit.uuid] = entity;
     }
 
     private loadMap() {
@@ -88,7 +103,7 @@ export class LogPlayerElement extends ThreeSceneElement {
 }
 
 class Entity {
-    private unit: Unit;
+    public unit: Unit;
     private mesh: Mesh;
     private sceneElement: ThreeSceneElement;
     constructor(sceneElement: ThreeSceneElement, unit: Unit) {
@@ -96,30 +111,43 @@ class Entity {
         this.unit = unit;
         this.mesh = assetForEntity(sceneElement.assets, unit.type, randomColor());
         sceneElement.scene.add(this.mesh);
-        this.addToScene(sceneElement.scene.getObjectByName(sceneElement.ctx.gameState.planet!.name)!);
+        const map = this.getMap();
+        map.add(this.mesh);
 
         this.updateLoc();
     }
-    addToScene(map: Object3D) {
-        map.add(this.mesh);
+    getMap() {
+        return this.sceneElement.scene.getObjectByName(this.sceneElement.ctx.gameState.planet!.name)!
     }
 
     // TODO handle animating between tiles
     updateLoc() {
-        const { x, y } = this.unit;
-        const { chunkSize, grid } = this.sceneElement.ctx.gameState.planet!;
+        const { x, y, facing } = this.unit;
 
-        const chunkX = Math.floor(x / chunkSize);
-        const chunkY = Math.floor(y / chunkSize);
-        const chunk = grid[chunkY][chunkX];
-        const tileX = x % chunkSize;
-        const tileY = y % chunkSize;
-        const tile = chunk.grid[tileY][tileX];
+        const tile = getTile(this.sceneElement.ctx.gameState.planet!, x, y);
         const height = (tile[0] + tile[1] + tile[2] + tile[3]) / 4;
 
         this.mesh.position.x = x + 0.5;
         this.mesh.position.y = height;
         this.mesh.position.z = y + 0.5;
+
+        switch (facing) {
+            case 'N':
+                this.mesh.rotation.y = -Math.PI;
+                break;
+            case 'S':
+                this.mesh.rotation.y = Math.PI;
+                break;
+            case 'E':
+                this.mesh.rotation.y = Math.PI / 2;
+                break;
+            case 'W':
+                this.mesh.rotation.y = -Math.PI / 2;
+        }
+
+    }
+    remove() {
+        this.getMap().remove(this.mesh);
     }
 }
 
