@@ -26,15 +26,7 @@ export class MapEditorElement extends ThreeSceneElement {
   private editorSelection: EditorSelection = EditorSelection.clear;
   private controls: OrbitControls;
   private opts = {
-    landColor: 0x405136,
-    edgeColor: 0x6f9240,
-    cliffColor: 0x362e26,
-    waterColor: 0x53b0e2,
-    waterHeight: 1.8,
     sunColor: 0xcccccc,
-    name: 'foobar',
-    size: 2,
-    chunkSize: 8,
   };
   constructor() {
     super();
@@ -49,19 +41,14 @@ export class MapEditorElement extends ThreeSceneElement {
         console.log(`LOADED FROM STORAGE ${Date.now() - start}ms`);
       } catch (err) {
         console.error(err);
-        this.ctx.loadLog(this.getDefaultLog());
+        this.ctx.loadLog(getDefaultEditorMap());
       }
     } else {
-      this.ctx.loadLog(this.getDefaultLog());
+      this.ctx.loadLog(getDefaultEditorMap());
     }
 
 
-    this.ctx.onGameEvent = () => {
-      const log = _.map(this.ctx.events, (e) => e.event);
-      const logStr = JSON.stringify(log);
-      localStorage.setItem('default-eventlog', logStr);
-      console.log(`LOCAL STORAGE ${log.length}`)
-    }
+    this.ctx.onGameEvent = this.onGameEvent.bind(this);
 
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
@@ -94,11 +81,8 @@ export class MapEditorElement extends ThreeSceneElement {
       'editorMode',
       this.onEditorModeChange.bind(this),
     );
+    this.ctx.queue.addListener('newFiniteMap', this.loadMap.bind(this));
     this.ctx.queue.addListener('mapEdit', this.loadMap.bind(this));
-    this.ctx.queue.addListener('waterChange', (e) => {
-      this.opts.waterHeight += e.amount;
-      this.loadMap();
-    });
 
     this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
@@ -145,22 +129,11 @@ export class MapEditorElement extends ThreeSceneElement {
     this.loadMap();
   }
 
-  public getDefaultLog(): ServerEvent[] {
-
-    const map = getFlatMap(
-      this.opts.name,
-      this.opts.size,
-      this.opts.chunkSize,
-      1.8,
-    );
-    map.grid[0][0].grid[0][0] = [1, 1, 1, 1];
-
-    return [
-      {
-        kind: 'newFiniteMap',
-        map
-      }
-    ]
+  public onGameEvent() {
+    const log = _.map(this.ctx.events, (e) => e.event);
+    const logStr = JSON.stringify(log);
+    localStorage.setItem('default-eventlog', logStr);
+    console.log(`LOCAL STORAGE ${log.length}`)
   }
 
   public onEditorModeChange(event: EditorMode) {
@@ -178,7 +151,7 @@ export class MapEditorElement extends ThreeSceneElement {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(screenLoc, this.camera);
 
-    const mapObj = this.scene.getObjectByName(this.opts.name);
+    const mapObj = this.scene.getObjectByName('foobar');
     if (!mapObj) {
       return null;
     }
@@ -194,8 +167,8 @@ export class MapEditorElement extends ThreeSceneElement {
   }
 
   private loadMap() {
-    const { name, size, chunkSize } = this.opts;
     const gameMap = this.ctx.gameState.planet!;
+    const { name, size, chunkSize } = gameMap;
 
     info('loading map', { name: gameMap.name });
     const existing = this.scene.getObjectByName(gameMap.name);
@@ -211,4 +184,22 @@ export class MapEditorElement extends ThreeSceneElement {
     mapObj.position.set(offset, 0, offset);
     this.scene.add(mapObj);
   }
+}
+
+export function getDefaultEditorMap(): ServerEvent[] {
+
+  const map = _.cloneDeep(getFlatMap(
+    'foobar',
+    2,
+    8,
+    1.8,
+  ));
+  map.grid[0][0].grid[0][0] = [1, 1, 1, 1];
+
+  return [
+    {
+      kind: 'newFiniteMap',
+      map
+    }
+  ]
 }

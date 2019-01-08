@@ -68,6 +68,8 @@ export class EventContextElement extends HTMLElement {
 
   public async loadLog(events: Array<ServerEvent | FrontendEvent>) {
     this.gameState = newGameState();
+    this.events = [];
+
     for (const event of events) {
       if (event.kind === 'assertion') {
         continue;
@@ -77,9 +79,11 @@ export class EventContextElement extends HTMLElement {
     }
   }
 
-  public async replayLog(title: string, repeat: boolean, events: Array<ServerEvent | FrontendEvent>) {
+  public async replayLog(title: string, repeat: boolean, events: Array<ServerEvent | FrontendEvent>, realtime: boolean = true) {
     do {
       this.gameState = newGameState();
+      this.events = [];
+
       info('starting event log', { title });
       const mapEvent = events[0];
       let tps = 2;
@@ -89,10 +93,12 @@ export class EventContextElement extends HTMLElement {
 
 
       for (const event of events) {
-
+        // TODO use TPS to rate limit with game tick events
         this.queue.post(event);
         this.queue.flushAll();
-        await delay(1000 / tps);
+        if (realtime) {
+          await delay(500);
+        }
       }
       info('completed event log', { title });
     } while (repeat);

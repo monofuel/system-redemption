@@ -1,6 +1,8 @@
 import { getParentContext, loadTemplate } from '.';
 import { EditorSelection } from '../events';
 import { EventContextElement } from './eventContext';
+import _ from 'lodash';
+import { getDefaultEditorMap } from './mapEditor';
 
 const holdingButtons = ['raiselower', 'rampRaiseLower'];
 
@@ -31,9 +33,20 @@ export async function getLandControlsElement() {
           state: 'open',
         });
       } else if (id === 'replay-fast') {
-        this.ctx.replayFromFile('/test/chunk/testLog.json', false);
+        const log = _.cloneDeep(_.map(this.ctx.events, (e) => e.event));
+        const eventHandler = this.ctx.onGameEvent;
+        delete this.ctx.onGameEvent;
+        this.ctx.replayLog('replay', false, log, false);
+        this.ctx.onGameEvent = eventHandler;
+
       } else if (id === 'replay-realtime') {
-        this.ctx.replayFromFile('/test/chunk/testLog.json', true);
+        const log = _.cloneDeep(_.map(this.ctx.events, (e) => e.event));
+        const eventHandler = this.ctx.onGameEvent;
+        delete this.ctx.onGameEvent;
+        this.ctx.replayLog('replay', false, log, true);
+        this.ctx.onGameEvent = eventHandler;
+      } else if (id === 'replay-reset') {
+        this.ctx.loadLog(getDefaultEditorMap());
       } else {
         this.ctx.queue.post({
           kind: 'editorMode',
