@@ -66,8 +66,8 @@ export class MapEditorElement extends ThreeSceneElement {
     this.camera.lookAt(0, 0, 0);
     this.controls = new RTSControls(this.camera, this);
 
-    this.scene.add(new HemisphereLight(0xffffff, undefined, 0.3));
-    const sun = new DirectionalLight(this.opts.sunColor, 0.8);
+    this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
+    const sun = new DirectionalLight(0xffffff, 2);
     sun.translateY(40);
     sun.translateX(50);
     sun.lookAt(0, 0, 0);
