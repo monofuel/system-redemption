@@ -84,6 +84,7 @@ export class MapEditorElement extends ThreeSceneElement {
     );
     this.ctx.queue.addListener('newFiniteMap', this.loadMap.bind(this));
     this.ctx.queue.addListener('mapEdit', this.loadMap.bind(this));
+    this.ctx.queue.addListener('waterChange', this.loadMap.bind(this));
 
     this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
