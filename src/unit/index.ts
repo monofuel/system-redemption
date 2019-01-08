@@ -1,5 +1,6 @@
 import { Unit, UnitType } from "../types/SR";
 import uuid from 'uuid';
+import { randomColor } from "../mesh/entity";
 
 export function newTank(): Unit {
     return {
@@ -9,6 +10,7 @@ export function newTank(): Unit {
         size: 1,
         x: 0,
         y: 0,
+        color: randomColor(),
         map: 'test'
     }
 }

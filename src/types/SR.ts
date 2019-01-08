@@ -40,6 +40,7 @@ export interface FiniteMap {
         waterColor: number;
         cliffColor: number;
         sunColor: number;
+        zScale: number;
         size: number; // number of PlanetTile chunks
         chunkSize: number; // size of each PlanetTiles chunk
         grid: PlanetTiles[][];
@@ -68,6 +69,7 @@ export interface UnitDefinition {
 
 export interface Unit {
         uuid: string;
+        color: GameColors;
         type: UnitType;
         facing: Direction;
         size: 1 | 2 | 3;

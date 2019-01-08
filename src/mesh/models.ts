@@ -105,8 +105,9 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, As
 }
 
 export function coloredModel(asset: Asset, color: GameColors): Mesh {
+
     const result = asset.model.clone();
-    const mat = result.material as MeshStandardMaterial;
+    const mat = (result.material as MeshStandardMaterial).clone();
     const normals = mat.normalMap as Texture;
     const tex = asset.skins[color];
     const bak = tex.image;
@@ -114,5 +115,10 @@ export function coloredModel(asset: Asset, color: GameColors): Mesh {
     tex.copy(normals);
     tex.image = bak;
     mat.map = tex;
+    result.traverse((obj) => {
+        if (obj instanceof Mesh) {
+            obj.material = mat;
+        }
+    });
     return result;
 }

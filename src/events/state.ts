@@ -20,6 +20,7 @@ export interface GameState {
   planet?: FiniteMap;
   units: { [key: string]: Unit };
   unitDefinitions: Partial<Record<UnitType, UnitDefinition>>;
+  editorMode?: EditorMode;
 }
 const eventApply: Record<
   EventKinds,
@@ -87,7 +88,7 @@ export function applyWaterChange(state: GameState, event: WaterChange) {
 }
 
 export function editorModeChange(state: GameState, event: EditorMode) {
-
+  state.editorMode = event;
 }
 
 export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) {

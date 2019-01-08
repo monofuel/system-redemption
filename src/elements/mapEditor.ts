@@ -19,18 +19,33 @@ import {
 import { info } from '../logging';
 import { getPlanetObject } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
-import { ThreeSceneElement } from './threeScene';
+import { ThreeSceneElement, UpdateLoop } from './threeScene';
 import _ from 'lodash';
 import { defaultUnitDefinitions } from '../test/eventLogs/units';
+import { newTank } from '../unit';
+import { Entity } from '../mesh/entity';
+import { Unit } from '../types/SR';
 
 export class MapEditorElement extends ThreeSceneElement {
-  private editorSelection: EditorSelection = EditorSelection.clear;
+
+  private entities: { [key: string]: Entity } = {};
+  animationLoop: UpdateLoop;
+
   private controls: OrbitControls;
   private opts = {
     sunColor: 0xcccccc,
   };
   constructor() {
     super();
+
+    this.animationLoop = new UpdateLoop('animation', (delta: number): boolean => {
+      for (const entity of Object.values(this.entities)) {
+        entity.updateLoc();
+
+      }
+      return false;
+    }, 40);
+    this.animationLoop.start();
 
     const localLogStr = localStorage.getItem('default-eventlog');
 
@@ -98,19 +113,33 @@ export class MapEditorElement extends ThreeSceneElement {
       ev.preventDefault();
     };
 
-    const mouseEnd = (ev: MouseEvent) => {
+    this.onAssetsLoaded = () => {
+      this.ctx.queue.addListener('newUnit', (event) => {
+        this.addUnit(this.ctx.gameState.units[event.unit.uuid]);
+      });
+      for (const unit of Object.values(this.ctx.gameState.units)) {
+        this.addUnit(unit);
+      }
+    }
+
+    const mouseUp = (ev: MouseEvent) => {
+      const editorMode = this.ctx.gameState.editorMode;
+      if (!editorMode) {
+        return;
+      }
       if (ev.button !== MOUSE.LEFT) {
         return;
       }
-      switch (this.editorSelection) {
+      const loc = this.getTileAtRay(
+        mouseToVec(ev, this.offsetWidth, this.offsetHeight),
+      );
+
+      switch (editorMode.selection) {
         case EditorSelection.raiselower:
           let editType = MapEditType.raise;
           if (ev.button === 2) {
             editType = MapEditType.lower;
           }
-          const loc = this.getTileAtRay(
-            mouseToVec(ev, this.offsetWidth, this.offsetHeight),
-          );
           if (loc) {
             this.ctx.queue.post({
               kind: 'mapEdit',
@@ -120,24 +149,46 @@ export class MapEditorElement extends ThreeSceneElement {
             });
           }
           return;
+        case EditorSelection.newUnit:
+          if (loc) {
+
+            this.ctx.queue.post({
+              kind: 'newUnit',
+              unit: {
+                ...newTank(),
+                color: editorMode.user!,
+                x: loc.x,
+                y: loc.y
+              } // TODO look up unit type from editorMode
+            })
+          }
+          return;
         case EditorSelection.clear:
         default:
           return;
       }
     };
-    this.onmouseleave = mouseEnd;
-    this.onmouseup = mouseEnd;
+    // this.onmouseleave = mouseEnd;
+    this.onmouseup = mouseUp;
 
     this.loadMap();
+  }
+
+  private addUnit(unit: Unit) {
+    if (this.entities[unit.uuid]) {
+      this.entities[unit.uuid]
+    }
+    const entity = new Entity(this, unit);
+    this.entities[unit.uuid] = entity;
   }
 
   public onGameEvent() {
     const log = _.map(this.ctx.events, (e) => e.event);
     const logStr = JSON.stringify(log);
     localStorage.setItem('default-eventlog', logStr);
-    console.log(`LOCAL STORAGE ${log.length}`)
   }
 
+  // TODO landcontrol could probably just fire this event directly
   public onEditorModeChange(event: EditorMode) {
     if (['raiseWater', 'lowerWater'].includes(event.selection)) {
       this.ctx.queue.post({
@@ -146,7 +197,6 @@ export class MapEditorElement extends ThreeSceneElement {
       });
       return;
     }
-    this.editorSelection = event.selection;
   }
 
   private getTileAtRay(screenLoc: Vector2): { x: number; y: number } | null {

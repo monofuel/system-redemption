@@ -1,4 +1,4 @@
-import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition } from '../types/SR';
+import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition, GameColors, UnitType } from '../types/SR';
 import { GameState } from './state';
 
 // ----------------------
@@ -9,10 +9,13 @@ export enum EditorSelection {
   clear = 'clear',
   lowerWater = 'lowerWater',
   raiseWater = 'raiseWater',
+  newUnit = 'newUnit'
 }
 export interface EditorMode {
   kind: 'editorMode';
   selection: EditorSelection;
+  user?: GameColors;
+  unitType?: UnitType;
 }
 
 export interface ToggleLogViewer {

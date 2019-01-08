@@ -23,7 +23,7 @@ export function getPlanetObject({
   gameMap,
 }: PlanetMeshOpts): Object3D {
   const {
-    landColor, edgeColor, cliffColor, waterColor, waterHeight
+    landColor, edgeColor, cliffColor, waterColor, waterHeight, zScale
   } = gameMap;
   const tileTexture = getTileTexture(landColor, edgeColor);
 
@@ -54,6 +54,7 @@ export function getPlanetObject({
         waterColor,
         skipSides: sides,
         tileTex: tileTexture,
+        zScale
       });
       chunk.translateX(x * gameMap.chunkSize);
       chunk.translateZ(y * gameMap.chunkSize);
@@ -72,7 +73,7 @@ interface MeshOpts {
   skipSides: Direction[];
   tileTex: Texture;
   wireframe?: boolean;
-  zScale?: number;
+  zScale: number;
 }
 export function getTileMesh({
   tiles,
@@ -174,7 +175,7 @@ export function getTileMesh({
   return mesh;
 }
 
-function getGeomForTile(corners: TileHeights, zScale: number = 0.4): Geometry {
+function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
   const geom = new Geometry();
 
   geom.vertices.push(
@@ -232,7 +233,7 @@ function getGeomForTile(corners: TileHeights, zScale: number = 0.4): Geometry {
 function getWaterGeomForTile(
   corners: TileHeights,
   waterHeight: number,
-  zScale: number = 0.4,
+  zScale: number,
 ): Geometry | null {
   if (corners.filter((corner) => corner > waterHeight).length === 4) {
     // if all 4 corners are above the water height, no water!

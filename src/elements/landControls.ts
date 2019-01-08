@@ -4,7 +4,7 @@ import { EventContextElement } from './eventContext';
 import _ from 'lodash';
 import { getDefaultEditorMap } from './mapEditor';
 
-const holdingButtons = ['raiselower', 'rampRaiseLower'];
+const holdingButtons = ['raiselower', 'rampRaiseLower', 'newUnit'];
 
 export async function getLandControlsElement() {
   const template = await loadTemplate('landControls');
@@ -12,11 +12,34 @@ export async function getLandControlsElement() {
   return class LandControlsElement extends HTMLElement {
     private buttonMap: { [key: string]: Element } = {};
     private ctx: EventContextElement;
+    private unitSelect: HTMLSelectElement;
+    private userSelect: HTMLSelectElement;
     constructor() {
       super();
       this.ctx = getParentContext(this);
       this.appendChild(template.content.cloneNode(true));
       this.getButtons();
+      this.unitSelect = document.getElementById('unit-select') as any;
+      const gameState = this.ctx.gameState;
+      this.unitSelect.onchange = (e) => {
+        if (gameState.editorMode) {
+          this.ctx.queue.post({
+            ...gameState.editorMode,
+            user: this.userSelect.value as any,
+            unitType: this.unitSelect.value as any,
+          });
+        }
+      }
+      this.userSelect = document.getElementById('user-select') as any;
+      this.userSelect.onchange = (e) => {
+        if (gameState.editorMode) {
+          this.ctx.queue.post({
+            ...gameState.editorMode,
+            user: this.userSelect.value as any,
+            unitType: this.unitSelect.value as any,
+          });
+        }
+      }
     }
 
     public onButtonPress(id: string) {
@@ -51,8 +74,14 @@ export async function getLandControlsElement() {
         this.ctx.queue.post({
           kind: 'editorMode',
           selection,
+          user: this.userSelect.value as any,
+          unitType: this.unitSelect.value as any,
         });
       }
+    }
+
+    private updatePlaceUnit() {
+
     }
 
     private getButtons() {

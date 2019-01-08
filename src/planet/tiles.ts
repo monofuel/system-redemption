@@ -39,6 +39,7 @@ export function getFlatMap(
     cliffColor: 0x362e26,
     waterColor: 0x53b0e2,
     sunColor: 0xcccccc,
+    zScale: 0.4,
     size,
     chunkSize,
     waterHeight,
@@ -68,6 +69,7 @@ export const testTilesMap: FiniteMap = {
   waterColor: 0x53b0e2,
   sunColor: 0xcccccc,
   chunkSize: 4,
+  zScale: 0.4,
   waterHeight: 0.8,
   grid: [[testTiles]],
 };
