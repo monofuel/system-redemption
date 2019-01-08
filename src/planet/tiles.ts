@@ -33,6 +33,7 @@ export function getFlatMap(
   return {
     name,
     version: 1,
+    tps: 2,
     landColor: 0x405136,
     edgeColor: 0x6f9240,
     cliffColor: 0x362e26,
@@ -60,6 +61,7 @@ export const testTilesMap: FiniteMap = {
   name: 'testTilesMap',
   version: 1,
   size: 1,
+  tps: 2,
   landColor: 0x405136,
   edgeColor: 0x6f9240,
   cliffColor: 0x362e26,

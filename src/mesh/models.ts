@@ -1,18 +1,7 @@
 import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color } from "three";
+import { GameColors, ModelType } from "../types/SR";
 
 const ASSET_ZIP = '/scripts/assets.zip';
-
-export enum ModelType {
-    LightTankLvl1 = 'LightTankLvl1'
-}
-export enum GameColors {
-    blue = 'blue',
-    green = 'green',
-    grey = 'grey',
-    red = 'red',
-    white = 'white',
-    yellow = 'yellow'
-}
 
 interface AssetPath {
     model: string;

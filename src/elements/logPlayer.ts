@@ -1,10 +1,10 @@
 import { ThreeSceneElement, UpdateLoop } from './threeScene';
-import { DirectionalLight, HemisphereLight, Mesh, Scene, Object3D, Vector2, Vector3 } from 'three';
+import { DirectionalLight, HemisphereLight, Mesh, Scene, Object3D, Vector2, Vector3, OrbitControls } from 'three';
 import { info } from '../logging';
 import { getPlanetObject } from '../mesh/tiles';
 import { EventContextElement } from './eventContext';
-import { Unit, UnitType } from '../types/SR';
-import { GameColors, Asset, ModelType, coloredModel } from '../mesh/models';
+import { Unit, UnitType, ModelType, GameColors } from '../types/SR';
+import { Asset, coloredModel } from '../mesh/models';
 import { getTile } from '../planet';
 
 export class LogPlayerElement extends ThreeSceneElement {
@@ -31,6 +31,10 @@ export class LogPlayerElement extends ThreeSceneElement {
         sun.translateX(10);
         sun.lookAt(0, 0, 0);
         this.scene.add(sun);
+
+        const controls = new OrbitControls(this.camera, this);
+        controls.target.set(0, 0, 0);
+        controls.update();
 
         this.ctx.queue.addListener('newFiniteMap', (event) => {
             for (const entity of Object.values(this.entities)) {

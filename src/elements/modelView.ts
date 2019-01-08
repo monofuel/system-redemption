@@ -1,6 +1,7 @@
 import { ThreeSceneElement } from "./threeScene";
-import { HemisphereLight, AxesHelper, OrbitControls, PlaneHelper, Plane, Vector3, DirectionalLight } from "three";
-import { loadAssets, coloredModel, GameColors } from "../mesh/models";
+import { HemisphereLight, AxesHelper, PlaneHelper, Plane, Vector3, DirectionalLight } from "three";
+import { loadAssets, coloredModel } from "../mesh/models";
+import { GameColors } from "../types/SR";
 
 export class ModelViewElement extends ThreeSceneElement {
     constructor() {

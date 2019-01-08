@@ -5,7 +5,8 @@ import { getParentContext, RollingStats } from '.';
 import { info } from '../logging';
 import { EventContextElement } from './eventContext';
 import './styles/threeScene.scss';
-import { Asset, ModelType, loadAssets } from '../mesh/models';
+import { Asset, loadAssets } from '../mesh/models';
+import { ModelType } from '../types/SR';
 
 export class ThreeSceneElement extends HTMLElement {
   public renderer: WebGLRenderer;
@@ -45,9 +46,6 @@ export class ThreeSceneElement extends HTMLElement {
     this.camera.position.set(0, 50, 100);
     this.camera.lookAt(0, 0, 0);
 
-    const controls = new OrbitControls(this.camera);
-    controls.target.set(0, 0, 0);
-    controls.update();
     this.frameTimeStats = new RollingStats(60);
     this.frameDeltaStats = new RollingStats(60);
 

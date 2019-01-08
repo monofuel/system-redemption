@@ -58,6 +58,11 @@ export interface NewUnit {
   unit: Unit;
 }
 
+export interface DefineUnit {
+  kind: 'defineUnit';
+  unit: Unit;
+}
+
 export interface MoveUnit {
   kind: 'moveUnit';
   uuid: string;

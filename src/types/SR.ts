@@ -1,4 +1,20 @@
+
+export enum ModelType {
+        LightTankLvl1 = 'LightTankLvl1'
+}
+
+export enum GameColors {
+        blue = 'blue',
+        green = 'green',
+        grey = 'grey',
+        red = 'red',
+        white = 'white',
+        yellow = 'yellow'
+}
+
 export type Direction = 'N' | 'S' | 'E' | 'W';
+
+export type Layer = 'ground' | 'air' | 'water';
 
 // corner heights: TL TR BL BR
 export type TileHeights = [number, number, number, number];
@@ -17,6 +33,7 @@ export interface PlanetTiles {
 export interface FiniteMap {
         name: string;
         version: number;
+        tps: number;
         waterHeight: number;
         landColor: number;
         edgeColor: number;
@@ -26,6 +43,26 @@ export interface FiniteMap {
         size: number; // number of PlanetTile chunks
         chunkSize: number; // size of each PlanetTiles chunk
         grid: PlanetTiles[][];
+}
+
+export interface UnitDefinition {
+        size: 1 | 2 | 3;
+        buildTime: number;
+        cost: number;
+        maxHealth: number;
+        layer: Layer;
+        // vision: number;
+        // fuelBurnLength: number;
+        attack?: {
+                layers: Layer[];
+        }
+        storage?: {
+                maxIron?: number;
+                maxFuel?: number;
+        }
+        graphical: {
+                model: ModelType;
+        }
 }
 
 export interface Unit {

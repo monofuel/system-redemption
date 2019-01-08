@@ -11,15 +11,19 @@ import {
   EditorSelection,
   MapEdit,
   MapEditType,
+  ServerEvents,
+  ServerEvent,
 } from '../events';
 import { info } from '../logging';
-import { getPlanetObject, getTileMesh, getTileTexture } from '../mesh/tiles';
+import { getPlanetObject } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
-import { FiniteMap } from '../types/SR';
 import { ThreeSceneElement } from './threeScene';
+import _ from 'lodash';
+import { RTSControls } from '../mesh/rtsControls';
 
 export class MapEditorElement extends ThreeSceneElement {
   private editorSelection: EditorSelection = EditorSelection.clear;
+  private controls: RTSControls;
   private opts = {
     landColor: 0x405136,
     edgeColor: 0x6f9240,
@@ -31,19 +35,36 @@ export class MapEditorElement extends ThreeSceneElement {
     size: 2,
     chunkSize: 8,
   };
-  private gameMap: FiniteMap;
   constructor() {
     super();
 
+    const localLogStr = localStorage.getItem('default-eventlog');
+
+    if (localLogStr) {
+      try {
+        const start = Date.now();
+        const localLog = JSON.parse(localLogStr);
+        this.ctx.loadLog(localLog);
+        console.log(`LOADED FROM STORAGE ${Date.now() - start}ms`);
+      } catch (err) {
+        console.error(err);
+        this.ctx.loadLog(this.getDefaultLog());
+      }
+    } else {
+      this.ctx.loadLog(this.getDefaultLog());
+    }
+
+
+    this.ctx.onGameEvent = () => {
+      const log = _.map(this.ctx.events, (e) => e.event);
+      const logStr = JSON.stringify(log);
+      localStorage.setItem('default-eventlog', logStr);
+      console.log(`LOCAL STORAGE ${log.length}`)
+    }
+
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
-    this.gameMap = getFlatMap(
-      this.opts.name,
-      this.opts.size,
-      this.opts.chunkSize,
-      1.8,
-    );
-    this.gameMap.grid[0][0].grid[0][0] = [1, 1, 1, 1];
+    this.controls = new RTSControls(this.camera, this);
 
     this.scene.add(new HemisphereLight(0xffffff, undefined, 0.3));
     const sun = new DirectionalLight(this.opts.sunColor, 0.8);
@@ -61,7 +82,7 @@ export class MapEditorElement extends ThreeSceneElement {
       'editorMode',
       this.onEditorModeChange.bind(this),
     );
-    this.ctx.queue.addListener('mapEdit', this.onEditMap.bind(this));
+    this.ctx.queue.addListener('mapEdit', this.loadMap.bind(this));
     this.ctx.queue.addListener('waterChange', (e) => {
       this.opts.waterHeight += e.amount;
       this.loadMap();
@@ -109,6 +130,24 @@ export class MapEditorElement extends ThreeSceneElement {
     this.loadMap();
   }
 
+  public getDefaultLog(): ServerEvent[] {
+
+    const map = getFlatMap(
+      this.opts.name,
+      this.opts.size,
+      this.opts.chunkSize,
+      1.8,
+    );
+    map.grid[0][0].grid[0][0] = [1, 1, 1, 1];
+
+    return [
+      {
+        kind: 'newFiniteMap',
+        map
+      }
+    ]
+  }
+
   public onEditorModeChange(event: EditorMode) {
     if (['raiseWater', 'lowerWater'].includes(event.selection)) {
       this.ctx.queue.post({
@@ -118,30 +157,6 @@ export class MapEditorElement extends ThreeSceneElement {
       return;
     }
     this.editorSelection = event.selection;
-  }
-
-  public onEditMap(event: MapEdit) {
-    const { size, chunkSize } = this.opts;
-
-    const chunkX = Math.floor(event.x / chunkSize);
-    const chunkY = Math.floor(event.y / chunkSize);
-    const chunk = this.gameMap.grid[chunkY][chunkX];
-    const tileX = event.x % chunkSize;
-    const tileY = event.y % chunkSize;
-    const tile = chunk.grid[tileY][tileX];
-    let delta = [0, 0, 0, 0];
-    if (event.edit === MapEditType.raise) {
-      delta = [1, 1, 1, 1];
-    } else if (event.edit === MapEditType.lower) {
-      delta = [-1, -1, -1, -1];
-    }
-    for (let i = 0; i < tile.length; i++) {
-      tile[i] += delta[i];
-      if (tile[i] <= 0) {
-        tile[i] = 0;
-      }
-    }
-    this.loadMap();
   }
 
   private getTileAtRay(screenLoc: Vector2): { x: number; y: number } | null {
@@ -165,7 +180,7 @@ export class MapEditorElement extends ThreeSceneElement {
 
   private loadMap() {
     const { name, size, chunkSize } = this.opts;
-    const gameMap = this.gameMap;
+    const gameMap = this.ctx.gameState.planet!;
 
     info('loading map', { name: gameMap.name });
     const existing = this.scene.getObjectByName(gameMap.name);
@@ -173,7 +188,7 @@ export class MapEditorElement extends ThreeSceneElement {
       this.scene.remove(existing);
     }
     const mapObj = getPlanetObject({
-      gameMap: this.gameMap,
+      gameMap,
     });
     mapObj.rotateY(Math.PI);
     const offset = (size * chunkSize) / 2;

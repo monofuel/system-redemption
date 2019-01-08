@@ -23,6 +23,8 @@ export class EventContextElement extends HTMLElement {
   public gameState: GameState;
   private flushLoop: UpdateLoop;
 
+  public onGameEvent?: (event: LoggedEvent) => void;
+
   constructor({ autoStart }: EventContextOpts = { autoStart: true }) {
     super();
     (window as any).ctx = this;
@@ -40,6 +42,9 @@ export class EventContextElement extends HTMLElement {
           timestamp,
           listeners,
         });
+        if (this.onGameEvent) {
+          this.onGameEvent(event);
+        }
       },
     });
 
@@ -61,16 +66,30 @@ export class EventContextElement extends HTMLElement {
     this.flushLoop.start();
   }
 
+  public async loadLog(events: Array<ServerEvent | FrontendEvent>) {
+    this.gameState = newGameState();
+    for (const event of events) {
+      this.queue.post(event);
+      this.queue.flushAll();
+    }
+  }
+
   public async replayLog(title: string, repeat: boolean, events: Array<ServerEvent | FrontendEvent>) {
     do {
       this.gameState = newGameState();
       info('starting event log', { title });
+      const mapEvent = events[0];
+      let tps = 2;
+      if (mapEvent.kind === 'newFiniteMap') {
+        tps = mapEvent.map.tps;
+      }
+
 
       for (const event of events) {
 
         this.queue.post(event);
         this.queue.flushAll();
-        await delay(500);
+        await delay(1000 / tps);
       }
       info('completed event log', { title });
     } while (repeat);

@@ -1,35 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="/index.css" />
-    <title>SR</title>
 
-    <!--    
-    <script src="/scripts/static/three/three.js"></script>
-    <script src="/scripts/static/lodash.js"></script>
-    <script src="http://livejs.com/live.js"></script>
-  -->
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="/index.css" />
+  <title>SR</title>
+
+  <!--    
     <script src="/scripts/static/three/three.min.js"></script>
     <script src="/scripts/static/lodash.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="/scripts/static/fontawesome-free/css/all.css"
-    />
+  -->
+  <script src="/scripts/static/three/three.js"></script>
+  <script src="/scripts/static/lodash.js"></script>
+  <script src="http://livejs.com/live.js"></script>
+  <script src="/scripts/static/ziploader.min.js"></script>
+  <script src="/scripts/static/GLTFLoader.js"></script>
+  <link rel="stylesheet" href="/scripts/static/fontawesome-free/css/all.css" />
 
-    <script src="/scripts/static/dat.gui.min.js"></script>
+  <script src="/scripts/static/dat.gui.min.js"></script>
 
-    <script src="/scripts/static/webcomponentsjs/webcomponents-loader.js"></script>
-    <script type="module" src="/scripts/bundle.js"></script>
-  </head>
+  <script src="/scripts/static/webcomponentsjs/webcomponents-loader.js"></script>
+  <script type="module" src="/scripts/bundle.js"></script>
+</head>
 
-  <body class="full-screen">
-    <event-context class="fill">
-      <span class="ui-wrapper">
-        <land-controls></land-controls>
-        <log-viewer></log-viewer>
-      </span>
-      <map-editor class="fill"> </map-editor>
-    </event-context>
-  </body>
+<body class="full-screen">
+  <event-context class="fill">
+    <span class="ui-wrapper">
+      <land-controls></land-controls>
+      <log-viewer></log-viewer>
+    </span>
+    <map-editor class="fill"> </map-editor>
+  </event-context>
+</body>
+
 </html>
