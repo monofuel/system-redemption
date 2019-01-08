@@ -4,6 +4,8 @@ import {
   Object3D,
   Raycaster,
   Vector2,
+  OrbitControls,
+  MOUSE,
 } from 'three';
 import { mouseToVec } from '.';
 import {
@@ -19,11 +21,10 @@ import { getPlanetObject } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
 import { ThreeSceneElement } from './threeScene';
 import _ from 'lodash';
-import { RTSControls } from '../mesh/rtsControls';
 
 export class MapEditorElement extends ThreeSceneElement {
   private editorSelection: EditorSelection = EditorSelection.clear;
-  private controls: RTSControls;
+  private controls: OrbitControls;
   private opts = {
     landColor: 0x405136,
     edgeColor: 0x6f9240,
@@ -64,7 +65,17 @@ export class MapEditorElement extends ThreeSceneElement {
 
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
-    this.controls = new RTSControls(this.camera, this);
+    this.controls = new OrbitControls(this.camera, this);
+
+    // leave left mouse button free for the game
+    this.controls.mouseButtons = {
+      LEFT: MOUSE.RIGHT,
+      RIGHT: MOUSE.MIDDLE,
+    } as any;
+
+
+    this.controls.target.set(0, 0, 0);
+    this.controls.update();
 
     this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
     const sun = new DirectionalLight(0xffffff, 2);
@@ -101,6 +112,9 @@ export class MapEditorElement extends ThreeSceneElement {
     };
 
     const mouseEnd = (ev: MouseEvent) => {
+      if (ev.button !== MOUSE.LEFT) {
+        return;
+      }
       switch (this.editorSelection) {
         case EditorSelection.raiselower:
           let editType = MapEditType.raise;

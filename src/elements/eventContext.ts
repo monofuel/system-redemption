@@ -69,6 +69,9 @@ export class EventContextElement extends HTMLElement {
   public async loadLog(events: Array<ServerEvent | FrontendEvent>) {
     this.gameState = newGameState();
     for (const event of events) {
+      if (event.kind === 'assertion') {
+        continue;
+      }
       this.queue.post(event);
       this.queue.flushAll();
     }
