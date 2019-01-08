@@ -68,18 +68,6 @@ export class MapEditorElement extends ThreeSceneElement {
 
     this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
-    this.controls = new OrbitControls(this.camera, this);
-
-    // leave left mouse button free for the game
-    this.controls.mouseButtons = {
-      LEFT: MOUSE.RIGHT,
-      RIGHT: MOUSE.MIDDLE,
-    } as any;
-
-
-    this.controls.target.set(0, 0, 0);
-    this.controls.update();
-    this.controls.maxPolarAngle = (10 * Math.PI) / 21;
 
     this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
     const sun = new DirectionalLight(0xffffff, 2);
@@ -97,7 +85,13 @@ export class MapEditorElement extends ThreeSceneElement {
       'editorMode',
       this.onEditorModeChange.bind(this),
     );
-    this.ctx.queue.addListener('newFiniteMap', this.loadMap.bind(this));
+    this.ctx.queue.addListener('newFiniteMap', () => {
+      for (const entity of Object.values(this.entities)) {
+        entity.remove();
+        this.entities = {};
+      }
+      this.loadMap();
+    });
     this.ctx.queue.addListener('mapEdit', this.loadMap.bind(this));
     this.ctx.queue.addListener('waterChange', this.loadMap.bind(this));
 
@@ -105,8 +99,9 @@ export class MapEditorElement extends ThreeSceneElement {
       ev.preventDefault();
     };
 
+    let dragStartEvent: MouseEvent | null = null;
     this.onmousedown = (ev: MouseEvent) => {
-      // TODO
+      dragStartEvent = ev;
     };
 
     this.onmousemove = (ev: MouseEvent) => {
@@ -127,9 +122,19 @@ export class MapEditorElement extends ThreeSceneElement {
       if (!editorMode) {
         return;
       }
-      if (ev.button !== MOUSE.LEFT) {
+
+      let dragDistance = 0;
+      if (dragStartEvent) {
+        const start = new Vector2(dragStartEvent.x, dragStartEvent.y);
+        const end = new Vector2(ev.x, ev.y);
+        dragDistance = start.distanceTo(end);
+      }
+
+      // ignore events if the mouse is dragged too far
+      if (dragDistance > 5) {
         return;
       }
+
       const loc = this.getTileAtRay(
         mouseToVec(ev, this.offsetWidth, this.offsetHeight),
       );
@@ -169,7 +174,20 @@ export class MapEditorElement extends ThreeSceneElement {
       }
     };
     // this.onmouseleave = mouseEnd;
-    this.onmouseup = mouseUp;
+    this.addEventListener('mouseup', mouseUp, true);
+
+    this.controls = new OrbitControls(this.camera, this);
+
+    // leave left mouse button free for the game
+    this.controls.mouseButtons = {
+      LEFT: MOUSE.RIGHT,
+      RIGHT: MOUSE.MIDDLE,
+    } as any;
+
+
+    this.controls.target.set(0, 0, 0);
+    this.controls.update();
+    this.controls.maxPolarAngle = (10 * Math.PI) / 21;
 
     this.loadMap();
   }
