@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { newTank } from "../../unit";
 import { GameState } from "../../events/state";
 import { assert } from 'chai';
+import { defaultUnitDefinitions } from "./units";
 
 const map = _.cloneDeep(testTilesMap);
 map.waterHeight = -1;
@@ -28,6 +29,7 @@ export const unitMoveTestLog: ServerEvent[] = [
         kind: 'newFiniteMap',
         map,
     },
+    ...defaultUnitDefinitions,
     {
         kind: 'newUnit',
         unit: {

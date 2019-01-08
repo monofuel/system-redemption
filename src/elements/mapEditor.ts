@@ -21,6 +21,7 @@ import { getPlanetObject } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
 import { ThreeSceneElement } from './threeScene';
 import _ from 'lodash';
+import { defaultUnitDefinitions } from '../test/eventLogs/units';
 
 export class MapEditorElement extends ThreeSceneElement {
   private editorSelection: EditorSelection = EditorSelection.clear;
@@ -200,6 +201,7 @@ export function getDefaultEditorMap(): ServerEvent[] {
     {
       kind: 'newFiniteMap',
       map
-    }
+    },
+    ...defaultUnitDefinitions
   ]
 }

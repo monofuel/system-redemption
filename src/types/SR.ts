@@ -46,6 +46,7 @@ export interface FiniteMap {
 }
 
 export interface UnitDefinition {
+        type: UnitType;
         size: 1 | 2 | 3;
         buildTime: number;
         cost: number;
@@ -60,7 +61,7 @@ export interface UnitDefinition {
                 maxIron?: number;
                 maxFuel?: number;
         }
-        graphical: {
+        graphical?: {
                 model: ModelType;
         }
 }

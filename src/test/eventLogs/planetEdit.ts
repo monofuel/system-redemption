@@ -1,11 +1,13 @@
 import { MapEditType, ServerEvent } from '../../events';
 import { testTilesMap } from '../../planet/tiles';
+import { defaultUnitDefinitions } from './units';
 
 export const planetEditTestLog: ServerEvent[] = [
     {
         kind: 'newFiniteMap',
         map: testTilesMap,
     },
+    ...defaultUnitDefinitions,
     {
         kind: 'mapEdit',
         edit: MapEditType.raise,

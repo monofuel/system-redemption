@@ -108,17 +108,24 @@ export class LogPlayerElement extends ThreeSceneElement {
 
 class Entity {
     public unit: Unit;
-    private mesh: Mesh;
+    private mesh?: Mesh;
     private sceneElement: ThreeSceneElement;
     constructor(sceneElement: ThreeSceneElement, unit: Unit) {
         this.sceneElement = sceneElement;
         this.unit = unit;
-        this.mesh = assetForEntity(sceneElement.assets, unit.type, randomColor());
-        sceneElement.scene.add(this.mesh);
-        const map = this.getMap();
-        map.add(this.mesh);
+        const unitDefinition = sceneElement.ctx.gameState.unitDefinitions[unit.type];
+        if (!unitDefinition) {
+            throw new Error(`missing definition for unit type ${unit.type}`);
+        }
+        if (unitDefinition.graphical) {
 
-        this.updateLoc();
+            this.mesh = assetForEntity(sceneElement.assets, unitDefinition.graphical.model, randomColor());
+            sceneElement.scene.add(this.mesh);
+            const map = this.getMap();
+            map.add(this.mesh);
+
+            this.updateLoc();
+        }
     }
     getMap() {
         return this.sceneElement.scene.getObjectByName(this.sceneElement.ctx.gameState.planet!.name)!
@@ -126,6 +133,9 @@ class Entity {
 
     // TODO handle animating between tiles
     updateLoc() {
+        if (!this.mesh) {
+            return;
+        }
         const { x, y, facing } = this.unit;
 
         const tile = getTile(this.sceneElement.ctx.gameState.planet!, x, y);
@@ -151,18 +161,20 @@ class Entity {
 
     }
     remove() {
-        this.getMap().remove(this.mesh);
+        if (this.mesh) {
+            this.getMap().remove(this.mesh);
+        }
     }
 }
 
-function assetForEntity(assets: Record<ModelType, Asset>, unit: UnitType, color: GameColors): Mesh {
-    switch (unit) {
-        case UnitType.tank:
-            const model = coloredModel(assets[ModelType.LightTankLvl1], color);
+function assetForEntity(assets: Record<ModelType, Asset>, modelType: ModelType, color: GameColors): Mesh {
+    switch (modelType) {
+        case ModelType.LightTankLvl1:
+            const model = coloredModel(assets[modelType], color);
             model.scale.copy(new Vector3(0.7, 0.7, 0.7));
             return model;
         default:
-            throw new Error(`missing asset for ${unit}`)
+            throw new Error(`missing asset for ${modelType}`)
     }
 }
 

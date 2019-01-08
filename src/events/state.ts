@@ -10,14 +10,16 @@ import {
   NewUnit,
   MoveUnit,
   Assertion,
+  DefineUnit,
 } from '.';
 import _ from 'lodash'
-import { FiniteMap, Unit } from '../types/SR';
+import { FiniteMap, Unit, UnitType, UnitDefinition } from '../types/SR';
 import { getTile } from '../planet';
 
 export interface GameState {
   planet?: FiniteMap;
   units: { [key: string]: Unit };
+  unitDefinitions: Partial<Record<UnitType, UnitDefinition>>;
 }
 const eventApply: Record<
   EventKinds,
@@ -31,11 +33,13 @@ const eventApply: Record<
   newUnit: applyNewUnit,
   moveUnit: applyMoveUnit,
   assertion: applyAssertion,
+  defineUnit: applyUnitDefinition,
 };
 
 export function newGameState(): GameState {
   return {
     units: {},
+    unitDefinitions: {}
   };
 }
 
@@ -126,4 +130,8 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
 }
 export function applyAssertion(state: GameState, event: Assertion) {
   event.fn(state);
+}
+
+export function applyUnitDefinition(state: GameState, event: DefineUnit) {
+  state.unitDefinitions[event.unit.type] = event.unit;
 }

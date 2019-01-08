@@ -1,4 +1,4 @@
-import { FiniteMap, TileHeights, Unit, Direction } from '../types/SR';
+import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition } from '../types/SR';
 import { GameState } from './state';
 
 // ----------------------
@@ -60,7 +60,7 @@ export interface NewUnit {
 
 export interface DefineUnit {
   kind: 'defineUnit';
-  unit: Unit;
+  unit: UnitDefinition;
 }
 
 export interface MoveUnit {
@@ -82,6 +82,7 @@ export interface ServerEvents {
   newUnit: NewUnit;
   moveUnit: MoveUnit;
   assertion: Assertion;
+  defineUnit: DefineUnit;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];
