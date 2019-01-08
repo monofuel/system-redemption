@@ -76,6 +76,7 @@ export class MapEditorElement extends ThreeSceneElement {
 
     this.controls.target.set(0, 0, 0);
     this.controls.update();
+    this.controls.maxPolarAngle = (10 * Math.PI) / 21;
 
     this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
     const sun = new DirectionalLight(0xffffff, 2);
