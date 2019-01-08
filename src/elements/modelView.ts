@@ -1,5 +1,5 @@
 import { ThreeSceneElement } from "./threeScene";
-import { HemisphereLight, AxesHelper, PlaneHelper, Plane, Vector3, DirectionalLight } from "three";
+import { HemisphereLight, AxesHelper, PlaneHelper, Plane, Vector3, DirectionalLight, OrbitControls } from "three";
 import { loadAssets, coloredModel } from "../mesh/models";
 import { GameColors } from "../types/SR";
 
@@ -17,6 +17,10 @@ export class ModelViewElement extends ThreeSceneElement {
         sun.translateX(10);
         sun.lookAt(0, 0, 0);
         this.scene.add(sun);
+
+        const controls = new OrbitControls(this.camera, this);
+        controls.target.set(0, 0, 0);
+        controls.update();
 
         this.loadModel();
     }
