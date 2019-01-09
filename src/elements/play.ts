@@ -9,7 +9,7 @@ export class PlayELement extends PlanetElement {
     private asyncEvents: ServerEvent[] = [];
     uiWrapper: HTMLSpanElement;
 
-    private singlePlayer: boolean = true;
+    private singlePlayer: boolean = false;
     private gameTickLoop?: UpdateLoop;
 
     constructor() {
@@ -79,8 +79,23 @@ export class PlayELement extends PlanetElement {
             }, tps);
             this.gameTickLoop.start();
         }
+        if (this.singlePlayer) {
+            this.startMatch();
+        } else {
+            this.syncToServer();
+        }
+    }
 
-        this.startMatch();
+    private async syncToServer() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const { hostname, port } = window.location;
+        const ws = new WebSocket(`${protocol}//${hostname}:${port}/ws`);
+        ws.onopen = () => {
+            // TODO stream current log to server if owner
+        }
+        ws.onmessage = (e: MessageEvent) => {
+            console.log(e);
+        }
     }
 
     private startMatch() {

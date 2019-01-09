@@ -195,7 +195,7 @@ export function applyGameTick(state: GameState, event: GameTick) {
   }
 }
 
-function getUnitInfo(state: GameState, uuid: string) {
+export function getUnitInfo(state: GameState, uuid: string) {
   const unit = state.units[uuid];
   const unitDef = state.unitDefinitions[unit.type];
   if (!unit) {

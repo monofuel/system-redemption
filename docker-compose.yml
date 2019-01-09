@@ -3,6 +3,7 @@ services:
   standalone:
     build:
       context: .
+    restart: always
     ports:
       - '3000:3000'
     environment:
