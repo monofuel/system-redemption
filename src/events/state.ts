@@ -14,6 +14,7 @@ import {
   GameStage,
   GameStageChange,
   GameTick,
+  AssertFail,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition } from '../types/SR';
@@ -40,10 +41,11 @@ const eventApply: Record<
   toggleLogViewer: toggleLogViewerChange,
   newUnit: applyNewUnit,
   moveUnit: applyMoveUnit,
-  assertion: applyAssertion,
   defineUnit: applyUnitDefinition,
   gameStageChange: applyGameStageChange,
   gameTick: applyGameTick,
+  assertion: applyAssertion,
+  assertFail: applyAssertFail,
 };
 
 export function newGameState(): GameState {
@@ -121,9 +123,12 @@ export function applyNewUnit(state: GameState, event: NewUnit) {
   state.units[event.unit.uuid] = _.cloneDeep(event.unit);
 }
 export function applyMoveUnit(state: GameState, event: MoveUnit) {
-  const unit = state.units[event.uuid];
-  if (!unit) {
-    throw new Error(`missing unit ${event.uuid}`);
+  const { unit, unitDef } = getUnitInfo(state, event.uuid);
+  if (!(unitDef.move)) {
+    throw new Error(`unit can't move`);
+  }
+  if (unit.moveCooldown !== 0) {
+    throw new Error('unit movement still cooling down');
   }
   let nextX = unit.x;
   let nextY = unit.y;
@@ -144,16 +149,31 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
       throw new Error(`invalid direction ${event.dir}`)
   }
 
+  // TODO assert that the movement is valid
   const prev = getTile(state.planet!, unit.x, unit.y);
   const next = getTile(state.planet!, nextX, nextY);
-
 
   unit.x = nextX;
   unit.y = nextY;
   unit.facing = event.dir;
+
+  unit.moveCooldown = unitDef.move.cooldown;
 }
 export function applyAssertion(state: GameState, event: Assertion) {
   event.fn(state);
+}
+
+export function applyAssertFail(state: GameState, event: AssertFail) {
+  let e: Error | undefined;
+  try {
+    applyEvent(state, event.event);
+  } catch (err) {
+    e = err;
+  }
+  if (!e) {
+    console.error(JSON.stringify(event.event));
+    throw new Error('AssertFail event did not fail');
+  }
 }
 
 export function applyUnitDefinition(state: GameState, event: DefineUnit) {
@@ -166,6 +186,23 @@ export function applyGameStageChange(state: GameState, event: GameStageChange) {
 export function applyGameTick(state: GameState, event: GameTick) {
   state.stage.tick++;
 
-  // TODO any work that has to happen once per tick
-  // eg: tick down cooldowns
+  // any work that has to happen once per tick happens here
+
+  for (const unit of Object.values(state.units)) {
+    if (unit.moveCooldown > 0) {
+      unit.moveCooldown--;
+    }
+  }
+}
+
+function getUnitInfo(state: GameState, uuid: string) {
+  const unit = state.units[uuid];
+  const unitDef = state.unitDefinitions[unit.type];
+  if (!unit) {
+    throw new Error(`missing unit ${uuid}`);
+  }
+  if (!unitDef) {
+    throw new Error(`missing unit definition ${unitDef}`);
+  }
+  return { unit, unitDef };
 }

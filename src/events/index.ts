@@ -93,6 +93,11 @@ export interface Assertion {
   kind: 'assertion';
   fn: (gameState: GameState) => void;
 }
+// Only for testing
+export interface AssertFail {
+  kind: 'assertFail';
+  event: ServerEvent;
+}
 
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
@@ -104,6 +109,7 @@ export interface ServerEvents {
   defineUnit: DefineUnit;
   gameStageChange: GameStageChange;
   gameTick: GameTick;
+  assertFail: AssertFail;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

@@ -37,11 +37,13 @@ export class EventContextElement extends HTMLElement {
       },
       logger: (event, timestamp, listeners) => {
         this.events.push({ event, timestamp, listeners });
-        info('event posted', {
-          event: JSON.stringify(event),
-          timestamp,
-          listeners,
-        });
+        if (event.kind !== 'gameTick') {
+          info('event posted', {
+            event: JSON.stringify(event),
+            timestamp,
+            listeners,
+          });
+        }
         if (this.onGameEvent) {
           this.onGameEvent(event);
         }
@@ -93,10 +95,11 @@ export class EventContextElement extends HTMLElement {
 
 
       for (const event of events) {
-        // TODO use TPS to rate limit with game tick events
         this.queue.post(event);
         this.queue.flushAll();
-        if (realtime) {
+        // TODO use TPS to rate limit with game tick events
+        // TODO figure out how to handle replays with game ticks and normal events
+        if (event.kind !== 'gameTick' && realtime) {
           await delay(500);
         }
       }

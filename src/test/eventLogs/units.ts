@@ -13,6 +13,9 @@ export const defaultUnitDefinitions: DefineUnit[] = [
             layer: 'ground',
             graphical: {
                 model: ModelType.LightTankLvl1,
+            },
+            move: {
+                cooldown: 2
             }
         }
     }

@@ -55,6 +55,9 @@ export interface UnitDefinition {
         layer: Layer;
         // vision: number;
         // fuelBurnLength: number;
+        move?: {
+                cooldown: number;
+        }
         attack?: {
                 layers: Layer[];
         }
@@ -76,6 +79,7 @@ export interface Unit {
         x: number;
         y: number;
         map: string;
+        moveCooldown: number;
 }
 
 /*

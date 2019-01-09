@@ -11,6 +11,7 @@ export function newTank(): Unit {
         x: 0,
         y: 0,
         color: randomColor(),
-        map: 'test'
+        map: 'test',
+        moveCooldown: 0,
     }
 }

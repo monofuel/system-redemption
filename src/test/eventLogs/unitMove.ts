@@ -47,9 +47,24 @@ export const unitMoveTestLog: ServerEvent[] = [
         kind: 'assertion',
         fn: (state: GameState) => {
             const unit = state.units[tank.uuid];
+            assert.equal(unit.moveCooldown, 2);
             assert.equal(unit.x, 1);
             assert.equal(unit.y, 5);
         }
+    },
+    {
+        kind: 'assertFail',
+        event: {
+            kind: 'moveUnit',
+            uuid: tank.uuid,
+            dir: 'E',
+        }
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
     },
     {
         kind: 'moveUnit',
@@ -65,14 +80,32 @@ export const unitMoveTestLog: ServerEvent[] = [
         }
     },
     {
-        kind: 'moveUnit',
-        uuid: tank.uuid,
-        dir: 'E',
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
     },
     {
         kind: 'moveUnit',
         uuid: tank.uuid,
         dir: 'E',
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'moveUnit',
+        uuid: tank.uuid,
+        dir: 'E',
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
     },
     {
         kind: 'moveUnit',
@@ -88,14 +121,32 @@ export const unitMoveTestLog: ServerEvent[] = [
         }
     },
     {
-        kind: 'moveUnit',
-        uuid: tank.uuid,
-        dir: 'S',
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
     },
     {
         kind: 'moveUnit',
         uuid: tank.uuid,
         dir: 'S',
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'moveUnit',
+        uuid: tank.uuid,
+        dir: 'S',
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
     },
     {
         kind: 'moveUnit',
@@ -103,14 +154,32 @@ export const unitMoveTestLog: ServerEvent[] = [
         dir: 'W',
     },
     {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
         kind: 'moveUnit',
         uuid: tank.uuid,
         dir: 'W',
     },
     {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
         kind: 'moveUnit',
         uuid: tank.uuid,
         dir: 'S',
+    },
+    {
+        kind: 'gameTick'
+    },
+    {
+        kind: 'gameTick'
     },
     {
         kind: 'moveUnit',

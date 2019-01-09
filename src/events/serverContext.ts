@@ -104,10 +104,10 @@ export class ServerContext {
 
 /**
  * 
- * @param state READ ONLY game state
+ * @param state READ ONLY game state (may change if read asyncronously)
  * @param asyncEvents array to push to for events (can be done asyncronously)
  */
 export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
-    console.log('ON TICK');
+    // console.log('ON TICK');
     // TODO pathfinding
 }
