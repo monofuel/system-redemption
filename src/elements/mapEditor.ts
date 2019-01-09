@@ -1,7 +1,4 @@
 import {
-  DirectionalLight,
-  HemisphereLight,
-  Object3D,
   Raycaster,
   Vector2,
   OrbitControls,
@@ -11,20 +8,14 @@ import { mouseToVec } from '.';
 import {
   EditorMode,
   EditorSelection,
-  MapEdit,
   MapEditType,
-  ServerEvents,
   ServerEvent,
 } from '../events';
-import { info } from '../logging';
-import { getPlanetObject } from '../mesh/tiles';
 import { getFlatMap } from '../planet/tiles';
-import { ThreeSceneElement, UpdateLoop } from './threeScene';
+import { UpdateLoop } from './threeScene';
 import _ from 'lodash';
 import { defaultUnitDefinitions } from '../test/eventLogs/units';
 import { newTank } from '../unit';
-import { Entity } from '../mesh/entity';
-import { Unit } from '../types/SR';
 import { PlanetElement } from './planet';
 
 export class MapEditorElement extends PlanetElement {

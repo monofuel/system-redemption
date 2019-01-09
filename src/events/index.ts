@@ -72,6 +72,22 @@ export interface MoveUnit {
   dir: Direction;
 }
 
+export enum GameStage {
+  init = 'init', // default state, map still loading
+  ready = 'ready', // map ready for players
+  running = 'running', // ticking
+  done = 'done'
+}
+
+export interface GameStageChange {
+  kind: 'gameStageChange';
+  mode: GameStage;
+}
+
+export interface GameTick {
+  kind: 'gameTick';
+}
+
 // Only for testing
 export interface Assertion {
   kind: 'assertion';
@@ -86,6 +102,8 @@ export interface ServerEvents {
   moveUnit: MoveUnit;
   assertion: Assertion;
   defineUnit: DefineUnit;
+  gameStageChange: GameStageChange;
+  gameTick: GameTick;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

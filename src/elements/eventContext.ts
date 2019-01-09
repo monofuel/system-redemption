@@ -66,7 +66,7 @@ export class EventContextElement extends HTMLElement {
     this.flushLoop.start();
   }
 
-  public async loadLog(events: Array<ServerEvent | FrontendEvent>) {
+  public loadLog(events: Array<ServerEvent | FrontendEvent>) {
     this.gameState = newGameState();
     this.events = [];
 

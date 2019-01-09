@@ -11,6 +11,9 @@ import {
   MoveUnit,
   Assertion,
   DefineUnit,
+  GameStage,
+  GameStageChange,
+  GameTick,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition } from '../types/SR';
@@ -21,6 +24,10 @@ export interface GameState {
   units: { [key: string]: Unit };
   unitDefinitions: Partial<Record<UnitType, UnitDefinition>>;
   editorMode?: EditorMode;
+  stage: {
+    tick: number;
+    mode: GameStage;
+  }
 }
 const eventApply: Record<
   EventKinds,
@@ -35,14 +42,30 @@ const eventApply: Record<
   moveUnit: applyMoveUnit,
   assertion: applyAssertion,
   defineUnit: applyUnitDefinition,
+  gameStageChange: applyGameStageChange,
+  gameTick: applyGameTick,
 };
 
 export function newGameState(): GameState {
   return {
     units: {},
-    unitDefinitions: {}
+    unitDefinitions: {},
+    stage: {
+      tick: 0,
+      mode: GameStage.init,
+    }
   };
 }
+
+/**
+ * applyEvent applies the given event to the game state
+ * event applicators must not append events!
+ * 
+ * onTick() may be used for on-tick async work that will append new events
+ * 
+ * @param state game state (mutable)
+ * @param event to process
+ */
 
 export function applyEvent(state: GameState, event: ServerEvent | FrontendEvent) {
   const applyFN = eventApply[event.kind];
@@ -135,4 +158,14 @@ export function applyAssertion(state: GameState, event: Assertion) {
 
 export function applyUnitDefinition(state: GameState, event: DefineUnit) {
   state.unitDefinitions[event.unit.type] = event.unit;
+}
+export function applyGameStageChange(state: GameState, event: GameStageChange) {
+  state.stage.mode = event.mode;
+}
+
+export function applyGameTick(state: GameState, event: GameTick) {
+  state.stage.tick++;
+
+  // TODO any work that has to happen once per tick
+  // eg: tick down cooldowns
 }

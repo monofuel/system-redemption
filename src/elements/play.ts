@@ -1,10 +1,16 @@
-import { ThreeSceneElement, UpdateLoop } from "./threeScene";
-import { Entity } from "../mesh/entity";
 import { PlanetElement } from "./planet";
 import { OrbitControls, MOUSE } from "three";
+import { ServerEvent, GameStage } from "../events";
+import { onTick } from "../events/serverContext";
+import { UpdateLoop } from "./threeScene";
+import { info } from "../logging";
 
 export class PlayELement extends PlanetElement {
+    private asyncEvents: ServerEvent[] = [];
     uiWrapper: HTMLSpanElement;
+
+    private singlePlayer: boolean = true;
+    private gameTickLoop?: UpdateLoop;
 
     constructor() {
         super();
@@ -20,6 +26,10 @@ export class PlayELement extends PlanetElement {
                 const start = Date.now();
                 const localLog = JSON.parse(localLogStr);
                 this.ctx.loadLog(localLog);
+                this.ctx.queue.post({
+                    kind: 'gameStageChange',
+                    mode: GameStage.ready
+                })
                 console.log(`LOADED FROM STORAGE ${Date.now() - start}ms`);
             } catch (err) {
                 console.error(err);
@@ -46,6 +56,38 @@ export class PlayELement extends PlanetElement {
         controls.target.set(0, 0, 0);
         controls.update();
         controls.maxPolarAngle = (10 * Math.PI) / 21;
+
+        this.ctx.queue.addListener('gameTick', () => {
+            if (this.singlePlayer) {
+                const events = this.onTick();
+                for (const e of events) {
+                    this.ctx.queue.post(e);
+                }
+            }
+        });
+
+        const { tps } = this.ctx.gameState.planet!;
+        if (this.singlePlayer) {
+            this.gameTickLoop = new UpdateLoop('gameTick', (delta) => {
+                if (this.ctx.gameState.stage.mode === GameStage.running) {
+                    info('game tick', { delta });
+                    this.ctx.queue.post({
+                        kind: 'gameTick'
+                    })
+                }
+                return this.ctx.gameState.stage.mode === GameStage.done;
+            }, tps);
+            this.gameTickLoop.start();
+        }
+
+        this.startMatch();
+    }
+
+    private startMatch() {
+        this.ctx.queue.post({
+            kind: 'gameStageChange',
+            mode: GameStage.running
+        });
     }
 
     private directToEditor(msg?: string) {
@@ -62,5 +104,24 @@ export class PlayELement extends PlanetElement {
         link.href = '/test/chunk/editor.html';
         popup.appendChild(link);
         this.uiWrapper.appendChild(popup);
+    }
+
+    // only needs to run for single player
+    // onTick should run after every game tick
+    // it should not be called when replaying the event log
+    // it does game tick work for appending new events
+    onTick(): ServerEvent[] {
+        const results: ServerEvent[] = [];
+        while (this.asyncEvents.length > 0) {
+            results.push(this.asyncEvents.shift()!);
+        }
+
+        onTick(this.ctx.gameState, this.asyncEvents);
+
+        return results;
+    }
+
+    addAsyncEvent(event: ServerEvent) {
+        this.asyncEvents.push(event);
     }
 }
