@@ -61,7 +61,6 @@ export class PlayELement extends PlanetElement {
             if (this.singlePlayer) {
                 const events = this.onTick();
                 for (const e of events) {
-                \
                     this.ctx.queue.post(e);
                 }
             }
