@@ -25,16 +25,11 @@ import { defaultUnitDefinitions } from '../test/eventLogs/units';
 import { newTank } from '../unit';
 import { Entity } from '../mesh/entity';
 import { Unit } from '../types/SR';
+import { PlanetElement } from './planet';
 
-export class MapEditorElement extends ThreeSceneElement {
-
-  private entities: { [key: string]: Entity } = {};
-  animationLoop: UpdateLoop;
+export class MapEditorElement extends PlanetElement {
 
   private controls: OrbitControls;
-  private opts = {
-    sunColor: 0xcccccc,
-  };
   constructor() {
     super();
 
@@ -66,34 +61,13 @@ export class MapEditorElement extends ThreeSceneElement {
 
     this.ctx.onGameEvent = this.onGameEvent.bind(this);
 
-    this.camera.position.set(20, 20, 20);
+    this.camera.position.set(-20, 20, -20);
     this.camera.lookAt(0, 0, 0);
-
-    this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
-    const sun = new DirectionalLight(0xffffff, 2);
-    sun.translateY(40);
-    sun.translateX(50);
-    sun.lookAt(0, 0, 0);
-    /*
-    const axesHelper = new AxesHelper();
-    axesHelper.position.y += 2 * 0.9;
-    this.scene.add(axesHelper);
-    */
-    this.scene.add(sun);
 
     this.ctx.queue.addListener(
       'editorMode',
       this.onEditorModeChange.bind(this),
     );
-    this.ctx.queue.addListener('newFiniteMap', () => {
-      for (const entity of Object.values(this.entities)) {
-        entity.remove();
-        this.entities = {};
-      }
-      this.loadMap();
-    });
-    this.ctx.queue.addListener('mapEdit', this.loadMap.bind(this));
-    this.ctx.queue.addListener('waterChange', this.loadMap.bind(this));
 
     this.oncontextmenu = (ev: MouseEvent) => {
       ev.preventDefault();
@@ -107,15 +81,6 @@ export class MapEditorElement extends ThreeSceneElement {
     this.onmousemove = (ev: MouseEvent) => {
       ev.preventDefault();
     };
-
-    this.onAssetsLoaded = () => {
-      this.ctx.queue.addListener('newUnit', (event) => {
-        this.addUnit(this.ctx.gameState.units[event.unit.uuid]);
-      });
-      for (const unit of Object.values(this.ctx.gameState.units)) {
-        this.addUnit(unit);
-      }
-    }
 
     const mouseUp = (ev: MouseEvent) => {
       const editorMode = this.ctx.gameState.editorMode;
@@ -188,16 +153,6 @@ export class MapEditorElement extends ThreeSceneElement {
     this.controls.target.set(0, 0, 0);
     this.controls.update();
     this.controls.maxPolarAngle = (10 * Math.PI) / 21;
-
-    this.loadMap();
-  }
-
-  private addUnit(unit: Unit) {
-    if (this.entities[unit.uuid]) {
-      this.entities[unit.uuid]
-    }
-    const entity = new Entity(this, unit);
-    this.entities[unit.uuid] = entity;
   }
 
   public onGameEvent() {
@@ -234,25 +189,6 @@ export class MapEditorElement extends ThreeSceneElement {
     } else {
       return null;
     }
-  }
-
-  private loadMap() {
-    const gameMap = this.ctx.gameState.planet!;
-    const { name, size, chunkSize } = gameMap;
-
-    info('loading map', { name: gameMap.name });
-    const existing = this.scene.getObjectByName(gameMap.name);
-    if (existing) {
-      this.scene.remove(existing);
-    }
-    const mapObj = getPlanetObject({
-      gameMap,
-    });
-    mapObj.rotateY(Math.PI);
-    const offset = (size * chunkSize) / 2;
-
-    mapObj.position.set(offset, 0, offset);
-    this.scene.add(mapObj);
   }
 }
 

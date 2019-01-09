@@ -95,6 +95,11 @@ $ui5: #8e7c6c;
   text-align: center;
   cursor: pointer;
 }
+
+a {
+  color: $ui3;
+}
+
 .ui-button:hover {
   border-color: $ui4;
   color: $ui4;

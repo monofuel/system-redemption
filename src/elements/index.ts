@@ -9,6 +9,8 @@ import { TileTestElement } from './tiles';
 import { LogTestElement } from './log-tests';
 import { ModelViewElement } from './modelView';
 import _ from 'lodash';
+import { getXRTestElement } from './xrTest';
+import { PlayELement } from './play';
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -31,6 +33,7 @@ export function loadElements() {
   window.customElements.define('map-editor', MapEditorElement);
   window.customElements.define('log-tests', LogTestElement);
   window.customElements.define('model-view', ModelViewElement);
+  window.customElements.define('play-sr', PlayELement);
 }
 
 // NB. loading elements asyncronously kind of sucks, but
@@ -39,6 +42,10 @@ export async function loadAsyncElements() {
   // TODO: with more elements, should load them in parallel
   window.customElements.define('land-controls', await getLandControlsElement());
   window.customElements.define('log-viewer', await getLogViewerElement());
+  const xrELement = await getXRTestElement();
+  if (xrELement) {
+    window.customElements.define('xr-test', xrELement);
+  }
 }
 
 export async function loadTemplate(name: string): Promise<HTMLTemplateElement> {

@@ -35,7 +35,8 @@ export class ThreeSceneElement extends HTMLElement {
 
     this.ctx = ctx || getParentContext(this);
 
-    this.renderer = new WebGLRenderer();
+    this.renderer = new WebGLRenderer({ alpha: true });
+    this.renderer.autoClear = false;
     const height = this.offsetHeight;
     const width = this.offsetWidth;
 

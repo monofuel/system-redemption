@@ -4389,6 +4389,11 @@ three-ziploader@^0.0.1:
   resolved "https://registry.yarnpkg.com/three-ziploader/-/three-ziploader-0.0.1.tgz#405a90c4e6bcddf50ff82a3f1f863c204d8cffb6"
   integrity sha1-QFqQxOa83fUP+Co/H4Y8IE2M/7Y=
 
+three.xr.js@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/three.xr.js/-/three.xr.js-0.1.11.tgz#69f88d7eaf444933c54cb8fb83c7a15b06242478"
+  integrity sha1-afiNfq9ESTPFTLj7g8ehWwYkJHg=
+
 three@^0.99.0:
   version "0.99.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.99.0.tgz#65711fda7a16501da83948121437d824df1fea19"

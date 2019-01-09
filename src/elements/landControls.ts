@@ -43,6 +43,9 @@ export async function getLandControlsElement() {
     }
 
     public onButtonPress(id: string) {
+      if (!id) {
+        return;
+      }
       const selection: EditorSelection = id as any;
       for (const button of Object.values(this.buttonMap)) {
         button.classList.remove('pressed');

@@ -55,6 +55,7 @@
     "ncp": "^2.0.0",
     "three": "^0.99.0",
     "three-ziploader": "^0.0.1",
+    "three.xr.js": "^0.1.11",
     "uuid": "^3.3.2",
     "zip-dir": "^1.0.2"
   }
