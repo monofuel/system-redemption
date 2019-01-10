@@ -44,7 +44,7 @@ export async function getXRTestElement() {
             }
 
             // @ts-ignore
-            this.renderer.xr = new THREE.WebXRManager(options, displays, this.renderer, this.camera, this.scene);
+            this.renderer.xr = new THREE.WebXRManager(options, displays, this.renderer, this.camera, this.scene, this.update.bind(this));
 
             // Listen when a session is started or stopped
             // @ts-ignore
@@ -61,7 +61,11 @@ export async function getXRTestElement() {
 
             // this.addVRButton();
             // this.addARButton();
+        }
 
+        update() {
+            // not sure if this is neccessary with setAnimationLoop also being used?
+            this.render();
         }
 
         sessionStarted() {

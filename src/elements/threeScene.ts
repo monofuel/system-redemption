@@ -52,8 +52,7 @@ export class ThreeSceneElement extends HTMLElement {
 
     this.dat = new dat.GUI();
     this.appendChild(this.renderer.domElement);
-    this.render();
-
+    this.renderer.setAnimationLoop(this.render.bind(this));
 
     this.perfText = document.createElement('ul');
     this.perfText.classList.add('hover-text');
@@ -116,7 +115,13 @@ export class ThreeSceneElement extends HTMLElement {
     this.renderer.setSize(this.offsetWidth, this.offsetHeight);
   }
 
-  private render() {
+  protected render() {
+
+    // @ts-ignore
+    if (this.renderer.xr && this.renderer.xr.sessionActive) {
+      return;
+    }
+
     if (this.isConnected) {
       this.resize();
       const start = Date.now();
@@ -128,7 +133,7 @@ export class ThreeSceneElement extends HTMLElement {
       }
       this.lastFrameTime = end;
     }
-    window.requestAnimationFrame(() => this.render());
+    // window.requestAnimationFrame(() => this.render());
   }
   private updateHoverText() {
 

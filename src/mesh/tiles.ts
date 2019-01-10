@@ -223,6 +223,21 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
       new Vector2(1, 1),
     ];
   }
+
+  // set a face at the bottom of the mesh
+  geom.faces.push(new Face3(7, 4, 5, undefined, undefined, 1));
+  geom.faces.push(new Face3(4, 7, 6, undefined, undefined, 1));
+  geom.faceVertexUvs[0][geom.faces.length - 1] = [
+    new Vector2(0, 0),
+    new Vector2(0, 1),
+    new Vector2(1, 1),
+  ];
+  geom.faceVertexUvs[0][geom.faces.length] = [
+    new Vector2(0, 0),
+    new Vector2(1, 0),
+    new Vector2(1, 1),
+  ];
+
   geom.computeFaceNormals();
   geom.computeFlatVertexNormals();
 
