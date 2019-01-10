@@ -92,10 +92,10 @@ export class PlanetElement extends ThreeSceneElement {
         const mapObj = getPlanetObject({
             gameMap,
         });
-        // mapObj.rotateY(Math.PI);
+        mapObj.rotateY(Math.PI);
         const offset = (gameMap.size * gameMap.chunkSize) / 2;
 
-        mapObj.position.set(-offset, 0, -offset);
+        mapObj.position.set(offset, 0, offset);
         this.scene.add(mapObj);
     }
 

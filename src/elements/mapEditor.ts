@@ -52,7 +52,7 @@ export class MapEditorElement extends PlanetElement {
 
     this.ctx.onGameEvent = this.onGameEvent.bind(this);
 
-    this.camera.position.set(-20, 20, -20);
+    // this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
 
     this.ctx.queue.addListener(
@@ -187,8 +187,8 @@ export function getDefaultEditorMap(): ServerEvent[] {
 
   const map = _.cloneDeep(getFlatMap(
     'foobar',
-    2,
-    8,
+    1,
+    4,
     1.8,
   ));
   map.grid[0][0].grid[0][0] = [1, 1, 1, 1];
