@@ -120,6 +120,14 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
+  // check if there is a unit already there
+  let { x, y } = event.unit;
+  for (const unit of Object.values(state.units)) {
+    if (unit.x === x && unit.y === y) {
+      throw new Error('unit already at location');
+    }
+  }
+
   state.units[event.unit.uuid] = _.cloneDeep(event.unit);
 }
 export function applyMoveUnit(state: GameState, event: MoveUnit) {
