@@ -10,6 +10,7 @@ import {
   EditorSelection,
   MapEditType,
   ServerEvent,
+  frontendEventList,
 } from '../events';
 import { getFlatMap } from '../planet/tiles';
 import { UpdateLoop } from './threeScene';
@@ -148,19 +149,14 @@ export class MapEditorElement extends PlanetElement {
 
   public onGameEvent() {
     const log = _.map(this.ctx.events, (e) => e.event);
-    const logStr = JSON.stringify(log);
+
+    // only include server events
+    const logStr = JSON.stringify(log.filter((e) => !frontendEventList.includes(e.kind)));
     localStorage.setItem('default-eventlog', logStr);
   }
 
-  // TODO landcontrol could probably just fire this event directly
   public onEditorModeChange(event: EditorMode) {
-    if (['raiseWater', 'lowerWater'].includes(event.selection)) {
-      this.ctx.queue.post({
-        kind: 'waterChange',
-        amount: event.selection === 'raiseWater' ? 0.2 : -0.2,
-      });
-      return;
-    }
+
   }
 
   private getTileAtRay(screenLoc: Vector2): { x: number; y: number } | null {

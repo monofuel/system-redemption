@@ -73,6 +73,11 @@ export async function getLandControlsElement() {
         this.ctx.onGameEvent = eventHandler;
       } else if (id === 'replay-reset') {
         this.ctx.loadLog(getDefaultEditorMap());
+      } else if (['raiseWater', 'lowerWater'].includes(id)) {
+        this.ctx.queue.post({
+          kind: 'waterChange',
+          amount: id === 'raiseWater' ? 0.2 : -0.2,
+        });
       } else {
         this.ctx.queue.post({
           kind: 'editorMode',
