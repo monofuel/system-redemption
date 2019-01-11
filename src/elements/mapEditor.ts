@@ -189,8 +189,22 @@ export class MapEditorElement extends PlanetElement {
 
 
       const vec = intersection.point.applyMatrix4(mapObj.matrix);
-      const x = Math.floor(vec.x);
-      const y = Math.floor(vec.z);
+      let x = Math.floor(vec.x);
+      let y = Math.floor(vec.z);
+      const maxSize = this.ctx.gameState.planet!.size * this.ctx.gameState.planet!.chunkSize;
+      if (x < 0) {
+        x = 0;
+      }
+      if (y < 0) {
+        y = 0;
+      }
+      if (x > maxSize - 1) {
+        x = maxSize - 1;
+      }
+      if (y > maxSize - 1) {
+        y = maxSize - 1;
+      }
+
       return { x, y };
     } else {
       return null;
