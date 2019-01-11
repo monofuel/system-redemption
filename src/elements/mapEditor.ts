@@ -93,7 +93,7 @@ export class MapEditorElement extends PlanetElement {
       }
 
       const loc = this.getTileAtRay(
-        mouseToVec(ev, this.offsetWidth, this.offsetHeight),
+        mouseToVec(ev, this.offsetWidth, this.offsetHeight), true
       );
 
       switch (editorMode.selection) {
@@ -159,7 +159,7 @@ export class MapEditorElement extends PlanetElement {
 
   }
 
-  private getTileAtRay(screenLoc: Vector2): { x: number; y: number } | null {
+  private getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): { x: number; y: number } | null {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(screenLoc, this.camera);
 
@@ -167,9 +167,28 @@ export class MapEditorElement extends PlanetElement {
     if (!mapObj) {
       return null;
     }
+
     const intersects = raycaster.intersectObjects(mapObj.children);
-    if (intersects.length > 0) {
-      const vec = intersects[0].point.applyMatrix4(mapObj.matrix);
+    let intersection = intersects.length > 0 ? intersects[0] : null;
+    // HACK for ignoring water, ignore transparent faces
+    if (ignoreWater) {
+      for (const inter of intersects) {
+        const face = inter.face;
+        if (face && face.materialIndex === 2) {
+          console.log(face.materialIndex);
+          intersection = null;
+          continue;
+        } else {
+          intersection = inter;
+          break;
+        }
+      }
+    }
+    if (intersection) {
+
+
+
+      const vec = intersection.point.applyMatrix4(mapObj.matrix);
       const x = Math.floor(vec.x);
       const y = Math.floor(vec.z);
       return { x, y };
