@@ -13,7 +13,6 @@ import {
   frontendEventList,
 } from '../events';
 import { getFlatMap } from '../planet/tiles';
-import { UpdateLoop } from './threeScene';
 import _ from 'lodash';
 import { defaultUnitDefinitions } from '../test/eventLogs/units';
 import { newTank } from '../unit';
@@ -24,15 +23,6 @@ export class MapEditorElement extends PlanetElement {
   private controls: OrbitControls;
   constructor() {
     super();
-
-    this.animationLoop = new UpdateLoop('animation', (delta: number): boolean => {
-      for (const entity of Object.values(this.entities)) {
-        entity.updateLoc();
-
-      }
-      return false;
-    }, 40);
-    this.animationLoop.start();
 
     const localLogStr = localStorage.getItem('default-eventlog');
 

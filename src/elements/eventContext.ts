@@ -27,7 +27,11 @@ export class EventContextElement extends HTMLElement {
 
   constructor({ autoStart }: EventContextOpts = { autoStart: true }) {
     super();
-    (window as any).ctx = this;
+    if ((window as any).ctx) {
+      (window as any).ctx = [(window as any).ctx, this];
+    } else {
+      (window as any).ctx = this;
+    }
     this.gameState = newGameState();
 
     this.queue = new EventQueue({

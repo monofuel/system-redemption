@@ -1,25 +1,26 @@
 import { ThreeSceneElement, UpdateLoop } from "./threeScene";
 import { EventContextElement } from "./eventContext";
-import { Entity } from "../mesh/entity";
 import { HemisphereLight, DirectionalLight } from "three";
 import { Unit } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject } from "../mesh/tiles";
+import { ECS } from "./components";
+import { unitGraphicalComp } from "./components/graphical";
 
 export class PlanetElement extends ThreeSceneElement {
-    protected entities: { [key: string]: Entity } = {};
-    protected animationLoop: UpdateLoop;
+    protected ecsLoop: UpdateLoop;
+
+    protected ecs: ECS;
+
     constructor(ctx?: EventContextElement) {
         super(ctx);
 
-        this.animationLoop = new UpdateLoop('animation', (delta: number): boolean => {
-            for (const entity of Object.values(this.entities)) {
-                entity.updateLoc();
-
-            }
+        this.ecs = new ECS(this);
+        this.ecsLoop = new UpdateLoop('ecs', (delta: number): boolean => {
+            this.ecs.update();
             return false;
         }, 40);
-        this.animationLoop.start();
+        this.ecsLoop.start();
 
         this.camera.position.set(7, 5, 7);
         this.camera.lookAt(0, 0, 0);
@@ -32,9 +33,8 @@ export class PlanetElement extends ThreeSceneElement {
         this.scene.add(sun);
 
         this.ctx.queue.addListener('newFiniteMap', (event) => {
-            for (const entity of Object.values(this.entities)) {
-                entity.remove();
-                this.entities = {};
+            for (const key in this.ecs.graphical) {
+                this.ecs.removeGraphicalComponent(key);
             }
             this.loadMap();
         })
@@ -61,11 +61,9 @@ export class PlanetElement extends ThreeSceneElement {
         }
     }
     private addUnit(unit: Unit) {
-        if (this.entities[unit.uuid]) {
-            this.entities[unit.uuid]
-        }
-        const entity = new Entity(this, unit);
-        this.entities[unit.uuid] = entity;
+
+        const comp = unitGraphicalComp(this, unit);
+        this.ecs.addGraphicalComponent(comp);
     }
 
     private loadMap() {

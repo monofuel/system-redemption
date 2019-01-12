@@ -1,16 +1,16 @@
 import { GameState, getUnitInfo } from "../events/state";
-import { Direction } from "../types/SR";
+import { Direction, Loc } from "../types/SR";
+import { getHash } from "./hash";
 
-type Loc = [number, number];
+
 
 // TODO
 export function pathfind(state: GameState, uuid: string, x: number, y: number): Direction[] {
     const { planet } = state;
     const { unit, unitDef } = getUnitInfo(state, uuid);
-    const start = hash([unit.x, unit.y]);
-    const dst = hash([x, y]);
+    const start = getHash([unit.x, unit.y]);
+    const dst = getHash([x, y]);
 
-    // TODO improve algorithm to not use so many hash strings as garbage
     const closed: { [key: string]: Loc } = {};
     const open: Loc[] = [[unit.x, unit.y]];
     const prevMap: { [key: string]: { prev: string, dir: Direction } } = {};
@@ -37,14 +37,4 @@ export function pathfind(state: GameState, uuid: string, x: number, y: number): 
     } else {
         return [];
     }
-}
-
-
-function hash(loc: Loc): string {
-    const [x, y] = loc;
-    return `${x}:${y}`;
-}
-function unHash(hash: string): Loc {
-    const split = hash.split(":");
-    return [Number(split[0]), Number(split[1])];
 }

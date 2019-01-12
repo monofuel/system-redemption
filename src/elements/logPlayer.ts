@@ -1,13 +1,8 @@
-import { ThreeSceneElement, UpdateLoop } from './threeScene';
-import { DirectionalLight, HemisphereLight, Mesh, Scene, Object3D, Vector2, Vector3, OrbitControls } from 'three';
-import { info } from '../logging';
-import { getPlanetObject } from '../mesh/tiles';
+
 import { EventContextElement } from './eventContext';
-import { Unit, UnitType, ModelType, GameColors } from '../types/SR';
-import { Asset, coloredModel } from '../mesh/models';
-import { getTile } from '../planet';
-import { Entity } from '../mesh/entity';
+
 import { PlanetElement } from './planet';
+import { OrbitControls } from 'three';
 
 export class LogPlayerElement extends PlanetElement {
 

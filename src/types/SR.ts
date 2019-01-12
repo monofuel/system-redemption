@@ -12,6 +12,7 @@ export enum GameColors {
         yellow = 'yellow'
 }
 
+export type Loc = [number, number];
 export type Direction = 'N' | 'S' | 'E' | 'W';
 
 export type Layer = 'ground' | 'air' | 'water';
