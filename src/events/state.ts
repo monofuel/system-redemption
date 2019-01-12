@@ -15,9 +15,10 @@ import {
   GameStageChange,
   GameTick,
   AssertFail,
+  HlightUpdate,
 } from '.';
 import _ from 'lodash'
-import { FiniteMap, Unit, UnitType, UnitDefinition } from '../types/SR';
+import { FiniteMap, Unit, UnitType, UnitDefinition, Loc } from '../types/SR';
 import { getTile } from '../planet';
 
 export interface GameState {
@@ -29,6 +30,7 @@ export interface GameState {
     tick: number;
     mode: GameStage;
   }
+  hilight?: Loc;
 }
 const eventApply: Record<
   EventKinds,
@@ -46,6 +48,7 @@ const eventApply: Record<
   gameTick: applyGameTick,
   assertion: applyAssertion,
   assertFail: applyAssertFail,
+  hilightUpdate: applyHilightUpdate
 };
 
 export function newGameState(): GameState {
@@ -201,6 +204,10 @@ export function applyGameTick(state: GameState, event: GameTick) {
       unit.moveCooldown--;
     }
   }
+}
+
+export function applyHilightUpdate(state: GameState, event: HlightUpdate) {
+  state.hilight = event.loc;
 }
 
 export function getUnitInfo(state: GameState, uuid: string) {

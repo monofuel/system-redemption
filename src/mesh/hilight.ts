@@ -2,35 +2,36 @@ import { DoubleSide, Face3, FrontSide, Geometry, Mesh, MeshBasicMaterial, MeshPh
 import { TileHeights } from '../types/SR';
 
 interface HilightOpts {
-    corners: TileHeights;
-    color: number;
-    cornerColors?: [number, number, number, number];
+  corners: TileHeights;
+  color: number;
+  cornerColors?: [number, number, number, number];
 
-    zScale?: number;
+  zScale: number;
 }
 
-export function getHilightMesh({ corners, color, cornerColors, zScale = 0.4}: HilightOpts): Mesh {
-    cornerColors = cornerColors || [color, color, color, color];
-    const geom = new Geometry();
-    const heightOffset = 0.01;
-    geom.vertices.push(
-        new Vector3(0, 0, heightOffset + corners[0] * zScale), // 0
-        new Vector3(0, 1, heightOffset + corners[1] *  zScale), // 1
-        new Vector3(1, 0, heightOffset + corners[2] *  zScale), // 2
-        new Vector3(1, 1, heightOffset + corners[3] * zScale), // 3
-        );
+export function getHilightMesh({ corners, color, cornerColors }: HilightOpts): Mesh {
+  cornerColors = cornerColors || [color, color, color, color];
+  const geom = new Geometry();
+  const heightOffset = 0.01;
+  geom.vertices.push(
+    new Vector3(0, 0, heightOffset), // 0
+    new Vector3(0, 1, heightOffset), // 1
+    new Vector3(1, 0, heightOffset), // 2
+    new Vector3(1, 1, heightOffset), // 3
+  );
 
-    geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
-    geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+  geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
+  geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
 
-    const hilightMaterial = new MeshBasicMaterial({
-        side: DoubleSide,
-        color,
-        flatShading: true,
-      });
-    geom.rotateX(-Math.PI / 2);
-    const mesh = new Mesh(geom, [hilightMaterial]);
-    return mesh;
+  const hilightMaterial = new MeshBasicMaterial({
+    side: DoubleSide,
+    color,
+    flatShading: true,
+  });
+  geom.rotateX(-Math.PI / 2);
+  geom.translate(-0.5, 0, 0.5);
+  const mesh = new Mesh(geom, [hilightMaterial]);
+  return mesh;
 }
 
 /*

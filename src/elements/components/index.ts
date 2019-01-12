@@ -2,7 +2,7 @@ import { GraphicalComponent, updateGraphicalComponent, dispose } from "./graphic
 import { ThreeSceneElement } from "../threeScene";
 
 export interface Component {
-    uuid: string;
+    key: string;
 }
 
 export class ECS {
@@ -13,14 +13,17 @@ export class ECS {
     }
 
     addGraphicalComponent(comp: GraphicalComponent) {
-        if (this.graphical[comp.uuid]) {
-            throw new Error(`component already exists ${comp.uuid}`);
+        if (this.graphical[comp.key]) {
+            this.removeGraphicalComponent(comp.key);
         }
-        this.graphical[comp.uuid] = comp;
+        this.graphical[comp.key] = comp;
     }
     removeGraphicalComponent(key: string) {
         const comp = this.graphical[key];
-        dispose(comp);
+        if (!comp) {
+            return;
+        }
+        dispose(this.sceneElement, comp);
         delete this.graphical[key];
     }
 

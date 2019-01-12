@@ -5,7 +5,7 @@ import { Unit } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject } from "../mesh/tiles";
 import { ECS } from "./components";
-import { unitGraphicalComp } from "./components/graphical";
+import { unitGraphicalComp, hilightGraphicalComp } from "./components/graphical";
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
@@ -50,6 +50,15 @@ export class PlanetElement extends ThreeSceneElement {
             console.log(this.ctx.gameState.units[event.uuid]);
         })
 
+        this.ctx.queue.addListener('hilightUpdate', (event) => {
+            const key = 'hilight';
+            if (!event.loc) {
+                this.ecs.removeGraphicalComponent(key);
+            } else {
+                const comp = hilightGraphicalComp(this, key, event.loc, event.corner);
+                this.ecs.addGraphicalComponent(comp);
+            }
+        })
 
         this.onAssetsLoaded = () => {
             this.ctx.queue.addListener('newUnit', (event) => {

@@ -1,4 +1,4 @@
-import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition, GameColors, UnitType } from '../types/SR';
+import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition, GameColors, UnitType, Loc } from '../types/SR';
 import { GameState } from './state';
 
 // ----------------------
@@ -23,14 +23,21 @@ export interface ToggleLogViewer {
   state: 'open' | 'closed';
 }
 
+export interface HlightUpdate {
+  kind: 'hilightUpdate',
+  loc?: Loc
+  corner?: Array<0 | 1 | 2 | 3>;
+}
+
 export interface FrontendEvents {
   editorMode: EditorMode;
   toggleLogViewer: ToggleLogViewer;
+  hilightUpdate: HlightUpdate;
 }
 export type FrontendEventKinds = keyof FrontendEvents;
 export type FrontendEvent = FrontendEvents[FrontendEventKinds];
 
-export const frontendEventList = ['editorMode', 'toggleLogViewer'];
+export const frontendEventList = ['editorMode', 'toggleLogViewer', 'hilightUpdate'];
 
 // ----------------------
 // server events
