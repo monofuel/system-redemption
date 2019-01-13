@@ -301,11 +301,11 @@ export class MapEditorElement extends PlanetElement {
       if (y < 0) {
         vec.z = 0;
       }
-      if (x > maxSize - 1) {
-        vec.x = maxSize - 1;
+      if (x > maxSize - 0.002) {
+        vec.x = maxSize - 0.002;
       }
-      if (y > maxSize - 1) {
-        vec.z = maxSize - 1;
+      if (y > maxSize - 0.002) {
+        vec.z = maxSize - 0.002;
       }
       return vec;
     } else {

@@ -39,7 +39,7 @@ export function getFlatMap(
     cliffColor: 0x362e26,
     waterColor: 0x53b0e2,
     sunColor: 0xcccccc,
-    zScale: 0.4,
+    zScale: 0.2,
     size,
     chunkSize,
     waterHeight,

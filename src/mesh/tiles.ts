@@ -185,11 +185,10 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
     new Vector3(1, 1, corners[3] * zScale), // 3
   );
 
-  // 0 - 2
-  // 1 - 3
-  const lDelta = corners[0] - corners[2];
-  const rDelta = corners[1] - corners[3];
-  if (lDelta > rDelta) {
+  // 1 - 2
+  // 0 - 3
+
+  if (corners[0] - corners[3] === 0) {
     // left handed
     geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
     geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
