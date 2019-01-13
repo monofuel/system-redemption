@@ -152,8 +152,19 @@ function getTileNormal(corners: TileHeights, zScale: number): Vector3 {
         new Vector3(1, 1, corners[3] * zScale), // 3
     );
 
-    geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
-    geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+    // 0 - 2
+    // 1 - 3
+    const lDelta = corners[0] - corners[2];
+    const rDelta = corners[1] - corners[3];
+    if (lDelta > rDelta) {
+        // left handed
+        geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
+        geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+    } else {
+        // right handed
+        geom.faces.push(new Face3(1, 0, 2, undefined, undefined, 0));
+        geom.faces.push(new Face3(2, 3, 1, undefined, undefined, 0));
+    }
     geom.computeFaceNormals();
 
     const normal1 = geom.faces[0].normal;
