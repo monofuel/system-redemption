@@ -54,7 +54,7 @@ export function getHilightMesh({ color, cornerColors }: HilightOpts): Mesh {
 
 
 export function hilightCornerGeom() {
-  const width = 0.3;
+  const width = 0.2;
   const height = 0.05;
 
   const geom = new Geometry();

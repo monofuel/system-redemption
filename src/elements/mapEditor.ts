@@ -93,8 +93,8 @@ export class MapEditorElement extends PlanetElement {
 
         const deltaX = vec.x - loc[0];
         const deltaY = vec.z - loc[1];
-        const lb = 0.30;
-        const ub = 0.70;
+        const lb = 0.20;
+        const ub = 1 - lb;
         if (deltaX < lb) {
           if (deltaY < lb) {
             corners.push(3);
