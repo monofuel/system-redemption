@@ -1,5 +1,5 @@
 import { PlanetElement } from "./planet";
-import { OrbitControls, MOUSE, Vector2 } from "three";
+import { OrbitControls, MOUSE, Vector2, Vector3 } from "three";
 import { ServerEvent, GameStage } from "../events";
 import { onTick } from "../events/serverContext";
 import { UpdateLoop } from "./threeScene";
@@ -95,6 +95,13 @@ export class PlayELement extends PlanetElement {
         })
         this.addEventListener('mouseup', (e: MouseEvent) => {
             if (e.button === 0) {
+                if (this.dragStart) {
+                    const uuids = this.getSelectedUnits(this.dragStart, e);
+                    this.ctx.queue.post({
+                        kind: 'selectUnits',
+                        uuids
+                    });
+                }
                 delete this.dragStart;
                 delete this.dragCurrent;
             }
@@ -187,6 +194,39 @@ export class PlayELement extends PlanetElement {
         this.HUDContext.strokeRect(minX, minY, maxX - minX, maxY - minY);
 
     }
+
+    private getSelectedUnits(dragStart: MouseEvent, dragEnd: MouseEvent) {
+        const startVec = new Vector2();
+        startVec.x = (dragStart.clientX / this.HUDPanel.width) * 2 - 1;
+        startVec.y = -(dragStart.clientY / this.HUDPanel.height) * 2 + 1;
+
+        const endVec = new Vector2();
+        endVec.x = (dragEnd.clientX / this.HUDPanel.width) * 2 - 1;
+        endVec.y = -(dragEnd.clientY / this.HUDPanel.height) * 2 + 1;
+
+        const maxX = Math.max(startVec.x, endVec.x);
+        const minX = Math.min(startVec.x, endVec.x);
+        const maxY = Math.max(startVec.y, endVec.y);
+        const minY = Math.min(startVec.y, endVec.y);
+
+        const unitList: string[] = [];
+        for (const key in this.ecs.graphical) {
+            const comp = this.ecs.graphical[key];
+            var vector = this.toScreenPosition(comp.mesh);
+            if (vector.x < maxX && vector.x > minX && vector.y > minY && vector.y < maxY) {
+                unitList.push(comp.key);
+            }
+        }
+        return unitList;
+    }
+
+    toScreenPosition(obj: THREE.Object3D): THREE.Vector3 {
+        const vector = new Vector3();
+        obj.updateMatrixWorld(false);
+        vector.setFromMatrixPosition(obj.matrixWorld);
+        vector.project(this.camera);
+        return vector;
+    };
 
     private directToEditor(msg?: string) {
         const popup = document.createElement('div');

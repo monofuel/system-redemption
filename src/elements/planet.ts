@@ -5,7 +5,7 @@ import { Unit } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
 import { ECS } from "./components";
-import { unitGraphicalComp, hilightGraphicalComp } from "./components/graphical";
+import { unitGraphicalComp, hilightGraphicalComp, GraphicalType } from "./components/graphical";
 import { getChunkForTile } from "../planet";
 import { getHilightMesh } from "../mesh/hilight";
 
@@ -76,19 +76,25 @@ export class PlanetElement extends ThreeSceneElement {
             const hilightColor = 0xba2b0e;
 
             for (const uuid of uuids) {
-                const unit = this.ctx.gameState.units[uuid];
-                const comp = this.ecs.graphical[unit.uuid];
-                if (!comp) {
+                const comp = this.ecs.graphical[uuid];
+                if (!comp || comp.type !== GraphicalType.unit) {
                     continue;
                 }
                 const hilight = getHilightMesh({
                     zScale: planet.zScale,
                     color: hilightColor,
                 })
-
+                hilight.name = 'selection';
                 comp.mesh.add(hilight);
             }
 
+            for (const uuid in this.ecs.graphical) {
+                const comp = this.ecs.graphical[uuid];
+                const selection = comp.mesh.getObjectByName('selection');
+                if (selection && !event.uuids.includes(comp.key)) {
+                    comp.mesh.remove(selection);
+                }
+            }
         })
 
         this.onAssetsLoaded = () => {
