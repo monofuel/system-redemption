@@ -317,8 +317,8 @@ export function getDefaultEditorMap(): ServerEvent[] {
 
   const map = _.cloneDeep(getFlatMap(
     'foobar',
-    1,
     4,
+    8,
     1.8,
   ));
   map.grid[0][0].grid[0][0] = [1, 1, 1, 1];

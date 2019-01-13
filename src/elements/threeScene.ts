@@ -23,6 +23,7 @@ export class ThreeSceneElement extends HTMLElement {
   public lastFrameTime: number = 0;
 
   protected perfText: HTMLUListElement;
+  protected frameRateLi: HTMLLIElement;
   protected frameTimeLi: HTMLLIElement;
   protected frameDeltaLi: HTMLLIElement;
 
@@ -56,10 +57,12 @@ export class ThreeSceneElement extends HTMLElement {
 
     this.perfText = document.createElement('ul');
     this.perfText.classList.add('hover-text');
+    this.frameRateLi = document.createElement('li');
     this.frameTimeLi = document.createElement('li');
     this.frameDeltaLi = document.createElement('li');
+    this.perfText.appendChild(this.frameRateLi);
     this.perfText.appendChild(this.frameTimeLi);
-    this.perfText.append(this.frameDeltaLi);
+    this.perfText.appendChild(this.frameDeltaLi);
     const perfFolder = this.dat.addFolder('Performance');
     (perfFolder as any).__ul.appendChild(this.perfText);
 
@@ -137,9 +140,10 @@ export class ThreeSceneElement extends HTMLElement {
   }
   private updateHoverText() {
 
-
+    const delta = this.frameDeltaStats.get();
+    this.frameRateLi.innerText = `FrameRate: ${(1000 / delta).toFixed(3)}fps`;
     this.frameTimeLi.innerText = `FrameTime: ${this.frameTimeStats.get().toFixed(3)}ms`;
-    this.frameDeltaLi.innerText = `FrameDelta: ${this.frameDeltaStats.get().toFixed(3)}ms`;
+    this.frameDeltaLi.innerText = `FrameDelta: ${delta.toFixed(3)}ms`;
 
   }
 }
