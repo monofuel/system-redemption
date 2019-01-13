@@ -1,4 +1,4 @@
-import { DoubleSide, Face3, FrontSide, Geometry, Mesh, MeshBasicMaterial, MeshPhongMaterial, Vector3, MeshLambertMaterial, BackSide } from 'three';
+import { DoubleSide, Face3, FrontSide, Geometry, Mesh, MeshBasicMaterial, MeshPhongMaterial, Vector3, MeshLambertMaterial, BackSide, BufferGeometry } from 'three';
 import { TileHeights } from '../types/SR';
 
 interface HilightOpts {
@@ -48,7 +48,9 @@ export function getHilightMesh({ color, cornerColors }: HilightOpts): Mesh {
   const hilightMaterial =
     geom.rotateX(-Math.PI / 2);
   geom.translate(-0.5, heightOffset, 0.5);
-  const mesh = new Mesh(geom, materials);
+  const bufferGeom = new BufferGeometry();
+  bufferGeom.fromGeometry(geom);
+  const mesh = new Mesh(bufferGeom, materials);
   return mesh;
 }
 

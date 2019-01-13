@@ -5,6 +5,7 @@ export interface Component {
     key: string;
 }
 
+// TODO consider pooling for components
 export class ECS {
     private sceneElement: ThreeSceneElement;
     public graphical: { [key: string]: GraphicalComponent } = {};
