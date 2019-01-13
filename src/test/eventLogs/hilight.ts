@@ -51,9 +51,9 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
                             ],
                             [
                                 [
+                                    3,
                                     2,
-                                    2,
-                                    2,
+                                    3,
                                     2
                                 ],
                                 [
@@ -512,7 +512,6 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
         loc: [2, 2],
         corner: [0, 1, 2, 3]
     },
-
     {
         kind: 'hilightUpdate',
         loc: [2, 1],
@@ -527,6 +526,11 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
         kind: 'hilightUpdate',
         loc: [3, 1],
         corner: [1, 2]
+    },
+    {
+        kind: 'hilightUpdate',
+        loc: [0, 1],
+        corner: [2, 1]
     },
     {
         kind: 'hilightUpdate',

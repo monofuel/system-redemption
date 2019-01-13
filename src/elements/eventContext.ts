@@ -103,8 +103,8 @@ export class EventContextElement extends HTMLElement {
         this.queue.flushAll();
         // TODO use TPS to rate limit with game tick events
         // TODO figure out how to handle replays with game ticks and normal events
-        if (event.kind !== 'gameTick' && realtime) {
-          await delay(500);
+        if (event.kind !== 'gameTick' && event.kind !== 'defineUnit' && realtime) {
+          await delay(400);
         }
       }
       info('completed event log', { title });
