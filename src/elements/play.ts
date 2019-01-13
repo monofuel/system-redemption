@@ -1,5 +1,5 @@
 import { PlanetElement } from "./planet";
-import { OrbitControls, MOUSE } from "three";
+import { OrbitControls, MOUSE, Vector2 } from "three";
 import { ServerEvent, GameStage } from "../events";
 import { onTick } from "../events/serverContext";
 import { UpdateLoop } from "./threeScene";
@@ -9,11 +9,34 @@ export class PlayELement extends PlanetElement {
     private asyncEvents: ServerEvent[] = [];
     uiWrapper: HTMLSpanElement;
 
+    private HUDPanel: HTMLCanvasElement;
+    private HUDContext: CanvasRenderingContext2D;
+
     private singlePlayer: boolean = false;
     private gameTickLoop?: UpdateLoop;
 
+    private dragStart?: MouseEvent;
+    private dragCurrent?: MouseEvent;
+
     constructor() {
         super();
+
+        this.HUDPanel = document.createElement('canvas');
+        this.HUDPanel.classList.add("HUDPanel");
+        this.appendChild(this.HUDPanel);
+        this.HUDContext = this.HUDPanel.getContext('2d')!;
+
+        this.afterRender = () => {
+            this.drawSelectionBox();
+            if (
+                this.HUDPanel.width === this.offsetWidth &&
+                this.HUDPanel.height === this.offsetHeight
+            ) {
+                return;
+            }
+            this.HUDPanel.width = window.innerWidth;
+            this.HUDPanel.height = window.innerHeight;
+        }
 
         this.uiWrapper = document.createElement('span');
         this.uiWrapper.classList.add('ui-wrapper');
@@ -56,6 +79,33 @@ export class PlayELement extends PlanetElement {
         controls.target.set(0, 0, 0);
         controls.update();
         controls.maxPolarAngle = (10 * Math.PI) / 21;
+
+        this.addEventListener('mousedown', (e: MouseEvent) => {
+            if (e.button === 0) {
+                this.dragStart = e;
+                this.dragCurrent = e;
+            } else {
+                delete this.dragStart;
+                delete this.dragCurrent;
+            }
+        });
+
+        this.addEventListener('mousemove', (e: MouseEvent) => {
+            this.dragCurrent = e;
+        })
+        this.addEventListener('mouseup', (e: MouseEvent) => {
+            if (e.button === 0) {
+                delete this.dragStart;
+                delete this.dragCurrent;
+            }
+        });
+        this.addEventListener('mouseleave', (e: MouseEvent) => {
+            if (e.button === 0) {
+
+                delete this.dragStart;
+                delete this.dragCurrent;
+            }
+        })
 
         this.ctx.queue.addListener('gameTick', () => {
             if (this.singlePlayer) {
@@ -103,6 +153,39 @@ export class PlayELement extends PlanetElement {
             kind: 'gameStageChange',
             mode: GameStage.running
         });
+    }
+
+    private drawSelectionBox() {
+        this.HUDContext.clearRect(0, 0, this.HUDPanel.width, this.HUDPanel.height);
+        if (!this.dragCurrent || !this.dragStart) {
+            return;
+        }
+
+        const startVec = new Vector2();
+        startVec.x = (this.dragStart.clientX / this.HUDPanel.width) * 2 - 1;
+        startVec.y = -(this.dragStart.clientY / this.HUDPanel.height) * 2 + 1;
+
+        const curVec = new Vector2();
+        curVec.x = (this.dragCurrent.clientX / this.HUDPanel.width) * 2 - 1;
+        curVec.y = -(this.dragCurrent.clientY / this.HUDPanel.height) * 2 + 1;
+
+        const widthHalf = 0.5 * this.HUDPanel.width;
+        const heightHalf = 0.5 * this.HUDPanel.height;
+
+        startVec.x = (startVec.x * widthHalf) + widthHalf;
+        startVec.y = -(startVec.y * heightHalf) + heightHalf;
+
+        curVec.x = (curVec.x * widthHalf) + widthHalf;
+        curVec.y = - (curVec.y * heightHalf) + heightHalf;
+        const maxX = Math.round(Math.max(startVec.x, curVec.x));
+        const minX = Math.round(Math.min(startVec.x, curVec.x));
+        const maxY = Math.round(Math.max(startVec.y, curVec.y));
+        const minY = Math.round(Math.min(startVec.y, curVec.y));
+
+        this.HUDContext.strokeStyle = '#7CFC00';
+        this.HUDContext.lineWidth = 1;
+        this.HUDContext.strokeRect(minX, minY, maxX - minX, maxY - minY);
+
     }
 
     private directToEditor(msg?: string) {

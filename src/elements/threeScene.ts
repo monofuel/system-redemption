@@ -27,6 +27,8 @@ export class ThreeSceneElement extends HTMLElement {
   protected frameTimeLi: HTMLLIElement;
   protected frameDeltaLi: HTMLLIElement;
 
+  protected afterRender?: () => void;
+
   // assets is null until onAssetsLoaded is called
   public assets!: Record<ModelType, Asset>;
   public onAssetsLoaded?: () => void;
@@ -135,6 +137,9 @@ export class ThreeSceneElement extends HTMLElement {
         this.frameDeltaStats.add(end - this.lastFrameTime);
       }
       this.lastFrameTime = end;
+      if (this.afterRender) {
+        this.afterRender();
+      }
     }
     // window.requestAnimationFrame(() => this.render());
   }
