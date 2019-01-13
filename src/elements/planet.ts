@@ -23,7 +23,7 @@ export class PlanetElement extends ThreeSceneElement {
         }, 40);
         this.ecsLoop.start();
 
-        this.camera.position.set(7, 5, 7);
+        this.camera.position.set(6, 9, 6);
         this.camera.lookAt(0, 0, 0);
         this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
 
