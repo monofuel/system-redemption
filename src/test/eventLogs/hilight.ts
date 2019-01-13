@@ -37,34 +37,8 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
                                     2
                                 ],
                                 [
-                                    2,
-                                    2,
-                                    2,
-                                    2
-                                ],
-                                [
-                                    2,
-                                    2,
-                                    2,
-                                    2
-                                ]
-                            ],
-                            [
-                                [
-                                    2,
-                                    2,
-                                    2,
-                                    2
-                                ],
-                                [
-                                    2,
-                                    2,
-                                    2,
-                                    2
-                                ],
-                                [
-                                    2,
-                                    2,
+                                    3,
+                                    3,
                                     2,
                                     2
                                 ],
@@ -91,8 +65,34 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
                                 [
                                     2,
                                     2,
+                                    3,
+                                    3
+                                ],
+                                [
+                                    2,
+                                    3,
+                                    2,
+                                    3
+                                ]
+                            ],
+                            [
+                                [
+                                    2,
+                                    2,
                                     2,
                                     2
+                                ],
+                                [
+                                    3,
+                                    2,
+                                    3,
+                                    3
+                                ],
+                                [
+                                    3,
+                                    3,
+                                    3,
+                                    3
                                 ],
                                 [
                                     2,
@@ -467,6 +467,7 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
 
     },
     ...defaultUnitDefinitions,
+    /*
     {
         kind: 'hilightUpdate',
         loc: [1, 1]
@@ -505,9 +506,33 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
         loc: [2, 2],
         corner: [0, 1, 3]
     },
+    */
     {
         kind: 'hilightUpdate',
         loc: [2, 2],
         corner: [0, 1, 2, 3]
+    },
+
+    {
+        kind: 'hilightUpdate',
+        loc: [2, 1],
+        corner: [0, 1]
+    },
+    {
+        kind: 'hilightUpdate',
+        loc: [2, 0],
+        corner: [2, 3]
+    },
+    {
+        kind: 'hilightUpdate',
+        loc: [3, 1],
+        corner: [0, 3]
+    },
+    {
+        kind: 'hilightUpdate',
+        loc: [1, 2],
+        corner: [0, 1, 3]
     }
+
+
 ]

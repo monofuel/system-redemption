@@ -1,9 +1,10 @@
 import { Component } from ".";
 import { ThreeSceneElement } from "../threeScene";
-import { Mesh, Vector3, Object3D } from "three";
-import { Unit, GameColors, ModelType, Loc, FiniteMap } from "../../types/SR";
+import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4, Vertex } from "three";
+import { Unit, GameColors, ModelType, Loc, FiniteMap, TileHeights } from "../../types/SR";
 import { Asset, coloredModel } from "../../mesh/models";
 import { getTile } from "../../planet";
+import _ from 'lodash';
 import { getHilightMesh } from "../../mesh/hilight";
 
 export enum GraphicalType {
@@ -77,13 +78,26 @@ export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: strin
     const planet = sceneElement.ctx.gameState.planet!;
     const tile = getTile(planet, loc[0], loc[1]);
 
+    const hilightColor = 0xf4eb42;
+    const defaultColor = 0x555555;
+
+    let cornerColors: [number, number, number, number] | undefined;
+    if (corners) {
+        cornerColors = [
+            corners.includes(0) ? hilightColor : defaultColor,
+            corners.includes(1) ? hilightColor : defaultColor,
+            corners.includes(2) ? hilightColor : defaultColor,
+            corners.includes(3) ? hilightColor : defaultColor,
+        ]
+    }
+
     // TODO cornerColors
     const mesh = getHilightMesh({
-        corners: tile,
         zScale: planet.zScale,
-        color: 0x555555
+        color: defaultColor,
+        cornerColors
     });
-
+    mesh.name = 'hilight';
     return {
         key,
         type: GraphicalType.hilight,
@@ -110,10 +124,62 @@ export function randomColor(): GameColors {
 function placeOnMap(map: FiniteMap, obj: Object3D, x: number, y: number) {
 
     const tile = getTile(map, x, y);
-    const height = (tile[0] + tile[1] + tile[2] + tile[3]) / 4;
+    const avgHeight = (tile[0] + tile[1] + tile[2] + tile[3]) / 4;
+    const maxHeight = _.max(tile)!;
 
-    // TODO movement animations
+    const normal = getTileNormal(tile, map.zScale);
+    const up = new Vector3(0, 0, 1);
+
+    if (up.equals(normal)) {
+        obj.position.y = maxHeight * map.zScale;
+    } else {
+        obj.position.y = avgHeight * map.zScale;
+    }
+
     obj.position.x = x + 0.5;
-    obj.position.y = height * map.zScale;
     obj.position.z = y + 0.5;
+
+    orientToNormal(normal, obj);
+}
+
+function getTileNormal(corners: TileHeights, zScale: number): Vector3 {
+    const geom = new Geometry();
+
+    geom.vertices.push(
+        new Vector3(0, 0, corners[0] * zScale), // 0
+        new Vector3(0, 1, corners[1] * zScale), // 1
+        new Vector3(1, 0, corners[2] * zScale), // 2
+        new Vector3(1, 1, corners[3] * zScale), // 3
+    );
+
+    geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
+    geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+    geom.computeFaceNormals();
+
+    const normal1 = geom.faces[0].normal;
+    const normal2 = geom.faces[1].normal;
+    const up = new Vector3(0, 0, 1);
+    if (normal1.equals(up) || normal2.equals(up)) {
+        return up;
+    }
+
+    return normal1.clone().add(normal2).divide(new Vector3(2, 2, 2));
+}
+
+function orientToNormal(vec: Vector3, obj: Object3D) {
+
+    const up = new Vector3(0, 0, 1);
+
+    let axis = new Vector3(1, 0, 0);
+    if (vec.z !== -1 && vec.z !== 1) {
+        axis = up.clone().cross(vec).normalize();
+        // not sure why this is needed, but it works
+        axis = new Vector3(axis.y, axis.z, axis.x);
+    }
+
+    const radians = Math.acos(vec.dot(up));
+    const mat = new Matrix4().makeRotationAxis(axis, radians);
+
+    obj.rotation.setFromRotationMatrix(mat);
+
 }
