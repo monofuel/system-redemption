@@ -256,69 +256,6 @@ export class MapEditorElement extends PlanetElement {
   public onEditorModeChange(event: EditorMode) {
 
   }
-
-  private getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): { x: number; y: number } | null {
-    const vec = this.getPointAtRay(screenLoc, ignoreWater);
-    if (!vec) {
-      return null;
-    }
-    let x = Math.floor(vec.x);
-    let y = Math.floor(vec.z);
-    return { x, y };
-
-  }
-
-
-  private getPointAtRay(screenLoc: Vector2, ignoreWater: boolean): Vector3 | null {
-    const raycaster = new Raycaster();
-    raycaster.setFromCamera(screenLoc, this.camera);
-
-    const mapObj = this.scene.getObjectByName('foobar');
-    if (!mapObj) {
-      return null;
-    }
-
-    const intersects = raycaster.intersectObjects(mapObj.children);
-    let intersection = intersects.length > 0 ? intersects[0] : null;
-    // HACK for ignoring water, ignore transparent faces
-    if (ignoreWater) {
-      for (const inter of intersects) {
-        const face = inter.face;
-        if (face && face.materialIndex === 2) {
-          intersection = null;
-          continue;
-        } else {
-          intersection = inter;
-          break;
-        }
-      }
-    }
-    if (intersection) {
-
-
-
-      const vec = intersection.point.applyMatrix4(mapObj.matrix);
-      // fudge the number over a little to prevent flickering over cliffs
-      vec.add(new Vector3(0.001, 0.001, 0.001));
-      let { x, y } = vec;
-      const maxSize = this.ctx.gameState.planet!.size * this.ctx.gameState.planet!.chunkSize;
-      if (x < 0) {
-        vec.x = 0;
-      }
-      if (y < 0) {
-        vec.z = 0;
-      }
-      if (x > maxSize - 0.002) {
-        vec.x = maxSize - 0.002;
-      }
-      if (y > maxSize - 0.002) {
-        vec.z = maxSize - 0.002;
-      }
-      return vec;
-    } else {
-      return null;
-    }
-  }
 }
 export function getDefaultEditorMap(size: number = 4, chunkSize: number = 8): ServerEvent[] {
 

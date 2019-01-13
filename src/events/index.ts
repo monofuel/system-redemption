@@ -88,7 +88,7 @@ export interface MoveUnit {
 }
 export interface SetDestination {
   kind: 'setDestination';
-  uuid: string;
+  uuids: string[];
   dest: Loc;
 }
 

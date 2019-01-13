@@ -1,7 +1,7 @@
 import { ThreeSceneElement, UpdateLoop } from "./threeScene";
 import { EventContextElement } from "./eventContext";
-import { HemisphereLight, DirectionalLight } from "three";
-import { Unit } from "../types/SR";
+import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3 } from "three";
+import { Unit, Loc } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
 import { ECS } from "./components";
@@ -110,6 +110,68 @@ export class PlanetElement extends ThreeSceneElement {
 
         const comp = unitGraphicalComp(this, unit);
         this.ecs.addGraphicalComponent(comp);
+    }
+
+    protected getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): Loc | null {
+        const vec = this.getPointAtRay(screenLoc, ignoreWater);
+        if (!vec) {
+            return null;
+        }
+        let x = Math.floor(vec.x);
+        let y = Math.floor(vec.z);
+        return [x, y];
+
+    }
+
+    protected getPointAtRay(screenLoc: Vector2, ignoreWater: boolean): Vector3 | null {
+        const raycaster = new Raycaster();
+        raycaster.setFromCamera(screenLoc, this.camera);
+
+        const mapObj = this.scene.getObjectByName('foobar');
+        if (!mapObj) {
+            return null;
+        }
+
+        const intersects = raycaster.intersectObjects(mapObj.children);
+        let intersection = intersects.length > 0 ? intersects[0] : null;
+        // HACK for ignoring water, ignore transparent faces
+        if (ignoreWater) {
+            for (const inter of intersects) {
+                const face = inter.face;
+                if (face && face.materialIndex === 2) {
+                    intersection = null;
+                    continue;
+                } else {
+                    intersection = inter;
+                    break;
+                }
+            }
+        }
+        if (intersection) {
+
+
+
+            const vec = intersection.point.applyMatrix4(mapObj.matrix);
+            // fudge the number over a little to prevent flickering over cliffs
+            vec.add(new Vector3(0.001, 0.001, 0.001));
+            let { x, y } = vec;
+            const maxSize = this.ctx.gameState.planet!.size * this.ctx.gameState.planet!.chunkSize;
+            if (x < 0) {
+                vec.x = 0;
+            }
+            if (y < 0) {
+                vec.z = 0;
+            }
+            if (x > maxSize - 0.002) {
+                vec.x = maxSize - 0.002;
+            }
+            if (y > maxSize - 0.002) {
+                vec.z = maxSize - 0.002;
+            }
+            return vec;
+        } else {
+            return null;
+        }
     }
 
     private loadMap() {

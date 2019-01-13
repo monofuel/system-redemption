@@ -4,6 +4,7 @@ import { ServerEvent, GameStage } from "../events";
 import { onTick } from "../events/serverContext";
 import { UpdateLoop } from "./threeScene";
 import { info } from "../logging";
+import { mouseToVec } from ".";
 
 export class PlayELement extends PlanetElement {
     private asyncEvents: ServerEvent[] = [];
@@ -104,6 +105,16 @@ export class PlayELement extends PlanetElement {
                 }
                 delete this.dragStart;
                 delete this.dragCurrent;
+            } else if (e.button === 2) {
+                const dest = this.getTileAtRay(mouseToVec(e, this.offsetWidth, this.offsetHeight), true)
+                if (!dest) {
+                    return;
+                }
+                this.ctx.queue.post({
+                    kind: 'setDestination',
+                    uuids: this.ctx.gameState.selectedUnits,
+                    dest
+                })
             }
         });
         this.addEventListener('mouseleave', (e: MouseEvent) => {

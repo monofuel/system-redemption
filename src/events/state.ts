@@ -229,12 +229,14 @@ export function getUnitInfo(state: GameState, uuid: string) {
 }
 
 export function applySetDestination(state: GameState, event: SetDestination) {
-  const { unit, unitDef } = getUnitInfo(state, event.uuid);
-  if (!unitDef.move) {
-    throw new Error(`unit cannot move: ${unit.type}`);
-  }
-  unit.destination = event.dest;
+  for (const uuid of event.uuids) {
 
+    const { unit, unitDef } = getUnitInfo(state, uuid);
+    if (!unitDef.move) {
+      throw new Error(`unit cannot move: ${unit.type}`);
+    }
+    unit.destination = event.dest;
+  }
 }
 export function applySelectUnits(state: GameState, event: SelectUnits) {
   // TODO
