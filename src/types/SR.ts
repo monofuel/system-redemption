@@ -77,8 +77,8 @@ export interface Unit {
         type: UnitType;
         facing: Direction;
         size: 1 | 2 | 3;
-        x: number;
-        y: number;
+        loc: Loc;
+        destination?: Loc;
         map: string;
         moveCooldown: number;
 }

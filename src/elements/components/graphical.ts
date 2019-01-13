@@ -25,7 +25,8 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
     const planet = sceneElement.ctx.gameState.planet!;
 
     if (comp.type === GraphicalType.unit) {
-        const { x, y, facing } = sceneElement.ctx.gameState.units[comp.key];
+        const { loc, facing } = sceneElement.ctx.gameState.units[comp.key];
+        const [x, y] = loc;
 
         placeOnMap(planet, comp.mesh, x, y);
 

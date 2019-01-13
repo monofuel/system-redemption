@@ -34,8 +34,7 @@ export const slopeMoveTestLog: ServerEvent[] = [
         kind: 'newUnit',
         unit: {
             ...tank,
-            x: 0,
-            y: 5,
+            loc: [0, 5]
         }
     },
     {

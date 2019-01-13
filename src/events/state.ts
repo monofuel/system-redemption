@@ -124,9 +124,9 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
   // check if there is a unit already there
-  let { x, y } = event.unit;
+  let [x, y] = event.unit.loc;
   for (const unit of Object.values(state.units)) {
-    if (unit.x === x && unit.y === y) {
+    if (unit.loc[0] === x && unit.loc[y] === y) {
       throw new Error('unit already at location');
     }
   }
@@ -141,31 +141,31 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
   if (unit.moveCooldown !== 0) {
     throw new Error('unit movement still cooling down');
   }
-  let nextX = unit.x;
-  let nextY = unit.y;
+  const [x, y] = unit.loc;
+  let nextX = x;
+  let nextY = y;
   switch (event.dir) {
     case 'N':
-      nextY = unit.y + 1;
+      nextY = x + 1;
       break;
     case 'S':
-      nextY = unit.y - 1;
+      nextY = y - 1;
       break;
     case 'E':
-      nextX = unit.x + 1;
+      nextX = x + 1;
       break;
     case 'W':
-      nextX = unit.x - 1;
+      nextX = x - 1;
       break;
     default:
       throw new Error(`invalid direction ${event.dir}`)
   }
 
   // TODO assert that the movement is valid
-  const prev = getTile(state.planet!, unit.x, unit.y);
+  const prev = getTile(state.planet!, x, y);
   const next = getTile(state.planet!, nextX, nextY);
 
-  unit.x = nextX;
-  unit.y = nextY;
+  unit.loc = [nextX, nextY];
   unit.facing = event.dir;
 
   unit.moveCooldown = unitDef.move.cooldown;

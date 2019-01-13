@@ -8,11 +8,11 @@ import { getHash } from "./hash";
 export function pathfind(state: GameState, uuid: string, x: number, y: number): Direction[] {
     const { planet } = state;
     const { unit, unitDef } = getUnitInfo(state, uuid);
-    const start = getHash([unit.x, unit.y]);
+    const start = getHash(unit.loc);
     const dst = getHash([x, y]);
 
     const closed: { [key: string]: Loc } = {};
-    const open: Loc[] = [[unit.x, unit.y]];
+    const open: Loc[] = [unit.loc];
     const prevMap: { [key: string]: { prev: string, dir: Direction } } = {};
     const scoreMap: { [key: string]: number } = {};
 

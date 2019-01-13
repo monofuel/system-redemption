@@ -218,8 +218,7 @@ export class MapEditorElement extends PlanetElement {
               unit: {
                 ...newTank(),
                 color: editorMode.user!,
-                x: hilight.loc[0],
-                y: hilight.loc[1]
+                loc: hilight.loc,
               } // TODO look up unit type from editorMode
             })
           }
@@ -321,12 +320,12 @@ export class MapEditorElement extends PlanetElement {
     }
   }
 }
-export function getDefaultEditorMap(): ServerEvent[] {
+export function getDefaultEditorMap(size: number = 4, chunkSize: number = 8): ServerEvent[] {
 
   const map = _.cloneDeep(getFlatMap(
     'foobar',
-    4,
-    8,
+    size,
+    chunkSize,
     1.8,
   ));
   map.grid[0][0].grid[0][0] = [1, 1, 1, 1];

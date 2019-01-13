@@ -72,7 +72,10 @@ export async function getLandControlsElement() {
         this.ctx.replayLog('replay', false, log, true);
         this.ctx.onGameEvent = eventHandler;
       } else if (id === 'replay-reset') {
-        this.ctx.loadLog(getDefaultEditorMap());
+        const chunkSizeInput = document.getElementById('chunkSize') as HTMLInputElement;
+        const mapChunksInput = document.getElementById('mapChunks') as HTMLInputElement;
+        const log = getDefaultEditorMap(Number(mapChunksInput.value), Number(chunkSizeInput.value));
+        this.ctx.loadLog(log);
       } else if (['raiseWater', 'lowerWater'].includes(id)) {
         this.ctx.queue.post({
           kind: 'waterChange',
