@@ -17,6 +17,7 @@ export class ECS {
             this.removeGraphicalComponent(comp.key);
         }
         this.graphical[comp.key] = comp;
+        updateGraphicalComponent(this.sceneElement, comp);
     }
     removeGraphicalComponent(key: string) {
         const comp = this.graphical[key];
