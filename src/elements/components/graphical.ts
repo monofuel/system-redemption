@@ -43,7 +43,7 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
                 comp.mesh.rotation.y = -Math.PI / 2;
         }
     } else if (comp.type === GraphicalType.hilight) {
-        const [x, y] = sceneElement.ctx.gameState.hilight!;
+        const [x, y] = sceneElement.ctx.gameState.hilight!.loc as any;
         placeOnMap(planet, comp.mesh, x, y);
     }
 }
@@ -79,7 +79,7 @@ export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: strin
     const tile = getTile(planet, loc[0], loc[1]);
 
     const hilightColor = 0xf4eb42;
-    const defaultColor = 0x555555;
+    const defaultColor = 0xffffff;
 
     let cornerColors: [number, number, number, number] | undefined;
     if (corners) {

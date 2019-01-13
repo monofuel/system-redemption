@@ -30,7 +30,7 @@ export interface GameState {
     tick: number;
     mode: GameStage;
   }
-  hilight?: Loc;
+  hilight?: HlightUpdate;
 }
 const eventApply: Record<
   EventKinds,
@@ -207,7 +207,7 @@ export function applyGameTick(state: GameState, event: GameTick) {
 }
 
 export function applyHilightUpdate(state: GameState, event: HlightUpdate) {
-  state.hilight = event.loc;
+  state.hilight = event;
 }
 
 export function getUnitInfo(state: GameState, uuid: string) {

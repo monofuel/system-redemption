@@ -3,6 +3,8 @@ import {
   Vector2,
   OrbitControls,
   MOUSE,
+  Vector3,
+  Vertex,
 } from 'three';
 import { mouseToVec } from '.';
 import {
@@ -11,6 +13,7 @@ import {
   MapEditType,
   ServerEvent,
   frontendEventList,
+  HlightUpdate,
 } from '../events';
 import { getFlatMap } from '../planet/tiles';
 import _ from 'lodash';
@@ -62,6 +65,71 @@ export class MapEditorElement extends PlanetElement {
 
     this.onmousemove = (ev: MouseEvent) => {
       ev.preventDefault();
+
+      if (this.ctx.gameState.editorMode && this.ctx.gameState.editorMode.selection !== EditorSelection.raiselower) {
+        return;
+      }
+      const vec = this.getPointAtRay(
+        mouseToVec(ev, this.offsetWidth, this.offsetHeight), true
+      );
+      if (!vec) {
+        if (this.ctx.gameState.hilight) {
+          this.ctx.queue.post({
+            kind: 'hilightUpdate'
+          })
+        }
+        return;
+      }
+
+      const loc: [number, number] = [Math.floor(vec.x), Math.floor(vec.z)];
+
+      const corners: Array<0 | 1 | 2 | 3> = [];
+      const deltaX = vec.x - loc[0];
+      const deltaY = vec.z - loc[1];
+      const lb = 0.30;
+      const ub = 0.70;
+      console.log(deltaX, deltaY);
+      if (deltaX < lb) {
+        if (deltaY < lb) {
+          corners.push(3);
+        } else if (deltaY > ub) {
+          corners.push(0);
+        } else {
+          corners.push(0, 3);
+        }
+      } else if (deltaX > ub) {
+        if (deltaY < lb) {
+          corners.push(2);
+        } else if (deltaY > ub) {
+          corners.push(1);
+        } else {
+          corners.push(1, 2);
+        }
+      } else {
+        if (deltaY < lb) {
+          corners.push(3, 2);
+        } else if (deltaY > ub) {
+          corners.push(1, 0);
+        } else {
+          corners.push(0, 1, 2, 3)
+        }
+      }
+
+
+      const existing = this.ctx.gameState.hilight;
+      const newState: HlightUpdate = {
+        kind: 'hilightUpdate',
+        loc,
+        corner: corners.length > 0 ? corners : undefined
+      }
+
+      if (_.isEqual(existing, newState)) {
+        return;
+      }
+
+
+      this.ctx.queue.post(newState);
+
     };
 
     const mouseUp = (ev: MouseEvent) => {
@@ -150,6 +218,18 @@ export class MapEditorElement extends PlanetElement {
   }
 
   private getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): { x: number; y: number } | null {
+    const vec = this.getPointAtRay(screenLoc, ignoreWater);
+    if (!vec) {
+      return null;
+    }
+    let x = Math.floor(vec.x);
+    let y = Math.floor(vec.z);
+    return { x, y };
+
+  }
+
+
+  private getPointAtRay(screenLoc: Vector2, ignoreWater: boolean): Vector3 | null {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(screenLoc, this.camera);
 
@@ -165,7 +245,6 @@ export class MapEditorElement extends PlanetElement {
       for (const inter of intersects) {
         const face = inter.face;
         if (face && face.materialIndex === 2) {
-          console.log(face.materialIndex);
           intersection = null;
           continue;
         } else {
@@ -179,29 +258,26 @@ export class MapEditorElement extends PlanetElement {
 
 
       const vec = intersection.point.applyMatrix4(mapObj.matrix);
-      let x = Math.floor(vec.x);
-      let y = Math.floor(vec.z);
+      let { x, y } = vec;
       const maxSize = this.ctx.gameState.planet!.size * this.ctx.gameState.planet!.chunkSize;
       if (x < 0) {
-        x = 0;
+        vec.x = 0;
       }
       if (y < 0) {
-        y = 0;
+        vec.z = 0;
       }
       if (x > maxSize - 1) {
-        x = maxSize - 1;
+        vec.x = maxSize - 1;
       }
       if (y > maxSize - 1) {
-        y = maxSize - 1;
+        vec.z = maxSize - 1;
       }
-
-      return { x, y };
+      return vec;
     } else {
       return null;
     }
   }
 }
-
 export function getDefaultEditorMap(): ServerEvent[] {
 
   const map = _.cloneDeep(getFlatMap(
