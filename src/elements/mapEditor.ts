@@ -20,6 +20,7 @@ import _ from 'lodash';
 import { defaultUnitDefinitions } from '../test/eventLogs/units';
 import { newTank } from '../unit';
 import { PlanetElement } from './planet';
+import { TileHeights } from '../types/SR';
 
 export class MapEditorElement extends PlanetElement {
 
@@ -65,8 +66,12 @@ export class MapEditorElement extends PlanetElement {
 
     this.onmousemove = (ev: MouseEvent) => {
       ev.preventDefault();
+      if (!this.ctx.gameState.editorMode) {
+        return;
+      }
+      const mode = this.ctx.gameState.editorMode;
 
-      if (this.ctx.gameState.editorMode && this.ctx.gameState.editorMode.selection !== EditorSelection.raiselower) {
+      if (!([EditorSelection.raiselower, EditorSelection.newUnit].includes(mode.selection))) {
         return;
       }
       const vec = this.getPointAtRay(
@@ -84,33 +89,36 @@ export class MapEditorElement extends PlanetElement {
       const loc: [number, number] = [Math.floor(vec.x), Math.floor(vec.z)];
 
       const corners: Array<0 | 1 | 2 | 3> = [];
-      const deltaX = vec.x - loc[0];
-      const deltaY = vec.z - loc[1];
-      const lb = 0.30;
-      const ub = 0.70;
-      if (deltaX < lb) {
-        if (deltaY < lb) {
-          corners.push(3);
-        } else if (deltaY > ub) {
-          corners.push(0);
+      if (mode.selection === EditorSelection.raiselower) {
+
+        const deltaX = vec.x - loc[0];
+        const deltaY = vec.z - loc[1];
+        const lb = 0.30;
+        const ub = 0.70;
+        if (deltaX < lb) {
+          if (deltaY < lb) {
+            corners.push(3);
+          } else if (deltaY > ub) {
+            corners.push(0);
+          } else {
+            corners.push(0, 3);
+          }
+        } else if (deltaX > ub) {
+          if (deltaY < lb) {
+            corners.push(2);
+          } else if (deltaY > ub) {
+            corners.push(1);
+          } else {
+            corners.push(1, 2);
+          }
         } else {
-          corners.push(0, 3);
-        }
-      } else if (deltaX > ub) {
-        if (deltaY < lb) {
-          corners.push(2);
-        } else if (deltaY > ub) {
-          corners.push(1);
-        } else {
-          corners.push(1, 2);
-        }
-      } else {
-        if (deltaY < lb) {
-          corners.push(3, 2);
-        } else if (deltaY > ub) {
-          corners.push(1, 0);
-        } else {
-          corners.push(0, 1, 2, 3)
+          if (deltaY < lb) {
+            corners.push(3, 2);
+          } else if (deltaY > ub) {
+            corners.push(1, 0);
+          } else {
+            corners.push(0, 1, 2, 3)
+          }
         }
       }
 
@@ -148,36 +156,62 @@ export class MapEditorElement extends PlanetElement {
       if (dragDistance > 5) {
         return;
       }
-
-      const loc = this.getTileAtRay(
-        mouseToVec(ev, this.offsetWidth, this.offsetHeight), true
-      );
-
+      const hilight = this.ctx.gameState.hilight;
       switch (editorMode.selection) {
         case EditorSelection.raiselower:
-          let editType = MapEditType.raise;
-          if (ev.button === 2) {
-            editType = MapEditType.lower;
-          }
-          if (loc) {
+          if (hilight && hilight.loc && hilight.corner) {
+            const editType: TileHeights = [0, 0, 0, 0];
+
+            // TODO
+            // make map corners line up with hilight corners
+            if (hilight.corner.includes(0)) {
+              if (ev.button === 2) {
+                editType[2]--;
+              } else {
+                editType[2]++;
+              }
+            }
+            if (hilight.corner.includes(3)) {
+              if (ev.button === 2) {
+                editType[0]--;
+              } else {
+                editType[0]++;
+              }
+            }
+            if (hilight.corner.includes(1)) {
+              if (ev.button === 2) {
+                editType[3]--;
+              } else {
+                editType[3]++;
+              }
+            }
+            if (hilight.corner.includes(2)) {
+              if (ev.button === 2) {
+                editType[1]--;
+              } else {
+                editType[1]++;
+              }
+            }
+
+
             this.ctx.queue.post({
               kind: 'mapEdit',
               edit: editType,
-              x: loc.x,
-              y: loc.y,
+              x: hilight.loc[0],
+              y: hilight.loc[1],
             });
           }
           return;
         case EditorSelection.newUnit:
-          if (loc) {
+          if (hilight && hilight.loc) {
 
             this.ctx.queue.post({
               kind: 'newUnit',
               unit: {
                 ...newTank(),
                 color: editorMode.user!,
-                x: loc.x,
-                y: loc.y
+                x: hilight.loc[0],
+                y: hilight.loc[1]
               } // TODO look up unit type from editorMode
             })
           }
