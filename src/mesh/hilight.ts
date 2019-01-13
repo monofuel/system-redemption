@@ -40,7 +40,7 @@ export function getHilightMesh({ color, cornerColors }: HilightOpts): Mesh {
       color,
       flatShading: true,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.8,
 
     });
   });
@@ -54,22 +54,25 @@ export function getHilightMesh({ color, cornerColors }: HilightOpts): Mesh {
 
 
 export function hilightCornerGeom() {
+  const width = 0.3;
+  const height = 0.05;
+
   const geom = new Geometry();
   geom.vertices.push(
     new Vector3(0, 0, 0), // 0
-    new Vector3(0, 0.4, 0), // 1
-    new Vector3(0.2, 0.2, 0), // 2
-    new Vector3(0.2, 0.4, 0), // 3
+    new Vector3(0, width, 0), // 1
+    new Vector3(width / 2, width / 2, 0), // 2
+    new Vector3(width / 2, width, 0), // 3
   );
 
   geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
   geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
 
   geom.vertices.push(
-    new Vector3(0, 0, 0.1), // 4
-    new Vector3(0, 0.4, 0.1), // 5
-    new Vector3(0.2, 0.2, 0.1), // 6
-    new Vector3(0.2, 0.4, 0.1), // 7
+    new Vector3(0, 0, height), // 4
+    new Vector3(0, width, height), // 5
+    new Vector3(width / 2, width / 2, height), // 6
+    new Vector3(width / 2, width, height), // 7
   );
 
   geom.faces.push(new Face3(7, 4, 5, undefined, undefined, 0));
@@ -93,7 +96,7 @@ export function hilightCornerGeom() {
   const halfGeom = geom.clone();
   halfGeom.rotateY(Math.PI);
   halfGeom.rotateZ(-Math.PI / 2);
-  halfGeom.translate(0, 0, 0.1);
+  halfGeom.translate(0, 0, height);
 
   geom.merge(halfGeom);
   geom.mergeVertices();
