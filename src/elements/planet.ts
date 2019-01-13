@@ -3,9 +3,10 @@ import { EventContextElement } from "./eventContext";
 import { HemisphereLight, DirectionalLight } from "three";
 import { Unit } from "../types/SR";
 import { info } from "../logging";
-import { getPlanetObject } from "../mesh/tiles";
+import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
 import { ECS } from "./components";
 import { unitGraphicalComp, hilightGraphicalComp } from "./components/graphical";
+import { getChunkForTile } from "../planet";
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
@@ -42,6 +43,7 @@ export class PlanetElement extends ThreeSceneElement {
             this.loadMap();
         });
         this.ctx.queue.addListener('mapEdit', (event) => {
+            invalidateChunkCache(getChunkForTile(this.ctx.gameState.planet!, event.x, event.y));
             this.loadMap();
 
             const hilight = this.ctx.gameState.hilight;
@@ -105,6 +107,8 @@ export class PlanetElement extends ThreeSceneElement {
         }
         const mapObj = getPlanetObject({
             gameMap,
+            cache: true,
+            wireframe: false,
         });
         mapObj.rotateY(Math.PI);
         const offset = (gameMap.size * gameMap.chunkSize) / 2;

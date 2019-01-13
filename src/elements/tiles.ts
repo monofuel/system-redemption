@@ -4,10 +4,11 @@ import {
   Group,
   HemisphereLight,
   Vector3,
+  Mesh,
 } from 'three';
-import { getTileMesh } from '../mesh/tiles';
-import { testTiles } from '../planet/tiles';
-import { Direction } from '../types/SR';
+import { getTileGeom, getPlanetObject } from '../mesh/tiles';
+import { testTiles, testTilesMap } from '../planet/tiles';
+import { Direction, FiniteMap } from '../types/SR';
 import { toHexColor } from '../util';
 import { ThreeSceneElement } from './threeScene';
 
@@ -90,19 +91,23 @@ export class TileTestElement extends ThreeSceneElement {
 
     const tileTex = new CanvasTexture(this.canvas);
     const chunkObj = new Group();
-    const chunkMesh = getTileMesh({
-      tiles: testTiles,
+    const gameMap: FiniteMap = {
+      ...testTilesMap,
       waterHeight: this.opts.waterHeight,
+      landColor: this.opts.landColor,
       cliffColor: this.opts.cliffColor,
       waterColor: this.opts.waterColor,
-      skipSides: [] as Direction[],
-      tileTex,
-
-      wireframe: this.opts.wireframe,
+      sunColor: this.opts.sunColor,
       zScale: this.opts.zScale,
+    }
+    const chunkMesh = getPlanetObject({
+      gameMap,
+      cache: false,
+      wireframe: this.opts.wireframe,
     });
-    chunkMesh.geometry.center();
-    chunkMesh.geometry.scale(10, 10, 10);
+
+    (chunkMesh.children[0] as Mesh).geometry.center();
+    (chunkMesh.children[0] as Mesh).geometry.scale(10, 10, 10);
 
     chunkObj.add(chunkMesh);
     chunkObj.name = chunkName;

@@ -21,6 +21,7 @@ import { defaultUnitDefinitions } from '../test/eventLogs/units';
 import { newTank } from '../unit';
 import { PlanetElement } from './planet';
 import { TileHeights } from '../types/SR';
+import { info } from '../logging';
 
 export class MapEditorElement extends PlanetElement {
 
@@ -193,13 +194,20 @@ export class MapEditorElement extends PlanetElement {
               }
             }
 
-
+            const start = Date.now();
+            const perfFn = () => {
+              this.ctx.queue.removeListener('mapEdit', perfFn);
+              const end = Date.now();
+              info("map edit delta", { delta: end - start });
+            }
+            this.ctx.queue.addListener('mapEdit', perfFn);
             this.ctx.queue.post({
               kind: 'mapEdit',
               edit: editType,
               x: hilight.loc[0],
               y: hilight.loc[1],
             });
+
           }
           return;
         case EditorSelection.newUnit:
@@ -318,7 +326,7 @@ export function getDefaultEditorMap(): ServerEvent[] {
   const map = _.cloneDeep(getFlatMap(
     'foobar',
     4,
-    8,
+    16,
     1.8,
   ));
   map.grid[0][0].grid[0][0] = [1, 1, 1, 1];

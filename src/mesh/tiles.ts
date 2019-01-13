@@ -5,27 +5,57 @@ import {
   Geometry,
   Matrix4,
   Mesh,
-  MeshBasicMaterial,
   MeshPhongMaterial,
   Object3D,
   Texture,
   Vector2,
   Vector3,
+  BufferGeometry,
 } from 'three';
 import { Direction, FiniteMap, PlanetTiles, TileHeights } from '../types/SR';
 import { toHexColor } from '../util';
+import { getHash } from '../services/hash';
+import _ from 'lodash';
 
 interface PlanetMeshOpts {
   gameMap: FiniteMap;
+  cache: boolean;
+  wireframe: boolean;
 }
 
 export function getPlanetObject({
   gameMap,
+  cache,
+  wireframe
 }: PlanetMeshOpts): Object3D {
   const {
-    landColor, edgeColor, cliffColor, waterColor, waterHeight, zScale
+    landColor, edgeColor, cliffColor, waterColor, waterHeight, zScale, size, chunkSize,
   } = gameMap;
-  const tileTexture = getTileTexture(landColor, edgeColor);
+  const tileTex = getTileTexture(landColor, edgeColor);
+
+  const landMaterial = new MeshPhongMaterial({
+    shininess: 0,
+    side: FrontSide,
+    map: tileTex,
+    flatShading: true,
+    wireframe
+  });
+  const cliffMaterial = new MeshPhongMaterial({
+    color: cliffColor,
+    side: FrontSide,
+    flatShading: true,
+    shininess: 0,
+    wireframe
+  });
+
+  const waterMaterial = new MeshPhongMaterial({
+    color: waterColor,
+    side: FrontSide,
+    flatShading: true,
+    transparent: true,
+    opacity: 0.8,
+    wireframe
+  });
 
   const mapObj = new Object3D();
   mapObj.name = gameMap.name;
@@ -47,15 +77,17 @@ export function getPlanetObject({
       }
 
       const tiles = gameMap.grid[y][x];
-      const chunk = getTileMesh({
+      const fetchFn = cache ? getCachedTileMesh : getTileGeom;
+      const geom = fetchFn({
+        chunkHash: getHash([x, y]),
+        size,
+        chunkSize,
         tiles,
         waterHeight,
-        cliffColor,
-        waterColor,
         skipSides: sides,
-        tileTex: tileTexture,
         zScale
       });
+      const chunk = new Mesh(geom, [landMaterial, cliffMaterial, waterMaterial]);
       chunk.translateX(x * gameMap.chunkSize);
       chunk.translateZ(y * gameMap.chunkSize);
       chunk.rotateY(-Math.PI / 2);
@@ -66,25 +98,20 @@ export function getPlanetObject({
 }
 
 interface MeshOpts {
+  chunkHash: string;
+  size: number;
+  chunkSize: number;
   tiles: PlanetTiles;
   waterHeight: number;
-  cliffColor: number;
-  waterColor: number;
   skipSides: Direction[];
-  tileTex: Texture;
-  wireframe?: boolean;
   zScale: number;
 }
-export function getTileMesh({
+export function getTileGeom({
   tiles,
   waterHeight,
-  cliffColor,
-  waterColor,
   skipSides: sides,
-  tileTex,
-  wireframe = false,
   zScale,
-}: MeshOpts): Mesh {
+}: MeshOpts): BufferGeometry {
   const geom = new Geometry();
 
   for (let y = 0; y < tiles.grid.length; y++) {
@@ -146,33 +173,11 @@ export function getTileMesh({
 
   geom.rotateX(-Math.PI / 2);
 
-  const landMaterial = new MeshPhongMaterial({
-    shininess: 0,
-    side: FrontSide,
-    map: tileTex,
-    flatShading: true,
-    wireframe,
-  });
-  const cliffMaterial = new MeshPhongMaterial({
-    color: cliffColor,
-    side: FrontSide,
-    flatShading: true,
-    shininess: 0,
-    wireframe,
-  });
 
-  const waterMaterial = new MeshPhongMaterial({
-    color: waterColor,
-    side: FrontSide,
-    flatShading: true,
-    transparent: true,
-    opacity: 0.8,
-    // shininess: 0,
-    wireframe,
-  });
 
-  const mesh = new Mesh(geom, [landMaterial, cliffMaterial, waterMaterial]);
-  return mesh;
+  const bufferedGeom = new BufferGeometry();
+  bufferedGeom.fromGeometry(geom);
+  return bufferedGeom;
 }
 
 function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
@@ -320,10 +325,20 @@ function getWaterGeomForTile(
   return geom;
 }
 
+const tileTexCache: {
+  [key: number]: {
+    [key: number]: CanvasTexture
+  }
+} = {};
+
 export function getTileTexture(
   landColor: number,
   edgeColor: number,
 ): CanvasTexture {
+  if (tileTexCache[landColor] && tileTexCache[landColor][edgeColor]) {
+    return tileTexCache[landColor][edgeColor];
+  }
+
   const canvas = document.createElement('canvas');
   canvas.height = 32;
   canvas.width = 32;
@@ -335,5 +350,50 @@ export function getTileTexture(
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = toHexColor(landColor);
   ctx.fillRect(1, 1, canvas.width - 2, canvas.height - 2);
-  return new CanvasTexture(canvas);
+  const tex = new CanvasTexture(canvas);
+  if (!tileTexCache[landColor]) {
+    tileTexCache[landColor] = {};
+  }
+  tileTexCache[landColor][edgeColor] = tex;
+
+  return tex;
+}
+
+
+const bufferedChunkCache: {
+  [key: string]: {
+    opts: MeshOpts;
+    geom: BufferGeometry;
+  };
+} = {};
+
+function getCachedTileMesh(opts: MeshOpts): BufferGeometry {
+  const key = opts.chunkHash;
+  const meta = bufferedChunkCache[key];
+  if (meta && isOptsEqual(opts, meta.opts)) {
+    return meta.geom;
+  }
+  const geom = getTileGeom(opts);
+  bufferedChunkCache[key] = {
+    opts,
+    geom
+  }
+  return geom;
+}
+
+export function invalidateChunkCache(key: string) {
+  delete bufferedChunkCache[key];
+}
+
+
+// NB. tiles is assumed to not change. if the map is edited when using the cache, call invalidateChunkCache first
+function isOptsEqual(a: MeshOpts, b: MeshOpts): boolean {
+
+  return a.chunkHash === b.chunkHash &&
+    a.waterHeight === b.waterHeight &&
+    _.isEqual(a.skipSides, b.skipSides) &&
+    a.zScale === b.zScale &&
+    a.size === b.size &&
+    a.chunkSize === b.chunkSize
+
 }
