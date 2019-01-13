@@ -1,6 +1,6 @@
 import { frontendEventList } from "../../events";
 
-const log = [
+const log: LoggedEvent[] = [
     {
         "event": {
             "kind": "newFiniteMap",
@@ -465,8 +465,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 3,
-                "y": 2,
+                loc: [3, 2],
                 "color": "blue",
                 "map": "test",
                 "moveCooldown": 0
@@ -483,8 +482,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 3,
-                "y": 3,
+                loc: [3, 3],
                 "color": "blue",
                 "map": "test",
                 "moveCooldown": 0
@@ -501,8 +499,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 2,
-                "y": 3,
+                loc: [2, 3],
                 "color": "green",
                 "map": "test",
                 "moveCooldown": 0
@@ -519,8 +516,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 2,
-                "y": 2,
+                loc: [2, 2],
                 "color": "green",
                 "map": "test",
                 "moveCooldown": 0
@@ -2018,8 +2014,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 1,
-                "y": 2,
+                loc: [1, 2],
                 "color": "red",
                 "map": "test",
                 "moveCooldown": 0
@@ -2058,8 +2053,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 1,
-                "y": 3,
+                loc: [1, 3],
                 "color": "red",
                 "map": "test",
                 "moveCooldown": 0
@@ -2503,8 +2497,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 0,
-                "y": 2,
+                loc: [0, 2],
                 "color": "white",
                 "map": "test",
                 "moveCooldown": 0
@@ -2532,8 +2525,7 @@ const log = [
                 "type": "tank",
                 "facing": "E",
                 "size": 1,
-                "x": 0,
-                "y": 3,
+                loc: [0, 3],
                 "color": "white",
                 "map": "test",
                 "moveCooldown": 0
