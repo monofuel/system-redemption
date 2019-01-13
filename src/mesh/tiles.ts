@@ -185,11 +185,22 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
     new Vector3(1, 1, corners[3] * zScale), // 3
   );
 
-  geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
-  geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+  // 0 - 2
+  // 1 - 3
+  const lDelta = corners[0] - corners[2];
+  const rDelta = corners[1] - corners[3];
+  if (lDelta > rDelta) {
+    // left handed
+    geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
+    geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+  } else {
+    // right handed
+    geom.faces.push(new Face3(1, 0, 2, undefined, undefined, 0));
+    geom.faces.push(new Face3(2, 3, 1, undefined, undefined, 0));
+  }
+
 
   // add cliff around sides
-
   geom.vertices.push(
     new Vector3(0, 0, -1), // 4
     new Vector3(0, 1, -1), // 5
