@@ -80,6 +80,11 @@ export interface MoveUnit {
   uuid: string;
   dir: Direction;
 }
+export interface SetDestination {
+  kind: 'setDestination';
+  uuid: string;
+  dest: Loc;
+}
 
 export enum GameStage {
   init = 'init', // default state, map still loading
@@ -119,6 +124,7 @@ export interface ServerEvents {
   gameStageChange: GameStageChange;
   gameTick: GameTick;
   assertFail: AssertFail;
+  setDestination: SetDestination;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

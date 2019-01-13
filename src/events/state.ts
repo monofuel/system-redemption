@@ -15,7 +15,8 @@ import {
   GameStageChange,
   GameTick,
   AssertFail,
-  HlightUpdate,
+  HlightUpdate as HilightUpdate,
+  SetDestination,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, Loc } from '../types/SR';
@@ -30,7 +31,7 @@ export interface GameState {
     tick: number;
     mode: GameStage;
   }
-  hilight?: HlightUpdate;
+  hilight?: HilightUpdate;
 }
 const eventApply: Record<
   EventKinds,
@@ -48,7 +49,8 @@ const eventApply: Record<
   gameTick: applyGameTick,
   assertion: applyAssertion,
   assertFail: applyAssertFail,
-  hilightUpdate: applyHilightUpdate
+  hilightUpdate: applyHilightUpdate,
+  setDestination: applySetDestination
 };
 
 export function newGameState(): GameState {
@@ -206,7 +208,7 @@ export function applyGameTick(state: GameState, event: GameTick) {
   }
 }
 
-export function applyHilightUpdate(state: GameState, event: HlightUpdate) {
+export function applyHilightUpdate(state: GameState, event: HilightUpdate) {
   state.hilight = event;
 }
 
@@ -220,4 +222,13 @@ export function getUnitInfo(state: GameState, uuid: string) {
     throw new Error(`missing unit definition ${unitDef}`);
   }
   return { unit, unitDef };
+}
+
+export function applySetDestination(state: GameState, event: SetDestination) {
+  const { unit, unitDef } = getUnitInfo(state, event.uuid);
+  if (!unitDef.move) {
+    throw new Error(`unit cannot move: ${unit.type}`);
+  }
+  unit.destination = event.dest;
+
 }
