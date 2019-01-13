@@ -13,7 +13,7 @@ import {
   MapEditType,
   ServerEvent,
   frontendEventList,
-  HlightUpdate,
+  HilightUpdate,
 } from '../events';
 import { getFlatMap } from '../planet/tiles';
 import _ from 'lodash';
@@ -125,7 +125,7 @@ export class MapEditorElement extends PlanetElement {
 
 
       const existing = this.ctx.gameState.hilight;
-      const newState: HlightUpdate = {
+      const newState: HilightUpdate = {
         kind: 'hilightUpdate',
         loc,
         corner: corners.length > 0 ? corners : undefined

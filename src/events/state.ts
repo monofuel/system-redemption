@@ -15,8 +15,9 @@ import {
   GameStageChange,
   GameTick,
   AssertFail,
-  HlightUpdate as HilightUpdate,
+  HilightUpdate,
   SetDestination,
+  SelectUnits,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, Loc } from '../types/SR';
@@ -32,6 +33,7 @@ export interface GameState {
     mode: GameStage;
   }
   hilight?: HilightUpdate;
+  selectedUnits: string[];
 }
 const eventApply: Record<
   EventKinds,
@@ -50,7 +52,8 @@ const eventApply: Record<
   assertion: applyAssertion,
   assertFail: applyAssertFail,
   hilightUpdate: applyHilightUpdate,
-  setDestination: applySetDestination
+  setDestination: applySetDestination,
+  selectUnits: applySelectUnits,
 };
 
 export function newGameState(): GameState {
@@ -60,7 +63,8 @@ export function newGameState(): GameState {
     stage: {
       tick: 0,
       mode: GameStage.init,
-    }
+    },
+    selectedUnits: [],
   };
 }
 
@@ -231,4 +235,7 @@ export function applySetDestination(state: GameState, event: SetDestination) {
   }
   unit.destination = event.dest;
 
+}
+export function applySelectUnits(state: GameState, event: SelectUnits) {
+  // TODO
 }

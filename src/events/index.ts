@@ -23,16 +23,22 @@ export interface ToggleLogViewer {
   state: 'open' | 'closed';
 }
 
-export interface HlightUpdate {
+export interface HilightUpdate {
   kind: 'hilightUpdate',
   loc?: Loc
   corner?: Array<0 | 1 | 2 | 3>;
 }
 
+export interface SelectUnits {
+  kind: 'selectUnits',
+  uuids: string[],
+}
+
 export interface FrontendEvents {
   editorMode: EditorMode;
   toggleLogViewer: ToggleLogViewer;
-  hilightUpdate: HlightUpdate;
+  hilightUpdate: HilightUpdate;
+  selectUnits: SelectUnits;
 }
 export type FrontendEventKinds = keyof FrontendEvents;
 export type FrontendEvent = FrontendEvents[FrontendEventKinds];

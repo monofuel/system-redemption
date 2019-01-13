@@ -1,6 +1,7 @@
-import { frontendEventList } from "../../events";
+import { frontendEventList, ServerEvent, FrontendEvent } from "../../events";
+import { LoggedEvent } from "../../elements/eventContext";
 
-const log: LoggedEvent[] = [
+const log: any = [
     {
         "event": {
             "kind": "newFiniteMap",
@@ -2893,4 +2894,4 @@ const log: LoggedEvent[] = [
     },
 ]
 
-export const slopesTestLog = log.map((e) => e.event).filter((e) => !frontendEventList.includes(e.kind));
+export const slopesTestLog = log.map((e: LoggedEvent) => e.event).filter((e: FrontendEvent | ServerEvent) => !frontendEventList.includes(e.kind));

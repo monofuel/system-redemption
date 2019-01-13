@@ -5,7 +5,7 @@ import { delay } from '../util';
 import { UpdateLoop } from './threeScene';
 import { GameState, newGameState, applyEvent } from '../events/state';
 
-interface LoggedEvent {
+export interface LoggedEvent {
   event: ServerEvent | FrontendEvent;
   timestamp: number;
   listeners: number;
