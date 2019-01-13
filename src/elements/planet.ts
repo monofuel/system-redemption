@@ -7,6 +7,7 @@ import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
 import { ECS } from "./components";
 import { unitGraphicalComp, hilightGraphicalComp } from "./components/graphical";
 import { getChunkForTile } from "../planet";
+import { getHilightMesh } from "../mesh/hilight";
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
@@ -67,6 +68,27 @@ export class PlanetElement extends ThreeSceneElement {
                 const comp = hilightGraphicalComp(this, key, event.loc, event.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
+        });
+
+        this.ctx.queue.addListener('selectUnits', (event) => {
+            const planet = this.ctx.gameState.planet!;
+            const uuids = event.uuids;
+            const hilightColor = 0xba2b0e;
+
+            for (const uuid of uuids) {
+                const unit = this.ctx.gameState.units[uuid];
+                const comp = this.ecs.graphical[unit.uuid];
+                if (!comp) {
+                    continue;
+                }
+                const hilight = getHilightMesh({
+                    zScale: planet.zScale,
+                    color: hilightColor,
+                })
+
+                comp.mesh.add(hilight);
+            }
+
         })
 
         this.onAssetsLoaded = () => {

@@ -17,6 +17,7 @@ export class LogTestElement extends HTMLElement {
             const log: Array<ServerEvent | FrontendEvent> = (logs as any)[key];
             const context = new EventContextElement({ autoStart: false });
             const logPlayer = new LogPlayerElement(context);
+
             context.style.display = 'block';
             context.style.margin = '0';
             context.style.width = '500px';

@@ -4,7 +4,6 @@ import { TileHeights } from '../types/SR';
 interface HilightOpts {
   color: number;
   cornerColors?: [number, number, number, number];
-
   zScale: number;
 }
 

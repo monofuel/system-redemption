@@ -179,6 +179,12 @@ const log: any = [
         "listeners": 0
     },
     {
+        event: {
+            kind: "selectUnits",
+            uuids: ["f392cc3f-c4a0-423f-841e-8d6fd27924f8"]
+        }
+    },
+    {
         "event": {
             "kind": "mapEdit",
             "edit": [
@@ -468,55 +474,54 @@ const log: any = [
         "timestamp": 1547366314360,
         "listeners": 1
     },
-    {
-        "event": {
-            "kind": "hilightUpdate",
-            "loc": [
-                3,
-                1
-            ]
-        },
-        "timestamp": 1547366314469,
-        "listeners": 1
-    },
-    {
-        "event": {
-            "kind": "hilightUpdate",
-            "loc": [
-                3,
-                1
-            ]
-        },
-        "timestamp": 1547366314486,
-        "listeners": 1
-    },
-    {
-        "event": {
-            "kind": "hilightUpdate"
-        },
-        "timestamp": 1547366314503,
-        "listeners": 1
-    },
-    {
-        "event": {
-            "kind": "hilightUpdate"
-        },
-        "timestamp": 1547366314519,
-        "listeners": 1
-    },
-    {
-        "event": {
-            "kind": "hilightUpdate"
-        },
-        "timestamp": 1547366314536,
-        "listeners": 1
-    },
-    // TODO selection events
+
     {
         event: {
             kind: "selectUnits",
-            uuid: ["f392cc3f-c4a0-423f-841e-8d6fd27924f8"]
+            uuids: [
+                "f392cc3f-c4a0-423f-841e-8d6fd27924f8",
+                "2c3b08b5-ae90-482f-8fbd-36a100b3e55d",
+                "4b91dfd4-fb7a-4550-8ab8-ad189db7ed4e",
+                "02a3f8af-6bcb-4b86-850b-3671d9c48de2"
+            ]
         }
-    }
+    },
+    {
+        "event": {
+            "kind": "mapEdit",
+            "edit": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "x": 0,
+            "y": 0
+        },
+        "timestamp": 1547353885431,
+        "listeners": 0
+    },
+    {
+        "event": {
+            "kind": "mapEdit",
+            "edit": [
+                0,
+                0,
+                0,
+                0
+            ],
+            "x": 0,
+            "y": 0
+        },
+        "timestamp": 1547353885431,
+        "listeners": 0
+    },
+    {
+        event: {
+            kind: "selectUnits",
+            uuids: [
+            ]
+        }
+    },
 ]
 export const selectionTestLog = log.map((e: LoggedEvent) => e.event).filter((e: FrontendEvent | ServerEvent) => !frontendEventList.includes(e.kind));

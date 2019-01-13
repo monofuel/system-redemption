@@ -77,7 +77,6 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
 }
 export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, loc: Loc, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
     const planet = sceneElement.ctx.gameState.planet!;
-    const tile = getTile(planet, loc[0], loc[1]);
 
     const hilightColor = 0xf4eb42;
     const defaultColor = 0xffffff;
