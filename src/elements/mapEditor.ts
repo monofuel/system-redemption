@@ -88,7 +88,6 @@ export class MapEditorElement extends PlanetElement {
       const deltaY = vec.z - loc[1];
       const lb = 0.30;
       const ub = 0.70;
-      console.log(deltaX, deltaY);
       if (deltaX < lb) {
         if (deltaY < lb) {
           corners.push(3);
@@ -258,6 +257,8 @@ export class MapEditorElement extends PlanetElement {
 
 
       const vec = intersection.point.applyMatrix4(mapObj.matrix);
+      // fudge the number over a little to prevent flickering over cliffs
+      vec.add(new Vector3(0.001, 0.001, 0.001));
       let { x, y } = vec;
       const maxSize = this.ctx.gameState.planet!.size * this.ctx.gameState.planet!.chunkSize;
       if (x < 0) {
