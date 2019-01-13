@@ -43,6 +43,13 @@ export class PlanetElement extends ThreeSceneElement {
         });
         this.ctx.queue.addListener('mapEdit', (event) => {
             this.loadMap();
+
+            const hilight = this.ctx.gameState.hilight;
+            if (hilight && hilight.loc) {
+                const key = 'hilight';
+                const comp = hilightGraphicalComp(this, key, hilight.loc, hilight.corner);
+                this.ecs.addGraphicalComponent(comp);
+            }
         });
 
         this.ctx.queue.addListener('moveUnit', (event) => {
