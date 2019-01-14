@@ -1,7 +1,10 @@
 
 export type LocHash = string;
 export enum ModelType {
-        LightTankLvl1 = 'LightTankLvl1'
+        LightTankLvl1 = 'LightTankLvl1',
+        LightTankLvl2 = 'LightTankLvl2',
+        LightTankLvl3 = 'LightTankLvl3',
+        HeavyTankLvl3 = 'HeavyTankLvl3'
 }
 
 export enum GameColors {
@@ -20,7 +23,10 @@ export type Layer = 'ground' | 'air' | 'water';
 // corner heights: TL TR BL BR
 export type TileHeights = [number, number, number, number];
 export enum UnitType {
-        tank = 'tank'
+        tank = 'tank',
+        ltank2 = 'ltank2',
+        ltank3 = 'ltank3',
+        htank3 = 'htank3'
 }
 
 export interface PlanetTiles {

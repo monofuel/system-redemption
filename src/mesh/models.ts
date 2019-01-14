@@ -19,6 +19,39 @@ const assetsPaths: Record<ModelType, AssetPath> = {
             white: 'gltf/tanks/LightTankLvl1/LightTankLvl1WhiteAlbedoAO.png',
             yellow: 'gltf/tanks/LightTankLvl1/LightTankLvl1YellowAlbedoAO.png',
         }
+    },
+    LightTankLvl2: {
+        model: 'gltf/tanks/LightTankLvl2/LightTankLvl2Blue.gltf',
+        skins: {
+            blue: 'gltf/tanks/LightTankLvl2/LightTankLvl2BlueAlbedoAO.png',
+            green: 'gltf/tanks/LightTankLvl2/LightTankLvl2GreenAlbedoAO.png',
+            grey: 'gltf/tanks/LightTankLvl2/LightTankLvl2GreyAlbedoAO.png',
+            red: 'gltf/tanks/LightTankLvl2/LightTankLvl2RedAlbedoAO.png',
+            white: 'gltf/tanks/LightTankLvl2/LightTankLvl2WhiteAlbedoAO.png',
+            yellow: 'gltf/tanks/LightTankLvl2/LightTankLvl2YellowAlbedoAO.png',
+        }
+    },
+    LightTankLvl3: {
+        model: 'gltf/tanks/LightTankLvl3/LightTankLvl3Blue.gltf',
+        skins: {
+            blue: 'gltf/tanks/LightTankLvl3/LightTankLvl3BlueAlbedoAO.png',
+            green: 'gltf/tanks/LightTankLvl3/LightTankLvl3GreenAlbedoAO.png',
+            grey: 'gltf/tanks/LightTankLvl3/LightTankLvl3GreyAlbedoAO.png',
+            red: 'gltf/tanks/LightTankLvl3/LightTankLvl3RedAlbedoAO.png',
+            white: 'gltf/tanks/LightTankLvl3/LightTankLvl3WhiteAlbedoAO.png',
+            yellow: 'gltf/tanks/LightTankLvl3/LightTankLvl3YellowAlbedoAO.png',
+        }
+    },
+    HeavyTankLvl3: {
+        model: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3Blue.gltf',
+        skins: {
+            blue: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3BlueAlbedoAO.png',
+            green: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3GreenAlbedoAO.png',
+            grey: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3GreyAlbedoAO.png',
+            red: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3RedAlbedoAO.png',
+            white: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3WhiteAlbedoAO.png',
+            yellow: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3YellowAlbedoAO.png',
+        }
     }
 }
 
@@ -106,6 +139,7 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, As
 
 export function coloredModel(asset: Asset, color: GameColors): Mesh {
 
+    // TODO medium and heavy tanks have treads, which need to be handled differently
     const result = asset.model.clone();
     const mat = (result.material as MeshStandardMaterial).clone();
     const normals = mat.normalMap as Texture;

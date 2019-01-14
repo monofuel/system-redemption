@@ -107,14 +107,13 @@ export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: strin
 }
 
 function assetForEntity(assets: Record<ModelType, Asset>, modelType: ModelType, color: GameColors): Mesh {
+    const model = coloredModel(assets[modelType], color);
     switch (modelType) {
-        case ModelType.LightTankLvl1:
-            const model = coloredModel(assets[modelType], color);
-            model.scale.copy(new Vector3(0.7, 0.7, 0.7));
-            return model;
         default:
-            throw new Error(`missing asset for ${modelType}`)
+            model.scale.copy(new Vector3(0.6, 0.6, 0.6));
+            break;
     }
+    return model;
 }
 
 export function randomColor(): GameColors {

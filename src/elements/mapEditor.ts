@@ -157,6 +157,7 @@ export class MapEditorElement extends PlanetElement {
               kind: 'newUnit',
               unit: {
                 ...newTank(),
+                type: editorMode.unitType!,
                 color: editorMode.user!,
                 loc: hilight.loc,
               } // TODO look up unit type from editorMode
