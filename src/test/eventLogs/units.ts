@@ -49,7 +49,7 @@ export const defaultUnitDefinitions: DefineUnit[] = [
                 model: ModelType.LightTankLvl3,
             },
             move: {
-                cooldown: 2
+                cooldown: 3
             }
         }
     },
