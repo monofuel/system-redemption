@@ -1,6 +1,6 @@
 import { ThreeSceneElement, UpdateLoop } from "./threeScene";
 import { EventContextElement } from "./eventContext";
-import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3 } from "three";
+import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper } from "three";
 import { Unit, Loc } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
@@ -29,9 +29,12 @@ export class PlanetElement extends ThreeSceneElement {
         this.scene.add(new HemisphereLight(0xffffff, undefined, 0.6));
 
         const sun = new DirectionalLight(0xffffff, 1);
-        sun.translateY(10);
-        sun.translateX(10);
+        sun.translateY(5);
+        sun.translateX(5);
+        sun.translateZ(3);
         sun.lookAt(0, 0, 0);
+        const helper = new DirectionalLightHelper(sun);
+        this.scene.add(helper);
         this.scene.add(sun);
 
         this.ctx.queue.addListener('newFiniteMap', (event) => {
