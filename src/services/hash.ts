@@ -1,7 +1,7 @@
-import { Loc } from "../types/SR";
+import { LocHash } from "../types/SR";
 
 interface HashMeta {
-    hash: string,
+    hash: LocHash,
     x: number,
     y: number
 }
@@ -19,8 +19,7 @@ const mapOfHashes: { [key: string]: HashMeta } = {};
  * @param x 
  * @param y 
  */
-export function getHash(loc: Loc) {
-    const [x, y] = loc;
+export function getHash(x: number, y: number): LocHash {
     if (!hashCache[x]) {
         hashCache[x] = {};
     }
@@ -37,7 +36,7 @@ export function getHash(loc: Loc) {
     return hashCache[x][y].hash;
 }
 
-export function unHash(hash: string): Loc {
+export function unHash(hash: string): [number, number] {
     if (mapOfHashes[hash]) {
         const { x, y } = mapOfHashes[hash];
         return [x, y];
@@ -49,6 +48,9 @@ export function unHash(hash: string): Loc {
         hash,
         x,
         y
+    }
+    if (!hashCache[x]) {
+        hashCache[x] = {};
     }
     hashCache[x][y] = meta;
     mapOfHashes[meta.hash] = meta;

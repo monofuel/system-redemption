@@ -8,7 +8,7 @@ export function newTank(): Unit {
         type: UnitType.tank,
         facing: 'E',
         size: 1,
-        loc: [0, 0],
+        loc: '0:0',
         color: randomColor(),
         map: 'test',
         moveCooldown: 0,

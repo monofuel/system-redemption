@@ -470,71 +470,71 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
 
     {
         kind: 'hilightUpdate',
-        loc: [1, 1]
+        loc: '1:1'
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2]
+        loc: '2:2'
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [0]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [1]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [2]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [3]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [0, 3]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [0, 1, 3]
     },
 
     {
         kind: 'hilightUpdate',
-        loc: [2, 2],
+        loc: '2:2',
         corner: [0, 1, 2, 3]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 1],
+        loc: '2:1',
         corner: [0, 1]
     },
     {
         kind: 'hilightUpdate',
-        loc: [2, 0],
+        loc: '2:0',
         corner: [2, 3]
     },
     {
         kind: 'hilightUpdate',
-        loc: [3, 1],
+        loc: '3:1',
         corner: [1, 2]
     },
     {
         kind: 'hilightUpdate',
-        loc: [0, 1],
+        loc: '0:1',
         corner: [2, 1]
     },
     {
         kind: 'hilightUpdate',
-        loc: [1, 2],
+        loc: '1:2',
         corner: [0, 1, 3]
     }
 

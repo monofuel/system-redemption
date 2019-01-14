@@ -22,6 +22,7 @@ import { newTank } from '../unit';
 import { PlanetElement } from './planet';
 import { TileHeights } from '../types/SR';
 import { info } from '../logging';
+import { getHash } from '../services/hash';
 
 export class MapEditorElement extends PlanetElement {
 
@@ -128,7 +129,7 @@ export class MapEditorElement extends PlanetElement {
       const existing = this.ctx.gameState.hilight;
       const newState: HilightUpdate = {
         kind: 'hilightUpdate',
-        loc,
+        loc: getHash(loc[0], loc[1]),
         corner: corners.length > 0 ? corners : undefined
       }
 
@@ -205,8 +206,7 @@ export class MapEditorElement extends PlanetElement {
             this.ctx.queue.post({
               kind: 'mapEdit',
               edit: editType,
-              x: hilight.loc[0],
-              y: hilight.loc[1],
+              loc: hilight.loc,
             });
 
           }

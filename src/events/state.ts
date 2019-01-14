@@ -20,9 +20,10 @@ import {
   SelectUnits,
 } from '.';
 import _ from 'lodash'
-import { FiniteMap, Unit, UnitType, UnitDefinition, Loc } from '../types/SR';
+import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
 import { getTile } from '../planet';
 import { isMoveValid } from '../services/pathfind';
+import { unHash, getHash } from '../services/hash';
 
 export interface GameState {
   planet?: FiniteMap;
@@ -99,12 +100,13 @@ export function applyMapEdit(state: GameState, event: MapEdit) {
   if (!map) {
     throw new Error(`map does not exist`);
   }
+  const [x, y] = unHash(event.loc);
 
-  const chunkX = Math.floor(event.x / map.chunkSize);
-  const chunkY = Math.floor(event.y / map.chunkSize);
+  const chunkX = Math.floor(x / map.chunkSize);
+  const chunkY = Math.floor(y / map.chunkSize);
   const chunk = map.grid[chunkY][chunkX];
-  const tileX = event.x % map.chunkSize;
-  const tileY = event.y % map.chunkSize;
+  const tileX = x % map.chunkSize;
+  const tileY = y % map.chunkSize;
   const tile = chunk.grid[tileY][tileX];
   for (let i = 0; i < tile.length; i++) {
     tile[i] += event.edit[i];
@@ -131,9 +133,8 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
   // check if there is a unit already there
-  let [x, y] = event.unit.loc;
   for (const unit of Object.values(state.units)) {
-    if (unit.loc[0] === x && unit.loc[y] === y) {
+    if (unit.loc === event.unit.loc) {
       throw new Error('unit already at location');
     }
   }
@@ -148,7 +149,7 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
   if (unit.moveCooldown !== 0) {
     throw new Error('unit movement still cooling down');
   }
-  const [x, y] = unit.loc;
+  const [x, y] = unHash(unit.loc);
   let nextX = x;
   let nextY = y;
   switch (event.dir) {
@@ -168,16 +169,20 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
       throw new Error(`invalid direction ${event.dir}`)
   }
 
+  const nextLoc = getHash(nextX, nextY);
+
   // TODO assert that the movement is valid
-  const prev = getTile(state.planet!, x, y);
-  const next = getTile(state.planet!, nextX, nextY);
+  const prev = getTile(state.planet!, unit.loc);
+  const next = getTile(state.planet!, nextLoc);
+
+  // TODO need to check if a unit is already there
 
   const valid = isMoveValid(prev, next, event.dir);
   if (!valid) {
     throw new Error("movement is not valid");
   }
 
-  unit.loc = [nextX, nextY];
+  unit.loc = nextLoc;
   unit.facing = event.dir;
 
   unit.moveCooldown = unitDef.move.cooldown;

@@ -1,11 +1,12 @@
 import { Component } from ".";
 import { ThreeSceneElement } from "../threeScene";
-import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4, Vertex } from "three";
-import { Unit, GameColors, ModelType, Loc, FiniteMap, TileHeights } from "../../types/SR";
+import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4 } from "three";
+import { Unit, GameColors, ModelType, FiniteMap, TileHeights, LocHash } from "../../types/SR";
 import { Asset, coloredModel } from "../../mesh/models";
 import { getTile } from "../../planet";
 import _ from 'lodash';
 import { getHilightMesh } from "../../mesh/hilight";
+import { unHash } from "../../services/hash";
 
 export enum GraphicalType {
     unit = 'unit',
@@ -26,9 +27,8 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
 
     if (comp.type === GraphicalType.unit) {
         const { loc, facing } = sceneElement.ctx.gameState.units[comp.key];
-        const [x, y] = loc;
 
-        placeOnMap(planet, comp.mesh, x, y);
+        placeOnMap(planet, comp.mesh, loc);
 
         switch (facing) {
             case 'N':
@@ -44,8 +44,10 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
                 comp.mesh.rotation.y = -Math.PI / 2;
         }
     } else if (comp.type === GraphicalType.hilight) {
-        const [x, y] = sceneElement.ctx.gameState.hilight!.loc as any;
-        placeOnMap(planet, comp.mesh, x, y);
+        const loc = sceneElement.ctx.gameState.hilight!.loc;
+        if (loc) {
+            placeOnMap(planet, comp.mesh, loc);
+        }
     }
 }
 
@@ -75,7 +77,7 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
         mesh
     }
 }
-export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, loc: Loc, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
+export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
     const planet = sceneElement.ctx.gameState.planet!;
 
     const hilightColor = 0xf4eb42;
@@ -121,9 +123,8 @@ export function randomColor(): GameColors {
     return (GameColors as any)[Object.keys(GameColors)[num]];
 
 }
-function placeOnMap(map: FiniteMap, obj: Object3D, x: number, y: number) {
-
-    const tile = getTile(map, x, y);
+function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash) {
+    const tile = getTile(map, loc);
     const avgHeight = (tile[0] + tile[1] + tile[2] + tile[3]) / 4;
     const maxHeight = _.max(tile)!;
 
@@ -135,6 +136,8 @@ function placeOnMap(map: FiniteMap, obj: Object3D, x: number, y: number) {
     } else {
         obj.position.y = avgHeight * map.zScale;
     }
+
+    const [x, y] = unHash(loc);
 
     obj.position.x = x + 0.5;
     obj.position.z = y + 0.5;

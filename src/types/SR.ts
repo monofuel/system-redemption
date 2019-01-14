@@ -1,4 +1,5 @@
 
+export type LocHash = string;
 export enum ModelType {
         LightTankLvl1 = 'LightTankLvl1'
 }
@@ -12,7 +13,6 @@ export enum GameColors {
         yellow = 'yellow'
 }
 
-export type Loc = [number, number];
 export type Direction = 'N' | 'S' | 'E' | 'W';
 
 export type Layer = 'ground' | 'air' | 'water';
@@ -77,8 +77,8 @@ export interface Unit {
         type: UnitType;
         facing: Direction;
         size: 1 | 2 | 3;
-        loc: Loc;
-        destination?: Loc;
+        loc: LocHash;
+        destination?: LocHash;
         map: string;
         moveCooldown: number;
 }

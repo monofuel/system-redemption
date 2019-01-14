@@ -79,7 +79,7 @@ export function getPlanetObject({
       const tiles = gameMap.grid[y][x];
       const fetchFn = cache ? getCachedTileMesh : getTileGeom;
       const geom = fetchFn({
-        chunkHash: getHash([x, y]),
+        chunkHash: getHash(x, y),
         size,
         chunkSize,
         tiles,

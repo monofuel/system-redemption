@@ -35,14 +35,14 @@ xdescribe('test pathfinder', () => {
 
     it("calculate path", () => {
 
-        const path = pathfind(state, tank.uuid, 0, 3);
+        const path = pathfind(state, tank.uuid, '0:3');
         const expectedPath: Direction[] = ['E', 'E', 'E'];
         assert.deepEqual(path, expectedPath);
     });
     it("empty path if no path", () => {
 
         // 0,4 is on top of the cliff
-        const path = pathfind(state, tank.uuid, 0, 4);
+        const path = pathfind(state, tank.uuid, '0:4');
         assert.equal(path.length, 0);
     });
 })

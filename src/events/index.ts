@@ -1,4 +1,4 @@
-import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition, GameColors, UnitType, Loc } from '../types/SR';
+import { FiniteMap, TileHeights, Unit, Direction, UnitDefinition, GameColors, UnitType, LocHash } from '../types/SR';
 import { GameState } from './state';
 
 // ----------------------
@@ -24,8 +24,8 @@ export interface ToggleLogViewer {
 }
 
 export interface HilightUpdate {
-  kind: 'hilightUpdate',
-  loc?: Loc
+  kind: 'hilightUpdate';
+  loc?: LocHash;
   corner?: Array<0 | 1 | 2 | 3>;
 }
 
@@ -62,8 +62,7 @@ export interface MapEdit {
   kind: 'mapEdit';
   // added to the existing tile
   edit: TileHeights;
-  x: number;
-  y: number;
+  loc: LocHash;
 }
 
 export interface WaterChange {
@@ -89,7 +88,7 @@ export interface MoveUnit {
 export interface SetDestination {
   kind: 'setDestination';
   uuids: string[];
-  dest: Loc;
+  dest: LocHash;
 }
 
 export enum GameStage {

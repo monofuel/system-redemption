@@ -34,7 +34,7 @@ export const unitMoveTestLog: ServerEvent[] = [
         kind: 'newUnit',
         unit: {
             ...tank,
-            loc: [0, 5]
+            loc: '0:5'
         }
     },
     {
@@ -47,8 +47,7 @@ export const unitMoveTestLog: ServerEvent[] = [
         fn: (state: GameState) => {
             const unit = state.units[tank.uuid];
             assert.equal(unit.moveCooldown, 2);
-            assert.equal(unit.loc[0], 1);
-            assert.equal(unit.loc[1], 5);
+            assert.equal(unit.loc, '1:5');
         }
     },
     {
@@ -74,8 +73,7 @@ export const unitMoveTestLog: ServerEvent[] = [
         kind: 'assertion',
         fn: (state: GameState) => {
             const unit = state.units[tank.uuid];
-            assert.equal(unit.loc[0], 2);
-            assert.equal(unit.loc[1], 5);
+            assert.equal(unit.loc, '2:5');
         }
     },
     {
@@ -115,8 +113,7 @@ export const unitMoveTestLog: ServerEvent[] = [
         kind: 'assertion',
         fn: (state: GameState) => {
             const unit = state.units[tank.uuid];
-            assert.equal(unit.loc[0], 5);
-            assert.equal(unit.loc[1], 5);
+            assert.equal(unit.loc, '5:5');
         }
     },
     {

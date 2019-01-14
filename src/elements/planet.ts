@@ -1,13 +1,14 @@
 import { ThreeSceneElement, UpdateLoop } from "./threeScene";
 import { EventContextElement } from "./eventContext";
 import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper } from "three";
-import { Unit, Loc } from "../types/SR";
+import { Unit, LocHash } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
 import { ECS } from "./components";
 import { unitGraphicalComp, hilightGraphicalComp, GraphicalType } from "./components/graphical";
 import { getChunkForTile } from "../planet";
 import { getHilightMesh } from "../mesh/hilight";
+import { getHash } from "../services/hash";
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
@@ -47,13 +48,13 @@ export class PlanetElement extends ThreeSceneElement {
             this.loadMap();
         });
         this.ctx.queue.addListener('mapEdit', (event) => {
-            invalidateChunkCache(getChunkForTile(this.ctx.gameState.planet!, event.x, event.y));
+            invalidateChunkCache(getChunkForTile(this.ctx.gameState.planet!, event.loc));
             this.loadMap();
 
             const hilight = this.ctx.gameState.hilight;
             if (hilight && hilight.loc) {
                 const key = 'hilight';
-                const comp = hilightGraphicalComp(this, key, hilight.loc, hilight.corner);
+                const comp = hilightGraphicalComp(this, key, hilight.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
         });
@@ -68,7 +69,7 @@ export class PlanetElement extends ThreeSceneElement {
             if (!event.loc) {
                 this.ecs.removeGraphicalComponent(key);
             } else {
-                const comp = hilightGraphicalComp(this, key, event.loc, event.corner);
+                const comp = hilightGraphicalComp(this, key, event.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
         });
@@ -115,14 +116,14 @@ export class PlanetElement extends ThreeSceneElement {
         this.ecs.addGraphicalComponent(comp);
     }
 
-    protected getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): Loc | null {
+    protected getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): LocHash | null {
         const vec = this.getPointAtRay(screenLoc, ignoreWater);
         if (!vec) {
             return null;
         }
         let x = Math.floor(vec.x);
         let y = Math.floor(vec.z);
-        return [x, y];
+        return getHash(x, y);
 
     }
 

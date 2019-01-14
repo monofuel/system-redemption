@@ -1,18 +1,20 @@
 import { GameState, getUnitInfo } from "../events/state";
-import { Direction, Loc, TileHeights } from "../types/SR";
-import { getHash } from "./hash";
+import { Direction, TileHeights, LocHash } from "../types/SR";
 
 
+interface LocCost {
+    loc: string,
+    cost: number,
+}
 
 // TODO
-export function pathfind(state: GameState, uuid: string, x: number, y: number): Direction[] {
+export function pathfind(state: GameState, uuid: string, dst: string): Direction[] {
     const { planet } = state;
     const { unit, unitDef } = getUnitInfo(state, uuid);
-    const start = getHash(unit.loc);
-    const dst = getHash([x, y]);
+    const start = unit.loc;
 
-    const closed: { [key: string]: Loc } = {};
-    const open: Loc[] = [unit.loc];
+    const closed: { [key: string]: LocHash } = {};
+    const open: LocHash[] = [unit.loc];
     const prevMap: { [key: string]: { prev: string, dir: Direction } } = {};
     const scoreMap: { [key: string]: number } = {};
 

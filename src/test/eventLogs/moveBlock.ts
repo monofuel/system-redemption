@@ -1,13 +1,14 @@
 import { LoggedEvent } from "../../elements/eventContext";
-import { FrontendEvent, ServerEvent, frontendEventList, Assertion, GameStage } from "../../events";
+import { FrontendEvent, ServerEvent, frontendEventList, Assertion, GameStage, EditorSelection } from "../../events";
 import { GameState } from "../../events/state";
 import { assert } from 'chai';
 import { AssertionError, deepEqual } from "assert";
+import { GameColors, UnitType, ModelType } from "../../types/SR";
 
 
 const tankUUID = "e3798619-9d8b-422e-b61c-ed84a1272577";
 
-const log: any = [
+const log: (ServerEvent | FrontendEvent)[] = [
     {
         "kind": "newFiniteMap",
         "map": {
@@ -142,14 +143,14 @@ const log: any = [
     {
         "kind": "defineUnit",
         "unit": {
-            "type": "tank",
+            "type": UnitType.tank,
             "size": 1,
             "buildTime": 10,
             "cost": 100,
             "maxHealth": 200,
             "layer": "ground",
             "graphical": {
-                "model": "LightTankLvl1"
+                "model": ModelType.LightTankLvl1
             },
             "move": {
                 "cooldown": 2
@@ -158,141 +159,11 @@ const log: any = [
     },
     {
         "kind": "editorMode",
-        "selection": "raiselower",
-        "user": "blue",
-        "unitType": "tank"
+        "selection": EditorSelection.raiselower,
+        "user": GameColors.blue,
+        "unitType": UnitType.tank
     },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            0
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            0
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            0,
-            0
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            0,
-            0
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
+
     {
         "kind": "mapEdit",
         "edit": [
@@ -301,290 +172,35 @@ const log: any = [
             1,
             1
         ],
-        "x": 0,
-        "y": 0
+        loc: '0:0'
     },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            1
-        ],
-        "corner": [
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
+
     {
         "kind": "editorMode",
-        "selection": "newUnit",
-        "user": "blue",
-        "unitType": "tank"
+        "selection": EditorSelection.newUnit,
+        "user": GameColors.blue,
+        "unitType": UnitType.tank
     },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            0,
-            0
-        ]
-    },
+
     {
         "kind": "newUnit",
         "unit": {
             "uuid": "e3798619-9d8b-422e-b61c-ed84a1272577",
-            "type": "tank",
+            "type": UnitType.tank,
             "facing": "E",
             "size": 1,
-            "loc": [
-                0,
-                0
-            ],
-            "color": "blue",
+            "loc": '0:0',
+            "color": GameColors.blue,
             "map": "test",
             "moveCooldown": 0
         }
     },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            1
-        ]
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
+
     {
         "kind": "editorMode",
-        "selection": "raiselower",
-        "user": "blue",
-        "unitType": "tank"
+        "selection": EditorSelection.raiselower,
     },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            1
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
+
     {
         "kind": "mapEdit",
         "edit": [
@@ -593,561 +209,16 @@ const log: any = [
             1,
             1
         ],
-        "x": 1,
-        "y": 1
+        "loc": "1:1",
     },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            1
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            3
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            3
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            3
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            3
-        ],
-        "corner": [
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            3
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            3
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            3
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            3
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            2
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            2
-        ],
-        "corner": [
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            2
-        ],
-        "corner": [
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            1
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            2
-        ],
-        "corner": [
-            3,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            0,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            0,
-            1,
-            2,
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            1,
-            1
-        ],
-        "corner": [
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            1
-        ],
-        "corner": [
-            3
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            1,
-            0
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            2,
-            0
-        ],
-        "corner": [
-            1,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate",
-        "loc": [
-            3,
-            0
-        ],
-        "corner": [
-            3,
-            2
-        ]
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
-    {
-        "kind": "hilightUpdate"
-    },
+
     {
         "kind": "hilightUpdate"
     },
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([0, 0], state.units[tankUUID].loc);
+            assert.deepEqual('0:0', state.units[tankUUID].loc);
         }
     },
     {
@@ -1158,7 +229,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([1, 0], state.units[tankUUID].loc);
+            assert.deepEqual("1:0", state.units[tankUUID].loc);
         }
     },
     {
@@ -1185,7 +256,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([2, 0], state.units[tankUUID].loc);
+            assert.deepEqual("2:0", state.units[tankUUID].loc);
         }
     },
     {
@@ -1202,7 +273,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([2, 1], state.units[tankUUID].loc);
+            assert.deepEqual("2:1", state.units[tankUUID].loc);
         }
     },
     {
@@ -1227,7 +298,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([2, 2], state.units[tankUUID].loc);
+            assert.deepEqual("2:2", state.units[tankUUID].loc);
         }
     },
     {
@@ -1244,7 +315,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([1, 2], state.units[tankUUID].loc);
+            assert.deepEqual("1:2", state.units[tankUUID].loc);
         }
     },
     {
@@ -1269,7 +340,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([0, 2], state.units[tankUUID].loc);
+            assert.deepEqual("0:2", state.units[tankUUID].loc);
         }
     },
     {
@@ -1286,7 +357,7 @@ const log: any = [
     {
         kind: 'assertion',
         fn: (state: GameState) => {
-            assert.deepEqual([0, 1], state.units[tankUUID].loc);
+            assert.deepEqual("0:1", state.units[tankUUID].loc);
         }
     },
     {
