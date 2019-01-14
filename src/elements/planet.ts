@@ -13,6 +13,7 @@ export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
 
     protected ecs: ECS;
+    protected usePlanetCache: boolean = false;
 
     constructor(ctx?: EventContextElement) {
         super(ctx);
@@ -199,7 +200,7 @@ export class PlanetElement extends ThreeSceneElement {
         }
         const mapObj = getPlanetObject({
             gameMap,
-            cache: true,
+            cache: this.usePlanetCache,
             wireframe: false,
         });
         mapObj.rotateY(Math.PI);

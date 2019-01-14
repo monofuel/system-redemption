@@ -26,6 +26,7 @@ import { info } from '../logging';
 export class MapEditorElement extends PlanetElement {
 
   private controls: OrbitControls;
+  protected usePlanetCache: boolean = true;
   constructor() {
     super();
 

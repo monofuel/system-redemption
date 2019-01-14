@@ -152,7 +152,7 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
   let nextY = y;
   switch (event.dir) {
     case 'N':
-      nextY = x + 1;
+      nextY = y + 1;
       break;
     case 'S':
       nextY = y - 1;
