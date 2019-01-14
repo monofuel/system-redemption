@@ -33,8 +33,7 @@ export class PlanetElement extends ThreeSceneElement {
         sun.translateX(5);
         sun.translateZ(3);
         sun.lookAt(0, 0, 0);
-        const helper = new DirectionalLightHelper(sun);
-        this.scene.add(helper);
+
         this.scene.add(sun);
 
         this.ctx.queue.addListener('newFiniteMap', (event) => {
