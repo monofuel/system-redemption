@@ -22,6 +22,7 @@ import {
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, Loc } from '../types/SR';
 import { getTile } from '../planet';
+import { isMoveValid } from '../services/pathfind';
 
 export interface GameState {
   planet?: FiniteMap;
@@ -170,6 +171,11 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
   // TODO assert that the movement is valid
   const prev = getTile(state.planet!, x, y);
   const next = getTile(state.planet!, nextX, nextY);
+
+  const valid = isMoveValid(prev, next, event.dir);
+  if (!valid) {
+    throw new Error("movement is not valid");
+  }
 
   unit.loc = [nextX, nextY];
   unit.facing = event.dir;
