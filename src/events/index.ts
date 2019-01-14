@@ -26,6 +26,7 @@ export interface ToggleLogViewer {
 export interface HilightUpdate {
   kind: 'hilightUpdate';
   loc?: LocHash;
+  color?: number;
   corner?: Array<0 | 1 | 2 | 3>;
 }
 
@@ -118,6 +119,13 @@ export interface AssertFail {
   event: ServerEvent;
 }
 
+export interface SetPath {
+  kind: 'setPath';
+  uuid: string;
+  dest: LocHash;
+  path: Direction[];
+}
+
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
   mapEdit: MapEdit;
@@ -130,6 +138,7 @@ export interface ServerEvents {
   gameTick: GameTick;
   assertFail: AssertFail;
   setDestination: SetDestination;
+  setPath: SetPath;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

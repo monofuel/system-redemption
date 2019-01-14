@@ -32,10 +32,10 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
 
         switch (facing) {
             case 'N':
-                comp.mesh.rotation.y = -Math.PI;
+                comp.mesh.rotation.y = Math.PI;
                 break;
             case 'S':
-                comp.mesh.rotation.y = Math.PI;
+                comp.mesh.rotation.y = -Math.PI;
                 break;
             case 'E':
                 comp.mesh.rotation.y = Math.PI / 2;
@@ -77,11 +77,10 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
         mesh
     }
 }
-export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
+export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, defaultColor: number = 0xffffff, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
     const planet = sceneElement.ctx.gameState.planet!;
 
     const hilightColor = 0xf4eb42;
-    const defaultColor = 0xffffff;
 
     let cornerColors: [number, number, number, number] | undefined;
     if (corners) {

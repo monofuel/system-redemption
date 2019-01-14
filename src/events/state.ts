@@ -18,6 +18,7 @@ import {
   HilightUpdate,
   SetDestination,
   SelectUnits,
+  SetPath,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
@@ -56,6 +57,7 @@ const eventApply: Record<
   hilightUpdate: applyHilightUpdate,
   setDestination: applySetDestination,
   selectUnits: applySelectUnits,
+  setPath: applySetPath,
 };
 
 export function newGameState(): GameState {
@@ -186,6 +188,9 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
   unit.facing = event.dir;
 
   unit.moveCooldown = unitDef.move.cooldown;
+  if (unit.path) {
+    unit.path.shift()
+  }
 }
 export function applyAssertion(state: GameState, event: Assertion) {
   event.fn(state);
@@ -229,10 +234,10 @@ export function applyHilightUpdate(state: GameState, event: HilightUpdate) {
 
 export function getUnitInfo(state: GameState, uuid: string) {
   const unit = state.units[uuid];
-  const unitDef = state.unitDefinitions[unit.type];
   if (!unit) {
     throw new Error(`missing unit ${uuid}`);
   }
+  const unitDef = state.unitDefinitions[unit.type];
   if (!unitDef) {
     throw new Error(`missing unit definition ${unitDef}`);
   }
@@ -246,9 +251,19 @@ export function applySetDestination(state: GameState, event: SetDestination) {
     if (!unitDef.move) {
       throw new Error(`unit cannot move: ${unit.type}`);
     }
+    delete unit.path;
     unit.destination = event.dest;
   }
 }
 export function applySelectUnits(state: GameState, event: SelectUnits) {
-  // TODO
+  state.selectedUnits = event.uuids;
+}
+
+export function applySetPath(state: GameState, event: SetPath) {
+  const { unit, unitDef } = getUnitInfo(state, event.uuid);
+  if (unit.destination !== event.dest) {
+    throw new Error(`destination does not match for unit ${event.uuid}, ${unit.destination}, ${event.dest}`);
+  }
+  unit.path = event.path;
+
 }

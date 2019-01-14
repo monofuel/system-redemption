@@ -41,7 +41,7 @@ export class EventContextElement extends HTMLElement {
       },
       logger: (event, timestamp, listeners) => {
         this.events.push({ event, timestamp, listeners });
-        if (event.kind !== 'gameTick') {
+        if (event.kind !== 'gameTick' && event.kind !== 'hilightUpdate') {
 
           info('event posted', {
             event: JSON.stringify(event),

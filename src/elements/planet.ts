@@ -9,6 +9,9 @@ import { unitGraphicalComp, hilightGraphicalComp, GraphicalType } from "./compon
 import { getChunkForTile } from "../planet";
 import { getHilightMesh } from "../mesh/hilight";
 import { getHash } from "../services/hash";
+import { mouseToVec } from ".";
+import { EditorSelection, HilightUpdate } from "../events";
+import _ from 'lodash';
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
@@ -54,7 +57,7 @@ export class PlanetElement extends ThreeSceneElement {
             const hilight = this.ctx.gameState.hilight;
             if (hilight && hilight.loc) {
                 const key = 'hilight';
-                const comp = hilightGraphicalComp(this, key, hilight.corner);
+                const comp = hilightGraphicalComp(this, key, hilight.color, hilight.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
         });
@@ -69,7 +72,7 @@ export class PlanetElement extends ThreeSceneElement {
             if (!event.loc) {
                 this.ecs.removeGraphicalComponent(key);
             } else {
-                const comp = hilightGraphicalComp(this, key, event.corner);
+                const comp = hilightGraphicalComp(this, key, event.color, event.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
         });
@@ -110,6 +113,74 @@ export class PlanetElement extends ThreeSceneElement {
             }
         }
     }
+
+    protected hilightAtMouse(ev: MouseEvent) {
+        const mode = this.ctx.gameState.editorMode;
+
+        const vec = this.getPointAtRay(
+            mouseToVec(ev, this.offsetWidth, this.offsetHeight), true
+        );
+        if (!vec) {
+            if (this.ctx.gameState.hilight) {
+                this.ctx.queue.post({
+                    kind: 'hilightUpdate'
+                })
+            }
+            return;
+        }
+
+        const loc: [number, number] = [Math.floor(vec.x), Math.floor(vec.z)];
+
+        const corners: Array<0 | 1 | 2 | 3> = [];
+        if (mode && mode.selection === EditorSelection.raiselower) {
+
+            const deltaX = vec.x - loc[0];
+            const deltaY = vec.z - loc[1];
+            const lb = 0.20;
+            const ub = 1 - lb;
+            if (deltaX < lb) {
+                if (deltaY < lb) {
+                    corners.push(3);
+                } else if (deltaY > ub) {
+                    corners.push(0);
+                } else {
+                    corners.push(0, 3);
+                }
+            } else if (deltaX > ub) {
+                if (deltaY < lb) {
+                    corners.push(2);
+                } else if (deltaY > ub) {
+                    corners.push(1);
+                } else {
+                    corners.push(1, 2);
+                }
+            } else {
+                if (deltaY < lb) {
+                    corners.push(3, 2);
+                } else if (deltaY > ub) {
+                    corners.push(1, 0);
+                } else {
+                    corners.push(0, 1, 2, 3)
+                }
+            }
+        }
+
+
+        const existing = this.ctx.gameState.hilight;
+        const newState: HilightUpdate = {
+            kind: 'hilightUpdate',
+            loc: getHash(loc[0], loc[1]),
+            corner: corners.length > 0 ? corners : undefined
+        }
+
+        if (_.isEqual(existing, newState)) {
+            return;
+        }
+
+
+        this.ctx.queue.post(newState);
+    }
+
     private addUnit(unit: Unit) {
 
         const comp = unitGraphicalComp(this, unit);

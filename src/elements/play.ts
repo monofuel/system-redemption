@@ -13,7 +13,7 @@ export class PlayELement extends PlanetElement {
     private HUDPanel: HTMLCanvasElement;
     private HUDContext: CanvasRenderingContext2D;
 
-    private singlePlayer: boolean = false;
+    private singlePlayer: boolean = true;
     private gameTickLoop?: UpdateLoop;
 
     private dragStart?: MouseEvent;
@@ -82,20 +82,23 @@ export class PlayELement extends PlanetElement {
         controls.maxPolarAngle = (10 * Math.PI) / 21;
 
         this.addEventListener('mousedown', (e: MouseEvent) => {
-            if (e.button === 0) {
-                this.dragStart = e;
-                this.dragCurrent = e;
-            } else {
-                delete this.dragStart;
-                delete this.dragCurrent;
-            }
+            this.dragStart = e;
+            this.dragCurrent = e;
+
         });
 
-        this.addEventListener('mousemove', (e: MouseEvent) => {
-            this.dragCurrent = e;
+        this.addEventListener('mousemove', (ev: MouseEvent) => {
+            this.dragCurrent = ev;
+
+            if (this.ctx.gameState.selectedUnits.length > 0) {
+                this.hilightAtMouse(ev);
+            }
         })
         this.addEventListener('mouseup', (e: MouseEvent) => {
             if (e.button === 0) {
+                this.ctx.queue.post({
+                    kind: 'hilightUpdate',
+                })
                 if (this.dragStart) {
                     const uuids = this.getSelectedUnits(this.dragStart, e);
                     this.ctx.queue.post({
@@ -106,10 +109,30 @@ export class PlayELement extends PlanetElement {
                 delete this.dragStart;
                 delete this.dragCurrent;
             } else if (e.button === 2) {
+                let dragDistance = 0;
+                if (this.dragStart) {
+                    const start = new Vector2(this.dragStart.x, this.dragStart.y);
+                    const end = new Vector2(e.x, e.y);
+                    dragDistance = start.distanceTo(end);
+                }
+
+                // ignore events if the mouse is dragged too far
+                if (dragDistance > 5) {
+                    return;
+                }
+                if (this.ctx.gameState.selectedUnits.length === 0) {
+                    return;
+                }
                 const dest = this.getTileAtRay(mouseToVec(e, this.offsetWidth, this.offsetHeight), true)
                 if (!dest) {
                     return;
                 }
+                this.ctx.queue.post({
+                    kind: 'hilightUpdate',
+                    loc: dest,
+                    color: 0xc60909,
+
+                })
                 this.ctx.queue.post({
                     kind: 'setDestination',
                     uuids: this.ctx.gameState.selectedUnits,
@@ -175,7 +198,7 @@ export class PlayELement extends PlanetElement {
 
     private drawSelectionBox() {
         this.HUDContext.clearRect(0, 0, this.HUDPanel.width, this.HUDPanel.height);
-        if (!this.dragCurrent || !this.dragStart) {
+        if (!this.dragCurrent || !this.dragStart || this.dragStart.button !== 0) {
             return;
         }
 
@@ -261,12 +284,11 @@ export class PlayELement extends PlanetElement {
     // it does game tick work for appending new events
     onTick(): ServerEvent[] {
         const results: ServerEvent[] = [];
+
+        onTick(this.ctx.gameState, this.asyncEvents);
         while (this.asyncEvents.length > 0) {
             results.push(this.asyncEvents.shift()!);
         }
-
-        onTick(this.ctx.gameState, this.asyncEvents);
-
         return results;
     }
 

@@ -81,6 +81,7 @@ export interface Unit {
         destination?: LocHash;
         map: string;
         moveCooldown: number;
+        path?: Direction[];
 }
 
 /*

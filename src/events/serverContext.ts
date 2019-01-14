@@ -3,6 +3,7 @@ import { GameState, newGameState, applyEvent } from "./state";
 import { EventQueue } from "./queues";
 import { info } from "../logging";
 import { UpdateLoop } from "../elements/threeScene";
+import { pathfind } from "../services/pathfind";
 
 interface LoggedEvent {
     event: ServerEvent;
@@ -108,6 +109,24 @@ export class ServerContext {
  * @param asyncEvents array to push to for events (can be done asyncronously)
  */
 export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
-    // console.log('ON TICK');
-    // TODO pathfinding
+
+    for (const uuid in state.units) {
+        const unit = state.units[uuid];
+        if (unit.destination && !unit.path) {
+            const path = pathfind(state, uuid, unit.destination);
+            asyncEvents.push({
+                kind: 'setPath',
+                uuid,
+                dest: unit.destination,
+                path,
+            });
+        }
+        if (unit.moveCooldown === 0 && unit.path && unit.path.length > 0) {
+            asyncEvents.push({
+                kind: 'moveUnit',
+                uuid,
+                dir: unit.path[0]
+            })
+        }
+    }
 }
