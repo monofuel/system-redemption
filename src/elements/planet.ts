@@ -35,8 +35,8 @@ export class PlanetElement extends ThreeSceneElement {
 
         const sun = new DirectionalLight(0xffffff, 1);
         sun.translateY(5);
-        sun.translateX(5);
-        sun.translateZ(3);
+        sun.translateX(-5);
+        sun.translateZ(-3);
         sun.lookAt(0, 0, 0);
 
         this.scene.add(sun);

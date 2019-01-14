@@ -46,7 +46,7 @@ export const unitMoveTestLog: ServerEvent[] = [
         kind: 'assertion',
         fn: (state: GameState) => {
             const unit = state.units[tank.uuid];
-            assert.equal(unit.moveCooldown, 2);
+            assert.equal(unit.moveCooldown, 1);
             assert.equal(unit.loc, '1:5');
         }
     },
