@@ -114,12 +114,21 @@ export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
         const unit = state.units[uuid];
         if (unit.destination && !unit.path) {
             const path = pathfind(state, uuid, unit.destination);
-            asyncEvents.push({
-                kind: 'setPath',
-                uuid,
-                dest: unit.destination,
-                path,
-            });
+            if (path.length === 0) {
+                // no path found, clear destination
+                asyncEvents.push({
+                    kind: 'setDestination',
+                    uuids: [uuid]
+                })
+            } else {
+
+                asyncEvents.push({
+                    kind: 'setPath',
+                    uuid,
+                    dest: unit.destination,
+                    path,
+                });
+            }
         }
         if (unit.moveCooldown === 0 && unit.path && unit.path.length > 0) {
             asyncEvents.push({

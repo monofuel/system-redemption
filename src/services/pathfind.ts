@@ -67,11 +67,14 @@ export function pathfind(state: GameState, uuid: string, dst: string): Direction
 
 // TODO this should probably return 'why' the movement is not valid
 // TODO consider different movement layers (ground/water/air)
-export function isMoveValid(src: TileHeights, dst: TileHeights, dir: Direction): boolean {
+export function isMoveValid(planet: FiniteMap, src: TileHeights, dst: TileHeights, dir: Direction): boolean {
     // tile corners:
     // 0 1
     // 2 3
-
+    const { waterHeight } = planet;
+    if (dst.filter((v) => v < waterHeight).length > 0) {
+        return false;
+    }
     switch (dir) {
         case 'N':
             return src[2] === dst[0] && src[3] === dst[1];
@@ -85,7 +88,7 @@ export function isMoveValid(src: TileHeights, dst: TileHeights, dir: Direction):
 }
 
 export function getValidMoveNeighbors(planet: FiniteMap, src: LocHash): { loc: LocHash, dir: Direction }[] {
-    return getNeighbors(planet, src).filter(({ loc, dir }) => isMoveValid(getTile(planet, src), getTile(planet, loc), dir));
+    return getNeighbors(planet, src).filter(({ loc, dir }) => isMoveValid(planet, getTile(planet, src), getTile(planet, loc), dir));
 }
 
 export function getNeighbors(planet: FiniteMap, loc: LocHash): { loc: LocHash, dir: Direction }[] {

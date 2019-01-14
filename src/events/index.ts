@@ -89,7 +89,7 @@ export interface MoveUnit {
 export interface SetDestination {
   kind: 'setDestination';
   uuids: string[];
-  dest: LocHash;
+  dest?: LocHash;
 }
 
 export enum GameStage {

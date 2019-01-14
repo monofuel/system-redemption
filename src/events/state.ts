@@ -179,7 +179,7 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
 
   // TODO need to check if a unit is already there
 
-  const valid = isMoveValid(prev, next, event.dir);
+  const valid = isMoveValid(state.planet!, prev, next, event.dir);
   if (!valid) {
     throw new Error("movement is not valid");
   }
