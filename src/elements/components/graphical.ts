@@ -1,6 +1,6 @@
 import { Component } from ".";
 import { ThreeSceneElement } from "../threeScene";
-import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4 } from "three";
+import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4, AxesHelper } from "three";
 import { Unit, GameColors, ModelType, FiniteMap, TileHeights, LocHash } from "../../types/SR";
 import { Asset, coloredModel } from "../../mesh/models";
 import { getTile } from "../../planet";
@@ -32,10 +32,10 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
 
         switch (facing) {
             case 'N':
-                comp.mesh.rotation.y = Math.PI;
+                comp.mesh.rotation.y = 0;
                 break;
             case 'S':
-                comp.mesh.rotation.y = -Math.PI;
+                comp.mesh.rotation.y = - Math.PI;
                 break;
             case 'E':
                 comp.mesh.rotation.y = Math.PI / 2;
@@ -70,7 +70,8 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
     }
     const mesh = assetForEntity(sceneElement.assets, unitDef.graphical.model, unit.color || randomColor());
     mesh.name = unit.uuid;
-
+    const helper = new AxesHelper(2);
+    mesh.add(helper);
     return {
         key: unit.uuid,
         type: GraphicalType.unit,
@@ -92,7 +93,6 @@ export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: strin
         ]
     }
 
-    // TODO cornerColors
     const mesh = getHilightMesh({
         zScale: planet.zScale,
         color: defaultColor,
@@ -140,7 +140,7 @@ function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash) {
     obj.position.x = x + 0.5;
     obj.position.z = y + 0.5;
 
-    orientToNormal(normal, obj);
+    // orientToNormal(normal, obj);
 }
 
 function getTileNormal(corners: TileHeights, zScale: number): Vector3 {
@@ -175,23 +175,20 @@ function getTileNormal(corners: TileHeights, zScale: number): Vector3 {
         return up;
     }
 
-    return normal1.clone().add(normal2).divide(new Vector3(2, 2, 2));
+    return normal1.clone().add(normal2).divide(new Vector3(2, 2, 2)).normalize();
 }
+function orientToNormal(normal: Vector3, obj: Object3D) {
 
-function orientToNormal(vec: Vector3, obj: Object3D) {
-
-    const up = new Vector3(0, 0, 1);
-
-    let axis = new Vector3(1, 0, 0);
-    if (vec.z !== -1 && vec.z !== 1) {
-        axis = up.clone().cross(vec).normalize();
-        // not sure why this is needed, but it works
-        axis = new Vector3(axis.y, axis.z, axis.x);
+    const up = obj.up.clone();
+    let axis = new Vector3(0, 0, 1);
+    if (normal.y !== -1 && normal.y !== 1) {
+        axis = up.cross(normal);
     }
 
-    const radians = Math.acos(vec.dot(up));
+    const radians = Math.acos(normal.dot(up));
     const mat = new Matrix4().makeRotationAxis(axis, radians);
 
     obj.rotation.setFromRotationMatrix(mat);
+    obj.rotateX(-Math.PI / 2);
 
 }

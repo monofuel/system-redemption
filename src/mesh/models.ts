@@ -1,4 +1,4 @@
-import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color } from "three";
+import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color, Vector3 } from "three";
 import { GameColors, ModelType } from "../types/SR";
 
 const ASSET_ZIP = '/scripts/assets.zip';
@@ -154,5 +154,6 @@ export function coloredModel(asset: Asset, color: GameColors): Mesh {
             obj.material = mat;
         }
     });
+    result.up = new Vector3(0, 1, 0);
     return result;
 }
