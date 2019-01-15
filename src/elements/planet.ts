@@ -57,7 +57,7 @@ export class PlanetElement extends ThreeSceneElement {
             const hilight = this.ctx.gameState.hilight;
             if (hilight && hilight.loc) {
                 const key = 'hilight';
-                const comp = hilightGraphicalComp(this, key, hilight.color, hilight.corner);
+                const comp = hilightGraphicalComp(this, key, hilight.loc, hilight.color, hilight.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
         });
@@ -72,7 +72,7 @@ export class PlanetElement extends ThreeSceneElement {
             if (!event.loc) {
                 this.ecs.removeGraphicalComponent(key);
             } else {
-                const comp = hilightGraphicalComp(this, key, event.color, event.corner);
+                const comp = hilightGraphicalComp(this, key, event.loc, event.color, event.corner);
                 this.ecs.addGraphicalComponent(comp);
             }
         });
@@ -88,6 +88,8 @@ export class PlanetElement extends ThreeSceneElement {
                     continue;
                 }
                 const hilight = getHilightMesh({
+                    planet,
+                    loc: this.ctx.gameState.hilight!.loc!,
                     zScale: planet.zScale,
                     color: hilightColor,
                 })
@@ -136,7 +138,7 @@ export class PlanetElement extends ThreeSceneElement {
 
             const deltaX = vec.x - loc[0];
             const deltaY = vec.z - loc[1];
-            const lb = 0.20;
+            const lb = 0.13;
             const ub = 1 - lb;
             if (deltaX < lb) {
                 if (deltaY < lb) {
@@ -202,12 +204,12 @@ export class PlanetElement extends ThreeSceneElement {
         const raycaster = new Raycaster();
         raycaster.setFromCamera(screenLoc, this.camera);
 
-        const mapObj = this.scene.getObjectByName('foobar');
-        if (!mapObj) {
+        const mapGroup = this.scene.getObjectByName(this.ctx.gameState.planet!.name);
+        if (!mapGroup) {
             return null;
         }
 
-        const intersects = raycaster.intersectObjects(mapObj.children);
+        const intersects = raycaster.intersectObjects(mapGroup.children, true);
         let intersection = intersects.length > 0 ? intersects[0] : null;
         // HACK for ignoring water, ignore transparent faces
         if (ignoreWater) {
@@ -226,7 +228,7 @@ export class PlanetElement extends ThreeSceneElement {
 
 
 
-            const vec = intersection.point.applyMatrix4(mapObj.matrix);
+            const vec = intersection.point.applyMatrix4(mapGroup.matrix);
             // fudge the number over a little to prevent flickering over cliffs
             vec.add(new Vector3(0.001, 0.001, 0.001));
             let { x, y } = vec;
@@ -287,6 +289,12 @@ export class PlanetElement extends ThreeSceneElement {
             mapGroup.remove(oldMap);
         }
         mapGroup.add(mapObj);
+        const hilight = this.ctx.gameState.hilight;
+        if (hilight && hilight.loc) {
+
+            const comp = hilightGraphicalComp(this, 'hilight', hilight.loc, hilight.color, hilight.corner);
+            this.ecs.addGraphicalComponent(comp);
+        }
     }
 
 }

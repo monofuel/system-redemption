@@ -1,36 +1,45 @@
 import { DoubleSide, Face3, FrontSide, Geometry, Mesh, MeshBasicMaterial, MeshPhongMaterial, Vector3, MeshLambertMaterial, BackSide, BufferGeometry } from 'three';
-import { TileHeights } from '../types/SR';
-
+import { TileHeights, FiniteMap, LocHash } from '../types/SR';
+import { getTile } from '../planet';
+import _ from 'lodash';
 interface HilightOpts {
+  planet: FiniteMap,
+  loc: LocHash,
   color: number;
   cornerColors?: [number, number, number, number];
   zScale: number;
 }
 
-export function getHilightMesh({ color, cornerColors }: HilightOpts): Mesh {
+export function getHilightMesh({ planet, loc, color, cornerColors, zScale }: HilightOpts): Mesh {
   // TODO respect corners
+  const tile = getTile(planet, loc).map((n) => n * zScale);
+  const minHeight = _.min(tile)!;
+  const height = tile.map((n) => (n - minHeight))
+
+
   cornerColors = cornerColors || [color, color, color, color];
   const geom = new Geometry();
-  const heightOffset = 0.02;
+  const heightOffset = 0.01;
   const c1 = cornerGeom.clone();
+  c1.translate(0, 0, height[2])
   geom.merge(c1);
 
   const c2 = cornerGeom.clone();
   c2.faces.forEach((f) => f.materialIndex = 1);
   c2.rotateZ(Math.PI / 2);
-  c2.translate(1, 0, 0);
+  c2.translate(1, 0, height[3]);
   geom.merge(c2);
 
   const c3 = cornerGeom.clone();
   c3.faces.forEach((f) => f.materialIndex = 2);
   c3.rotateZ(Math.PI);
-  c3.translate(1, 1, 0);
+  c3.translate(1, 1, height[1]);
   geom.merge(c3);
 
   const c4 = cornerGeom.clone();
   c4.faces.forEach((f) => f.materialIndex = 3);
   c4.rotateZ(-Math.PI / 2);
-  c4.translate(0, 1, 0);
+  c4.translate(0, 1, height[0]);
   geom.merge(c4);
 
   const materials = cornerColors.map((color) => {

@@ -28,7 +28,7 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
     if (comp.type === GraphicalType.unit) {
         const { loc, facing } = sceneElement.ctx.gameState.units[comp.key];
 
-        placeOnMap(planet, comp.mesh, loc);
+        placeOnMap(planet, comp.mesh, loc, true);
 
         switch (facing) {
             case 'N':
@@ -46,7 +46,7 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
     } else if (comp.type === GraphicalType.hilight) {
         const loc = sceneElement.ctx.gameState.hilight!.loc;
         if (loc) {
-            placeOnMap(planet, comp.mesh, loc);
+            placeOnMap(planet, comp.mesh, loc, false);
         }
     }
 }
@@ -78,7 +78,7 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
         mesh
     }
 }
-export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, defaultColor: number = 0xffffff, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
+export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, loc: LocHash, defaultColor: number = 0xffffff, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
     const planet = sceneElement.ctx.gameState.planet!;
 
     const hilightColor = 0xf4eb42;
@@ -94,6 +94,8 @@ export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: strin
     }
 
     const mesh = getHilightMesh({
+        planet,
+        loc,
         zScale: planet.zScale,
         color: defaultColor,
         cornerColors
@@ -121,26 +123,27 @@ export function randomColor(): GameColors {
     return (GameColors as any)[Object.keys(GameColors)[num]];
 
 }
-function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash) {
+function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash, orient: boolean) {
     const tile = getTile(map, loc);
     const avgHeight = (tile[0] + tile[1] + tile[2] + tile[3]) / 4;
-    const maxHeight = _.max(tile)!;
+    const minHeight = _.min(tile)!;
 
     const normal = getTileNormal(tile, map.zScale);
     const up = new Vector3(0, 0, 1);
 
     if (up.equals(normal)) {
-        obj.position.y = maxHeight * map.zScale;
+        obj.position.y = minHeight * map.zScale;
     } else {
-        obj.position.y = avgHeight * map.zScale;
+        obj.position.y = minHeight * map.zScale;
     }
 
     const [x, y] = unHash(loc);
 
     obj.position.x = x + 0.5;
     obj.position.z = y + 0.5;
-
-    // orientToNormal(normal, obj);
+    if (orient) {
+        // orientToNormal(normal, obj);
+    }
 }
 
 function getTileNormal(corners: TileHeights, zScale: number): Vector3 {
