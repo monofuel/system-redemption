@@ -1,6 +1,6 @@
 import { ThreeSceneElement, UpdateLoop } from "./threeScene";
 import { EventContextElement } from "./eventContext";
-import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper } from "three";
+import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper, Group } from "three";
 import { Unit, LocHash } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
@@ -260,26 +260,33 @@ export class PlanetElement extends ThreeSceneElement {
         sun.translateY(40);
         sun.translateX(50);
         sun.lookAt(0, 0, 0);
-        let existing = this.scene.getObjectByName(sun.name);
-        if (existing) {
-            this.scene.remove(existing);
+        let existingSun = this.scene.getObjectByName(sun.name);
+        if (existingSun) {
+            this.scene.remove(existingSun);
         }
         this.scene.add(sun);
 
-        existing = this.scene.getObjectByName(gameMap.name);
-        if (existing) {
-            this.scene.remove(existing);
-        }
+        let mapGroup = this.scene.getObjectByName(gameMap.name);
         const mapObj = getPlanetObject({
             gameMap,
             cache: this.usePlanetCache,
             wireframe: false,
         });
-        mapObj.rotateY(Math.PI);
-        const offset = (gameMap.size * gameMap.chunkSize) / 2;
+        mapObj.name = 'map';
 
-        mapObj.position.set(offset, 0, offset);
-        this.scene.add(mapObj);
+        if (!mapGroup) {
+            mapGroup = new Group()
+            mapGroup.name = gameMap.name;
+            mapGroup.rotateY(Math.PI);
+            const offset = (gameMap.size * gameMap.chunkSize) / 2;
+
+            mapGroup.position.set(offset, 0, offset);
+            this.scene.add(mapGroup);
+        } else {
+            const oldMap = mapGroup.getObjectByName('map')!;
+            mapGroup.remove(oldMap);
+        }
+        mapGroup.add(mapObj);
     }
 
 }
