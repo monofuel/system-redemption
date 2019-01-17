@@ -121,7 +121,7 @@ export function parseQueryOpts(str: string): QueryOpts {
 
     const queryOpts: QueryOpts = {
         mode: 'single',
-        color: "blue"
+        color: GameColors.blue
     }
     const split = str.split("?");
     if (split.length < 2) {
