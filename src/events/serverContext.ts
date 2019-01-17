@@ -3,6 +3,8 @@ import { GameState, newGameState, applyEvent } from "./state";
 import { EventQueue } from "./queues";
 import { info } from "../logging";
 import { pathfind } from "../services/pathfind";
+import { deflateSync } from "zlib";
+import { delay } from "../util";
 
 interface LoggedEvent {
     event: ServerEvent;
@@ -83,10 +85,14 @@ export class ServerContext {
             },
         });
         this.queue.addListener('gameTick', () => {
-            if (this.loaded) {
+            if (this.gameState.stage.mode === GameStage.running) {
+
                 const events = this.onTick();
                 for (const e of events) {
-                    this.queue.post(e);
+                    // TODO fix this and figure out why the client doesn't need this?
+                    delay(0).then(() => {
+                        this.queue.post(e);
+                    })
                 }
             }
         });
@@ -106,6 +112,11 @@ export class ServerContext {
         })
     }
 
+    public dispose() {
+        if (this.gameTickLoop) {
+            this.gameTickLoop.stop();
+        }
+    }
     public async loadLog(events: Array<ServerEvent>) {
         this.loaded = false;
         this.gameState = newGameState();

@@ -14,11 +14,13 @@ export async function getAdminControlsElement() {
             this.appendChild(template.content.cloneNode(true));
             const playerLabel = document.getElementById('player-label') as HTMLInputElement;
             playerLabel.innerText = `Color: ${opts.color}`;
-            this.updateLinks();
+            this.ctx.queue.addListener('createMatch', (e) => {
+                this.updateLinks(e.id);
+            })
         }
-        private updateLinks() {
+        private updateLinks(id: string) {
             const { protocol, hostname, port } = window.location;
-            const baseLink = `${protocol}//${hostname}:${port}/test/play/?mode=multi`;
+            const baseLink = `${protocol}//${hostname}:${port}/test/play/?mode=multi&matchId=${id}`;
 
             const blueLink = document.getElementById('link-blue') as HTMLInputElement;
             blueLink.onclick = () => setTimeout(() => blueLink.select(), 0);

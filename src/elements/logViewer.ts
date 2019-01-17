@@ -18,7 +18,7 @@ export async function getLogViewerElement() {
         'log-viewer #close',
       ) as any;
       close.onclick = () => {
-        this.ctx.queue.post({
+        this.ctx.post({
           kind: 'toggleLogViewer',
           state: 'closed',
         });

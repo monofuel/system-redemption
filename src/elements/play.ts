@@ -1,6 +1,6 @@
 import { PlanetElement } from "./planet";
 import { OrbitControls, MOUSE, Vector2, Vector3 } from "three";
-import { ServerEvent, GameStage, FrontendEvent } from "../events";
+import { ServerEvent, GameStage, FrontendEvent, GameStageChange, frontendEventList } from "../events";
 import { onTick, UpdateLoop } from "../events/serverContext";
 import { info } from "../logging";
 import { mouseToVec } from ".";
@@ -81,12 +81,12 @@ export class PlayELement extends PlanetElement {
         })
         this.addEventListener('mouseup', (e: MouseEvent) => {
             if (e.button === 0) {
-                this.ctx.queue.post({
+                this.ctx.post({
                     kind: 'hilightUpdate',
                 })
                 if (this.dragStart) {
                     const uuids = this.getSelectedUnits(this.dragStart, e);
-                    this.ctx.queue.post({
+                    this.ctx.post({
                         kind: 'selectUnits',
                         uuids
                     });
@@ -112,13 +112,13 @@ export class PlayELement extends PlanetElement {
                 if (!dest) {
                     return;
                 }
-                this.ctx.queue.post({
+                this.ctx.post({
                     kind: 'hilightUpdate',
                     loc: dest,
                     color: 0xc60909,
 
                 })
-                this.ctx.queue.post({
+                this.ctx.post({
                     kind: 'setDestination',
                     uuids: this.ctx.gameState.selectedUnits,
                     dest
@@ -137,7 +137,7 @@ export class PlayELement extends PlanetElement {
             if (this.opts.mode === 'single') {
                 const events = this.onTick();
                 for (const e of events) {
-                    this.ctx.queue.post(e);
+                    this.ctx.post(e);
                 }
             }
         });
@@ -147,7 +147,7 @@ export class PlayELement extends PlanetElement {
             this.gameTickLoop = new UpdateLoop('gameTick', (delta) => {
                 if (this.ctx.gameState.stage.mode === GameStage.running) {
                     info('game tick', { delta });
-                    this.ctx.queue.post({
+                    this.ctx.post({
                         kind: 'gameTick'
                     })
                 }
@@ -160,8 +160,9 @@ export class PlayELement extends PlanetElement {
     private async syncToServer() {
 
         const localLogStr = localStorage.getItem('default-eventlog');
+        const opts = parseQueryOpts(window.location.href);
         let localLog: (FrontendEvent | ServerEvent)[] = [];
-        if (localLogStr) {
+        if (localLogStr && !opts.matchId) {
             try {
                 const start = Date.now();
                 localLog = JSON.parse(localLogStr);
@@ -172,8 +173,10 @@ export class PlayELement extends PlanetElement {
                 return;
             }
         } else {
-            this.directToEditor();
-            return;
+            if (!opts.matchId) {
+                this.directToEditor();
+                return;
+            }
         }
 
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -181,17 +184,35 @@ export class PlayELement extends PlanetElement {
         const params = window.location.href.split('?')[1];
         const ws = new WebSocket(`${protocol}//${hostname}:${port}/ws?${params}`);
         ws.onopen = async () => {
-            let i = 0;
-            for (const event of localLog) {
-                console.log(`syncing ${i++}`);
-                ws.send(JSON.stringify(event));
-                this.ctx.queue.post(event);
-                await delay(0);
+            if (!opts.matchId) {
+                let i = 0;
+                for (const event of localLog) {
+                    console.log(`syncing ${i++}`);
+                    ws.send(JSON.stringify(event));
+                    this.ctx.post(event);
+                    await delay(0);
+                }
+            }
+            this.ctx.post = (e) => {
+                if (frontendEventList.includes(e.kind)) {
+                    this.ctx.queue.post(e);
+                } else {
+                    ws.send(JSON.stringify(e));
+                }
+            }
+            if (!opts.matchId) {
+                this.ctx.post({
+                    kind: 'gameStageChange',
+                    // mode: GameStage.ready
+                    mode: GameStage.running
+                });
             }
             this.uiWrapper.innerHTML += '<admin-controls/>';
         }
         ws.onmessage = (e: MessageEvent) => {
             console.log(e);
+            const event = JSON.parse(e.data);
+            this.ctx.queue.post(event);
         }
     }
 
@@ -203,7 +224,7 @@ export class PlayELement extends PlanetElement {
                 const start = Date.now();
                 const localLog = JSON.parse(localLogStr);
                 this.ctx.loadLog(localLog);
-                this.ctx.queue.post({
+                this.ctx.post({
                     kind: 'gameStageChange',
                     mode: GameStage.ready
                 })
@@ -217,7 +238,7 @@ export class PlayELement extends PlanetElement {
             this.directToEditor();
             return;
         }
-        this.ctx.queue.post({
+        this.ctx.post({
             kind: 'gameStageChange',
             mode: GameStage.running
         });

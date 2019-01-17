@@ -142,7 +142,7 @@ export class MapEditorElement extends PlanetElement {
               info("map edit delta", { delta: end - start });
             }
             this.ctx.queue.addListener('mapEdit', perfFn);
-            this.ctx.queue.post({
+            this.ctx.post({
               kind: 'mapEdit',
               edit: editType,
               loc: hilight.loc,
@@ -153,7 +153,7 @@ export class MapEditorElement extends PlanetElement {
         case EditorSelection.newUnit:
           if (hilight && hilight.loc) {
 
-            this.ctx.queue.post({
+            this.ctx.post({
               kind: 'newUnit',
               unit: {
                 ...newTank(),

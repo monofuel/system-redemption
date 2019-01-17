@@ -2,8 +2,10 @@ import * as ws from 'ws';
 import * as uuid from 'uuid';
 import { ServerContext } from '../events/serverContext';
 import _ from 'lodash';
-import { ServerEvent, FrontendEvent, frontendEventList } from '../events';
+import { ServerEvent, FrontendEvent, frontendEventList, GameStageChange } from '../events';
 import { GameColors } from '../types/SR';
+import { delay } from '../util';
+import { ClientRequest } from 'http';
 
 export interface LoggedEvent {
     event: ServerEvent | FrontendEvent;
@@ -12,6 +14,12 @@ export interface LoggedEvent {
 }
 
 const matches: { [key: string]: GameMatch } = {};
+
+export function removeMatch(id: string) {
+    const match = matches[id];
+    delete matches[id];
+    match.dispose();
+}
 
 export function getMatch(id: string) {
     if (!matches[id]) {
@@ -40,11 +48,25 @@ class GameMatch {
 
         this.addPlayer(adminWS);
 
-        this.ctx.onGameEvent = (e: ServerEvent | FrontendEvent) => {
-            for (const client of this.clients) {
-                if (!frontendEventList.includes(e.kind)) {
-                    client.send(e as ServerEvent);
-                }
+        const gameReadyHandler = (e: GameStageChange) => {
+
+            this.ctx.onGameEvent = this.onGameEvent.bind(this);
+            delay(0).then(() => {
+                this.ctx.queue.post({ kind: 'createMatch', id: this.id });
+            });
+        }
+        this.ctx.queue.addListener('gameStageChange', gameReadyHandler)
+
+    }
+
+    onGameEvent(e: ServerEvent | FrontendEvent) {
+        if (this.clients.length === 0) {
+            removeMatch(this.id);
+            return;
+        }
+        for (const client of this.clients) {
+            if (!frontendEventList.includes(e.kind)) {
+                client.send(e as ServerEvent);
             }
         }
     }
@@ -53,6 +75,8 @@ class GameMatch {
         const client = new ClientConnection(ws);
         this.clients.push(client);
 
+        console.log('adding player');
+
         ws.addEventListener('close', () => {
             _.remove(this.clients, client);
         });
@@ -60,6 +84,18 @@ class GameMatch {
             const payload: ServerEvent = JSON.parse(e.data);
             this.ctx.queue.post(payload);
         });
+        console.log(`events: ${this.ctx.events.length}`);
+        for (const e of this.ctx.events) {
+            if (!frontendEventList.includes(e.event.kind)) {
+                client.send(e.event as ServerEvent);
+            }
+        }
+    }
+
+    public dispose() {
+        console.log(`disposing match ${this.id}`);
+        delete this.ctx.onGameEvent;
+        this.ctx.dispose();
     }
 }
 
@@ -84,7 +120,8 @@ export interface QueryOpts {
 export function parseQueryOpts(str: string): QueryOpts {
 
     const queryOpts: QueryOpts = {
-        mode: 'single'
+        mode: 'single',
+        color: "blue"
     }
     const split = str.split("?");
     if (split.length < 2) {
@@ -92,7 +129,6 @@ export function parseQueryOpts(str: string): QueryOpts {
     }
     for (const s of split[1].split("&")) {
         const [key, value] = s.split('=');
-        console.log(value);
         switch (key) {
             case 'mode':
                 queryOpts.mode = value === 'multi' ? 'multi' : 'single';

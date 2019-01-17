@@ -21,6 +21,7 @@ export class EventContextElement extends HTMLElement {
   private flushLoop: UpdateLoop;
 
   public onGameEvent?: (event: LoggedEvent) => void;
+  public post: (event: ServerEvent | FrontendEvent) => void;
 
   constructor({ autoStart }: EventContextOpts = { autoStart: true }) {
     super();
@@ -30,6 +31,10 @@ export class EventContextElement extends HTMLElement {
       (window as any).ctx = this;
     }
     this.gameState = newGameState();
+
+    this.post = (e) => {
+      this.queue.post(e);
+    }
 
     this.queue = new EventQueue({
       postSyncronous: false,

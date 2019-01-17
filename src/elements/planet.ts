@@ -125,7 +125,7 @@ export class PlanetElement extends ThreeSceneElement {
         );
         if (!vec) {
             if (this.ctx.gameState.hilight) {
-                this.ctx.queue.post({
+                this.ctx.post({
                     kind: 'hilightUpdate'
                 })
             }
@@ -181,7 +181,7 @@ export class PlanetElement extends ThreeSceneElement {
         }
 
 
-        this.ctx.queue.post(newState);
+        this.ctx.post(newState);
     }
 
     private addUnit(unit: Unit) {

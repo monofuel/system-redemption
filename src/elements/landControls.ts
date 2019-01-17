@@ -23,7 +23,7 @@ export async function getLandControlsElement() {
       const gameState = this.ctx.gameState;
       this.unitSelect.onchange = (e) => {
         if (gameState.editorMode) {
-          this.ctx.queue.post({
+          this.ctx.post({
             ...gameState.editorMode,
             user: this.userSelect.value as any,
             unitType: this.unitSelect.value as any,
@@ -33,7 +33,7 @@ export async function getLandControlsElement() {
       this.userSelect = document.getElementById('user-select') as any;
       this.userSelect.onchange = (e) => {
         if (gameState.editorMode) {
-          this.ctx.queue.post({
+          this.ctx.post({
             ...gameState.editorMode,
             user: this.userSelect.value as any,
             unitType: this.unitSelect.value as any,
@@ -54,7 +54,7 @@ export async function getLandControlsElement() {
         this.buttonMap[id].classList.add('pressed');
       }
       if (id === 'toggleLogViewer') {
-        this.ctx.queue.post({
+        this.ctx.post({
           kind: 'toggleLogViewer',
           state: 'open',
         });
@@ -77,12 +77,12 @@ export async function getLandControlsElement() {
         const log = getDefaultEditorMap(Number(mapChunksInput.value), Number(chunkSizeInput.value));
         this.ctx.loadLog(log);
       } else if (['raiseWater', 'lowerWater'].includes(id)) {
-        this.ctx.queue.post({
+        this.ctx.post({
           kind: 'waterChange',
           amount: id === 'raiseWater' ? 0.2 : -0.2,
         });
       } else {
-        this.ctx.queue.post({
+        this.ctx.post({
           kind: 'editorMode',
           selection,
           user: this.userSelect.value as any,

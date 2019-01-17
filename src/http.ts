@@ -16,13 +16,13 @@ export async function initWeb() {
     const app = express();
     ExpressWS(app);
     app.use(
-        express.static(path.join(__dirname, '../public')),
+        express.static(path.join(__dirname, '../../public')),
     );
     app.use('/scripts/static/',
-        express.static(path.join(__dirname, '../build/client'), { maxAge: 1000 * 60 * 60 }),
+        express.static(path.join(__dirname, '../../build/client'), { maxAge: 1000 * 60 * 60 }),
     );
     app.use('/scripts/',
-        express.static(path.join(__dirname, '../build/client')),
+        express.static(path.join(__dirname, '../../build/client')),
     );
 
     // @ts-ignore
