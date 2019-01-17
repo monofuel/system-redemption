@@ -1,8 +1,7 @@
-import { ServerEvent, ServerEventKinds, ServerEvents, GameStage } from ".";
+import { ServerEvent, ServerEventKinds, ServerEvents, GameStage, FrontendEvent } from ".";
 import { GameState, newGameState, applyEvent } from "./state";
 import { EventQueue } from "./queues";
 import { info } from "../logging";
-import { UpdateLoop } from "../elements/threeScene";
 import { pathfind } from "../services/pathfind";
 
 interface LoggedEvent {
@@ -10,6 +9,43 @@ interface LoggedEvent {
     timestamp: number;
     listeners: number;
 }
+
+export class UpdateLoop {
+    private name: string;
+    private fn: (delta: number) => boolean;
+    private freq: number;
+    private stopFlag: boolean = false;
+
+    constructor(name: string, fn: (delta: number) => boolean, freq: number) {
+        this.name = name;
+        this.fn = fn;
+        this.freq = freq;
+    }
+
+    public start() {
+        let lastTime = Date.now();
+        const loopFn = () => {
+            if (this.stopFlag) {
+                info('detaching loop', { name: this.name });
+                return;
+            }
+            const startTime = Date.now();
+            const end = this.fn(startTime - lastTime);
+            if (end) {
+                info('detaching loop', { name: this.name });
+                return;
+            }
+            lastTime = Date.now();
+            setTimeout(loopFn, 1000 / this.freq - (lastTime - startTime));
+        };
+        loopFn();
+    }
+
+    public stop() {
+        this.stopFlag = true;
+    }
+}
+
 
 // TODO this class is not tested
 // similar to PlayElement and EventContextElement
@@ -25,7 +61,7 @@ export class ServerContext {
     private gameTickLoop?: UpdateLoop;
 
     // TODO send game events to clients
-    public onGameEvent?: (event: LoggedEvent) => void;
+    public onGameEvent?: (event: ServerEvent | FrontendEvent) => void;
 
     constructor() {
         this.gameState = newGameState();

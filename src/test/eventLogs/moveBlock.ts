@@ -1,4 +1,3 @@
-import { LoggedEvent } from "../../elements/eventContext";
 import { FrontendEvent, ServerEvent, frontendEventList, Assertion, GameStage, EditorSelection } from "../../events";
 import { GameState } from "../../events/state";
 import { assert } from 'chai';

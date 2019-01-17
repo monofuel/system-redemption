@@ -126,6 +126,11 @@ export interface SetPath {
   path: Direction[];
 }
 
+export interface CreateMatchEvent {
+  kind: 'createMatch';
+  id: string;
+}
+
 export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
   mapEdit: MapEdit;
@@ -139,6 +144,7 @@ export interface ServerEvents {
   assertFail: AssertFail;
   setDestination: SetDestination;
   setPath: SetPath;
+  createMatch: CreateMatchEvent;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

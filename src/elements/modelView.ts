@@ -27,7 +27,7 @@ export class ModelViewElement extends ThreeSceneElement {
 
     async loadModel() {
         const assets = await loadAssets((current: number, total: number) => {
-            console.log(`ASSETS: ${current}/${total}`);
+            // console.log(`ASSETS: ${current}/${total}`);
         });
 
         this.scene.add(new AxesHelper());

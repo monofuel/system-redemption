@@ -2,14 +2,11 @@ import { EventKinds, Events, FrontendEvent, ServerEvent } from '../events';
 import { EventQueue } from '../events/queues';
 import { info } from '../logging';
 import { delay } from '../util';
-import { UpdateLoop } from './threeScene';
 import { GameState, newGameState, applyEvent } from '../events/state';
+import { LoggedEvent } from '../matchMaker';
+import { UpdateLoop } from '../events/serverContext';
 
-export interface LoggedEvent {
-  event: ServerEvent | FrontendEvent;
-  timestamp: number;
-  listeners: number;
-}
+
 
 interface EventContextOpts {
   autoStart: boolean;

@@ -1,10 +1,11 @@
 import { PlanetElement } from "./planet";
 import { OrbitControls, MOUSE, Vector2, Vector3 } from "three";
-import { ServerEvent, GameStage } from "../events";
-import { onTick } from "../events/serverContext";
-import { UpdateLoop } from "./threeScene";
+import { ServerEvent, GameStage, FrontendEvent } from "../events";
+import { onTick, UpdateLoop } from "../events/serverContext";
 import { info } from "../logging";
 import { mouseToVec } from ".";
+import { parseQueryOpts, QueryOpts, LoggedEvent } from "../matchMaker";
+import { delay } from "../util";
 
 export class PlayELement extends PlanetElement {
     private asyncEvents: ServerEvent[] = [];
@@ -13,7 +14,7 @@ export class PlayELement extends PlanetElement {
     private HUDPanel: HTMLCanvasElement;
     private HUDContext: CanvasRenderingContext2D;
 
-    private singlePlayer: boolean = true;
+    private opts: QueryOpts;
     private gameTickLoop?: UpdateLoop;
 
     private dragStart?: MouseEvent;
@@ -21,6 +22,7 @@ export class PlayELement extends PlanetElement {
 
     constructor() {
         super();
+        this.opts = parseQueryOpts(window.location.href);
 
         this.HUDPanel = document.createElement('canvas');
         this.HUDPanel.classList.add("HUDPanel");
@@ -43,28 +45,6 @@ export class PlayELement extends PlanetElement {
         this.uiWrapper.classList.add('ui-wrapper');
         this.appendChild(this.uiWrapper);
 
-        const localLogStr = localStorage.getItem('default-eventlog');
-
-        if (localLogStr) {
-            try {
-                const start = Date.now();
-                const localLog = JSON.parse(localLogStr);
-                this.ctx.loadLog(localLog);
-                this.ctx.queue.post({
-                    kind: 'gameStageChange',
-                    mode: GameStage.ready
-                })
-                console.log(`LOADED FROM STORAGE ${Date.now() - start}ms`);
-            } catch (err) {
-                console.error(err);
-                this.directToEditor('failed to load map, please reset map from the editor');
-                return;
-            }
-        } else {
-            this.directToEditor();
-            return;
-        }
-
         this.camera.position.set(-20, 20, -20);
         this.camera.lookAt(0, 0, 0);
 
@@ -76,6 +56,11 @@ export class PlayELement extends PlanetElement {
             RIGHT: MOUSE.MIDDLE,
         } as any;
 
+        if (this.opts.mode === 'single') {
+            this.startMatch();
+        } else {
+            this.syncToServer();
+        }
 
         controls.target.set(0, 0, 0);
         controls.update();
@@ -149,7 +134,7 @@ export class PlayELement extends PlanetElement {
         })
 
         this.ctx.queue.addListener('gameTick', () => {
-            if (this.singlePlayer) {
+            if (this.opts.mode === 'single') {
                 const events = this.onTick();
                 for (const e of events) {
                     this.ctx.queue.post(e);
@@ -157,8 +142,8 @@ export class PlayELement extends PlanetElement {
             }
         });
 
-        const { tps } = this.ctx.gameState.planet!;
-        if (this.singlePlayer) {
+        if (this.opts.mode === 'single') {
+            const { tps } = this.ctx.gameState.planet!;
             this.gameTickLoop = new UpdateLoop('gameTick', (delta) => {
                 if (this.ctx.gameState.stage.mode === GameStage.running) {
                     info('game tick', { delta });
@@ -170,19 +155,40 @@ export class PlayELement extends PlanetElement {
             }, tps);
             this.gameTickLoop.start();
         }
-        if (this.singlePlayer) {
-            this.startMatch();
-        } else {
-            this.syncToServer();
-        }
     }
 
     private async syncToServer() {
+
+        const localLogStr = localStorage.getItem('default-eventlog');
+        let localLog: (FrontendEvent | ServerEvent)[] = [];
+        if (localLogStr) {
+            try {
+                const start = Date.now();
+                localLog = JSON.parse(localLogStr);
+                console.log(`LOADED FROM STORAGE ${Date.now() - start}ms`);
+            } catch (err) {
+                console.error(err);
+                this.directToEditor('failed to load map, please reset map from the editor');
+                return;
+            }
+        } else {
+            this.directToEditor();
+            return;
+        }
+
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const { hostname, port } = window.location;
-        const ws = new WebSocket(`${protocol}//${hostname}:${port}/ws`);
-        ws.onopen = () => {
-            // TODO stream current log to server if owner
+        const params = window.location.href.split('?')[1];
+        const ws = new WebSocket(`${protocol}//${hostname}:${port}/ws?${params}`);
+        ws.onopen = async () => {
+            let i = 0;
+            for (const event of localLog) {
+                console.log(`syncing ${i++}`);
+                ws.send(JSON.stringify(event));
+                this.ctx.queue.post(event);
+                await delay(0);
+            }
+            this.uiWrapper.innerHTML += '<admin-controls/>';
         }
         ws.onmessage = (e: MessageEvent) => {
             console.log(e);
@@ -190,6 +196,27 @@ export class PlayELement extends PlanetElement {
     }
 
     private startMatch() {
+        const localLogStr = localStorage.getItem('default-eventlog');
+
+        if (localLogStr) {
+            try {
+                const start = Date.now();
+                const localLog = JSON.parse(localLogStr);
+                this.ctx.loadLog(localLog);
+                this.ctx.queue.post({
+                    kind: 'gameStageChange',
+                    mode: GameStage.ready
+                })
+                console.log(`LOADED FROM STORAGE ${Date.now() - start}ms`);
+            } catch (err) {
+                console.error(err);
+                this.directToEditor('failed to load map, please reset map from the editor');
+                return;
+            }
+        } else {
+            this.directToEditor();
+            return;
+        }
         this.ctx.queue.post({
             kind: 'gameStageChange',
             mode: GameStage.running

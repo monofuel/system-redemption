@@ -11,6 +11,7 @@ import { ModelViewElement } from './modelView';
 import _ from 'lodash';
 import { getXRTestElement } from './xrTest';
 import { PlayELement } from './play';
+import { getAdminControlsElement } from './adminControls';
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -42,6 +43,7 @@ export async function loadAsyncElements() {
   // TODO: with more elements, should load them in parallel
   window.customElements.define('land-controls', await getLandControlsElement());
   window.customElements.define('log-viewer', await getLogViewerElement());
+  window.customElements.define('admin-controls', await getAdminControlsElement());
   const xrELement = await getXRTestElement();
   if (xrELement) {
     window.customElements.define('xr-test', xrELement);

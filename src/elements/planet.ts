@@ -1,4 +1,4 @@
-import { ThreeSceneElement, UpdateLoop } from "./threeScene";
+import { ThreeSceneElement } from "./threeScene";
 import { EventContextElement } from "./eventContext";
 import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper, Group } from "three";
 import { Unit, LocHash } from "../types/SR";
@@ -12,6 +12,7 @@ import { getHash } from "../services/hash";
 import { mouseToVec } from ".";
 import { EditorSelection, HilightUpdate } from "../events";
 import _ from 'lodash';
+import { UpdateLoop } from "../events/serverContext";
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;

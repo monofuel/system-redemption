@@ -19,6 +19,7 @@ import {
   SetDestination,
   SelectUnits,
   SetPath,
+  CreateMatchEvent,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
@@ -37,6 +38,9 @@ export interface GameState {
   }
   hilight?: HilightUpdate;
   selectedUnits: string[];
+  match?: {
+    id: string;
+  }
 }
 const eventApply: Record<
   EventKinds,
@@ -58,6 +62,7 @@ const eventApply: Record<
   setDestination: applySetDestination,
   selectUnits: applySelectUnits,
   setPath: applySetPath,
+  createMatch: applyCreateMatch,
 };
 
 export function newGameState(): GameState {
@@ -266,4 +271,9 @@ export function applySetPath(state: GameState, event: SetPath) {
   }
   unit.path = event.path;
 
+}
+export function applyCreateMatch(state: GameState, event: CreateMatchEvent) {
+  state.match = {
+    id: event.id
+  }
 }

@@ -7,6 +7,7 @@ import { EventContextElement } from './eventContext';
 import './styles/threeScene.scss';
 import { Asset, loadAssets } from '../mesh/models';
 import { ModelType } from '../types/SR';
+import { UpdateLoop } from '../events/serverContext';
 
 export class ThreeSceneElement extends HTMLElement {
   public renderer: WebGLRenderer;
@@ -74,7 +75,7 @@ export class ThreeSceneElement extends HTMLElement {
     }, 1);
 
     loadAssets((current: number, total: number) => {
-      console.log(`ASSETS: ${current}/${total}`);
+      // console.log(`ASSETS: ${current}/${total}`);
     }).then((assets) => {
       this.assets = assets;
       if (this.onAssetsLoaded) {
@@ -150,41 +151,5 @@ export class ThreeSceneElement extends HTMLElement {
     this.frameTimeLi.innerText = `FrameTime: ${this.frameTimeStats.get().toFixed(3)}ms`;
     this.frameDeltaLi.innerText = `FrameDelta: ${delta.toFixed(3)}ms`;
 
-  }
-}
-
-export class UpdateLoop {
-  private name: string;
-  private fn: (delta: number) => boolean;
-  private freq: number;
-  private stopFlag: boolean = false;
-
-  constructor(name: string, fn: (delta: number) => boolean, freq: number) {
-    this.name = name;
-    this.fn = fn;
-    this.freq = freq;
-  }
-
-  public start() {
-    let lastTime = Date.now();
-    const loopFn = () => {
-      if (this.stopFlag) {
-        info('detaching loop', { name: this.name });
-        return;
-      }
-      const startTime = Date.now();
-      const end = this.fn(startTime - lastTime);
-      if (end) {
-        info('detaching loop', { name: this.name });
-        return;
-      }
-      lastTime = Date.now();
-      setTimeout(loopFn, 1000 / this.freq - (lastTime - startTime));
-    };
-    loopFn();
-  }
-
-  public stop() {
-    this.stopFlag = true;
   }
 }
