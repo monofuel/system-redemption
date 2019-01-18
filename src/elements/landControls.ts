@@ -4,7 +4,7 @@ import { EventContextElement } from './eventContext';
 import _ from 'lodash';
 import { getDefaultEditorMap } from './mapEditor';
 
-const holdingButtons = ['raiselower', 'rampRaiseLower', 'newUnit'];
+const holdingButtons = ['raiselower', 'rampRaiseLower', 'newUnit', 'removeUnit'];
 
 export async function getLandControlsElement() {
   const template = await loadTemplate('landControls');

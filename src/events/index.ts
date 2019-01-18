@@ -9,7 +9,8 @@ export enum EditorSelection {
   clear = 'clear',
   lowerWater = 'lowerWater',
   raiseWater = 'raiseWater',
-  newUnit = 'newUnit'
+  newUnit = 'newUnit',
+  removeUnit = 'removeUnit'
 }
 export interface EditorMode {
   kind: 'editorMode';
@@ -86,6 +87,12 @@ export interface MoveUnit {
   uuid: string;
   dir: Direction;
 }
+
+export interface DestroyUnit {
+  kind: 'destroyUnit';
+  uuid: string;
+}
+
 export interface SetDestination {
   kind: 'setDestination';
   uuids: string[];
@@ -144,6 +151,7 @@ export interface ServerEvents {
   assertFail: AssertFail;
   setDestination: SetDestination;
   setPath: SetPath;
+  destroyUnit: DestroyUnit;
   createMatch: CreateMatchEvent;
 }
 export type ServerEventKinds = keyof ServerEvents;

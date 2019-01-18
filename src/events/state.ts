@@ -20,6 +20,7 @@ import {
   SelectUnits,
   SetPath,
   CreateMatchEvent,
+  DestroyUnit,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
@@ -40,6 +41,9 @@ export interface GameState {
   selectedUnits: string[];
   match?: {
     id: string;
+  },
+  cache: {
+    unitLocations: Record<LocHash, string>
   }
 }
 const eventApply: Record<
@@ -63,6 +67,7 @@ const eventApply: Record<
   selectUnits: applySelectUnits,
   setPath: applySetPath,
   createMatch: applyCreateMatch,
+  destroyUnit: applyDestroyUnit
 };
 
 export function newGameState(): GameState {
@@ -74,6 +79,9 @@ export function newGameState(): GameState {
       mode: GameStage.init,
     },
     selectedUnits: [],
+    cache: {
+      unitLocations: {}
+    }
   };
 }
 
@@ -275,4 +283,8 @@ export function applyCreateMatch(state: GameState, event: CreateMatchEvent) {
   state.match = {
     id: event.id
   }
+}
+export function applyDestroyUnit(state: GameState, event: DestroyUnit) {
+  const { unit, unitDef } = getUnitInfo(state, event.uuid);
+  delete state.units[event.uuid];
 }

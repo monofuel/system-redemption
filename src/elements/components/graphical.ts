@@ -70,6 +70,7 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
     }
     const mesh = assetForEntity(sceneElement.assets, unitDef.graphical.model, unit.color || randomColor());
     mesh.name = unit.uuid;
+    mesh.userData.uuid = unit.uuid;
     return {
         key: unit.uuid,
         type: GraphicalType.unit,

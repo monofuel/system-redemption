@@ -164,6 +164,14 @@ export class MapEditorElement extends PlanetElement {
             })
           }
           return;
+        case EditorSelection.removeUnit:
+          const uuid = this.getUnitAtMouse(ev);
+          if (uuid) {
+            this.ctx.post({
+              kind: 'destroyUnit',
+              uuid
+            });
+          }
         case EditorSelection.clear:
         default:
           return;

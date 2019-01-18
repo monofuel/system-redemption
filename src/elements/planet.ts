@@ -1,6 +1,6 @@
 import { ThreeSceneElement } from "./threeScene";
 import { EventContextElement } from "./eventContext";
-import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper, Group } from "three";
+import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper, Group, Mesh } from "three";
 import { Unit, LocHash } from "../types/SR";
 import { info } from "../logging";
 import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
@@ -108,13 +108,40 @@ export class PlanetElement extends ThreeSceneElement {
         })
 
         this.onAssetsLoaded = () => {
+            this.ctx.queue.addListener('destroyUnit', (event) => {
+                this.ecs.removeGraphicalComponent(event.uuid);
+            })
             this.ctx.queue.addListener('newUnit', (event) => {
                 this.addUnit(this.ctx.gameState.units[event.unit.uuid]);
             });
             for (const unit of Object.values(this.ctx.gameState.units)) {
                 this.addUnit(unit);
             }
+
         }
+    }
+
+    protected getUnitAtMouse(ev: MouseEvent): string | null {
+        const vec = mouseToVec(ev, this.offsetWidth, this.offsetHeight);
+        if (!vec) {
+            return null;
+        }
+        const raycaster = new Raycaster();
+        raycaster.setFromCamera(vec, this.camera);
+
+        const units: Mesh[] = [];
+        for (const key in this.ecs.graphical) {
+            const comp = this.ecs.graphical[key];
+            if (comp.type === GraphicalType.unit) {
+                units.push(comp.mesh)
+            }
+        }
+        const intersects = raycaster.intersectObjects(units, true);
+        if (intersects.length > 0) {
+            return intersects[0].object.userData.uuid;
+        }
+        return null;
+
     }
 
     protected hilightAtMouse(ev: MouseEvent) {
