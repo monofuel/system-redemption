@@ -12,6 +12,7 @@ export class LogTestElement extends HTMLElement {
         super();
         const repeat = true;
         this.style.display = 'flex';
+        this.style.overflowY = 'auto';
         this.style.flexWrap = 'wrap';
         for (const key of Object.keys(logs)) {
             const log: Array<ServerEvent | FrontendEvent> = (logs as any)[key];
@@ -24,6 +25,8 @@ export class LogTestElement extends HTMLElement {
             context.style.height = '500px';
             context.style.borderColor = 'grey';
             context.style.borderStyle = 'solid';
+            context.style.marginBottom = 'auto';
+            context.style.marginTop = 'auto';
 
             logPlayer.classList.add('fill');
             this.appendChild(context);
