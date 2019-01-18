@@ -106,7 +106,9 @@ class ClientConnection {
     }
     send(e: ServerEvent) {
         this.ws.send(JSON.stringify(e), (err) => {
-            console.error(err);
+            if (err) {
+                console.error(err);
+            }
         });
     }
 }

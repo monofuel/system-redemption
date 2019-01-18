@@ -44,7 +44,7 @@ export interface FrontendEvents {
 export type FrontendEventKinds = keyof FrontendEvents;
 export type FrontendEvent = FrontendEvents[FrontendEventKinds];
 
-export const frontendEventList = ['editorMode', 'toggleLogViewer', 'hilightUpdate'];
+export const frontendEventList = ['editorMode', 'toggleLogViewer', 'hilightUpdate', 'selectedUnits'];
 
 // ----------------------
 // server events

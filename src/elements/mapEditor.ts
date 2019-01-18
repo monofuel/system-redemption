@@ -160,7 +160,7 @@ export class MapEditorElement extends PlanetElement {
                 type: editorMode.unitType!,
                 color: editorMode.user!,
                 loc: hilight.loc,
-              } // TODO look up unit type from editorMode
+              }
             })
           }
           return;

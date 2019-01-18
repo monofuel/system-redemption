@@ -178,7 +178,6 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
 
   const nextLoc = getHash(nextX, nextY);
 
-  // TODO assert that the movement is valid
   const prev = getTile(state.planet!, unit.loc);
   const next = getTile(state.planet!, nextLoc);
 

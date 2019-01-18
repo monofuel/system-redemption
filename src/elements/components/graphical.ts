@@ -1,6 +1,6 @@
 import { Component } from ".";
 import { ThreeSceneElement } from "../threeScene";
-import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4, AxesHelper } from "three";
+import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4, } from "three";
 import { Unit, GameColors, ModelType, FiniteMap, TileHeights, LocHash } from "../../types/SR";
 import { Asset, coloredModel } from "../../mesh/models";
 import { getTile } from "../../planet";
@@ -70,8 +70,6 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
     }
     const mesh = assetForEntity(sceneElement.assets, unitDef.graphical.model, unit.color || randomColor());
     mesh.name = unit.uuid;
-    const helper = new AxesHelper(2);
-    mesh.add(helper);
     return {
         key: unit.uuid,
         type: GraphicalType.unit,

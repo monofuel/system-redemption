@@ -58,11 +58,9 @@ export class ServerContext {
     public events: LoggedEvent[] = [];
     public gameState: GameState;
     private asyncEvents: ServerEvent[] = [];
-    private loaded: boolean = false;
 
     private gameTickLoop?: UpdateLoop;
 
-    // TODO send game events to clients
     public onGameEvent?: (event: ServerEvent | FrontendEvent) => void;
 
     constructor() {
@@ -89,10 +87,7 @@ export class ServerContext {
 
                 const events = this.onTick();
                 for (const e of events) {
-                    // TODO fix this and figure out why the client doesn't need this?
-                    delay(0).then(() => {
-                        this.queue.post(e);
-                    })
+                    this.queue.post(e);
                 }
             }
         });
@@ -118,7 +113,6 @@ export class ServerContext {
         }
     }
     public async loadLog(events: Array<ServerEvent>) {
-        this.loaded = false;
         this.gameState = newGameState();
         this.events = [];
 
@@ -128,7 +122,6 @@ export class ServerContext {
             }
             this.queue.post(event);
         }
-        this.loaded = true;
     }
 
     // onTick should run after every game tick

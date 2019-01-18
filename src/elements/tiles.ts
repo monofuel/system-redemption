@@ -118,7 +118,7 @@ export class TileTestElement extends ThreeSceneElement {
       this.scene.remove(prevChunk);
     }
     this.scene.add(chunkObj);
-    // TODO this listener leaks on seed changes
+    // HACK this listener leaks on seed changes
 
     this.addUpdateLoop(
       'rotation',
