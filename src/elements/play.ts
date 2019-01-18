@@ -210,9 +210,9 @@ export class PlayELement extends PlanetElement {
             this.uiWrapper.innerHTML += '<admin-controls/>';
         }
         ws.onmessage = (e: MessageEvent) => {
-            console.log(e);
             const event = JSON.parse(e.data);
             this.ctx.queue.post(event);
+            this.ctx.queue.flushAll();
         }
     }
 

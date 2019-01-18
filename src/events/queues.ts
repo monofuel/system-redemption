@@ -139,15 +139,16 @@ export class EventQueue<
       throw new Error("Do not publish events syncronously in the handler of other events");
     }
 
-    // this.processing = true;
 
     try {
+      this.processing = true;
       this.opts.preHandler(event, timestamp, listeners ? listeners.length : 0);
       if (listeners) {
         for (const fn of listeners) {
           fn(event);
         }
       }
+      this.processing = false;
       this.opts.logger(event, timestamp, listeners ? listeners.length : 0);
     } catch (err) {
       console.error(err);
