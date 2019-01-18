@@ -60,13 +60,14 @@ export class ServerContext {
     private asyncEvents: ServerEvent[] = [];
 
     private gameTickLoop?: UpdateLoop;
+    private flushLoop: UpdateLoop;
 
     public onGameEvent?: (event: ServerEvent | FrontendEvent) => void;
 
     constructor() {
         this.gameState = newGameState();
         this.queue = new EventQueue({
-            postSyncronous: true,
+            postSyncronous: false,
             preHandler: (event) => {
                 applyEvent(this.gameState, event);
             },
@@ -82,10 +83,12 @@ export class ServerContext {
                 }
             },
         });
+
         this.queue.addListener('gameTick', () => {
             if (this.gameState.stage.mode === GameStage.running) {
 
                 const events = this.onTick();
+                info('handling ontick events', { length: events.length });
                 for (const e of events) {
                     this.queue.post(e);
                 }
@@ -96,15 +99,26 @@ export class ServerContext {
             this.gameTickLoop = new UpdateLoop('gameTick', (delta) => {
                 if (this.gameState.stage.mode === GameStage.running) {
                     info('game tick', { delta });
+
                     this.queue.post({
                         kind: 'gameTick'
                     })
+                    this.queue.flushAll();
                 }
                 return this.gameState.stage.mode === GameStage.done;
             }, tps);
             this.gameTickLoop.start();
+        });
 
-        })
+        this.flushLoop = new UpdateLoop(
+            'queueFlush',
+            (delta: number) => {
+                this.queue.flushAll();
+                return false;
+            },
+            30,
+        );
+        this.flushLoop.start();
     }
 
     public dispose() {
@@ -129,11 +143,11 @@ export class ServerContext {
     // it does game tick work for appending new events
     onTick(): ServerEvent[] {
         const results: ServerEvent[] = [];
+        onTick(this.gameState, this.asyncEvents);
+
         while (this.asyncEvents.length > 0) {
             results.push(this.asyncEvents.shift()!);
         }
-
-        onTick(this.gameState, this.asyncEvents);
 
         return results;
     }
