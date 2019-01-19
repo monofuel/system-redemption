@@ -43,7 +43,7 @@ export async function getLogViewerElement() {
         'log-viewer textarea',
       );
       if (logText) {
-        logText.textContent = JSON.stringify(this.ctx.events, undefined, 2);
+        logText.textContent = JSON.stringify(this.ctx.events.map((e) => e.event), undefined, 2);
       }
     }
     private onClose() {

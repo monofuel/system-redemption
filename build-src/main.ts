@@ -54,6 +54,10 @@ async function copyFiles() {
     fs.copyFileSync("node_modules/dat.gui/build/dat.gui.min.js", "build/client/dat.gui.min.js");
     fs.copyFileSync("node_modules/three-ziploader/build/ziploader.min.js", "build/client/ziploader.min.js");
 
+    fs.copyFileSync("ShaderParticleEngine/build/SPE.js", "build/client/SPE.js");
+    fs.copyFileSync("ShaderParticleEngine/build/SPE.min.js", "build/client/SPE.min.js");
+    fs.copyFileSync("ShaderParticleEngine/examples/img/sprite-explosion2.png", "build/client/sprite-explosion2.png");
+
     console.log('copied files');
 }
 

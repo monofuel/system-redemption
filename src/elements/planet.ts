@@ -13,6 +13,7 @@ import { mouseToVec } from ".";
 import { EditorSelection, HilightUpdate } from "../events";
 import _ from 'lodash';
 import { UpdateLoop } from "../events/serverContext";
+import { getExplosionGroup } from "../mesh/particles";
 
 export class PlanetElement extends ThreeSceneElement {
     protected ecsLoop: UpdateLoop;
@@ -110,6 +111,14 @@ export class PlanetElement extends ThreeSceneElement {
         this.onAssetsLoaded = () => {
             this.ctx.queue.addListener('destroyUnit', (event) => {
                 this.ecs.removeGraphicalComponent(event.uuid);
+            })
+            this.ctx.queue.addListener('damageUnit', (e) => {
+                const comp = this.ecs.graphical[e.uuid];
+                if (comp) {
+                    comp.speGroup = getExplosionGroup();
+                    const mesh = comp.speGroup!.mesh
+                    comp.mesh.add(mesh);
+                }
             })
             this.ctx.queue.addListener('newUnit', (event) => {
                 this.addUnit(this.ctx.gameState.units[event.unit.uuid]);

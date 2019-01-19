@@ -7,6 +7,7 @@ import { getTile } from "../../planet";
 import _ from 'lodash';
 import { getHilightMesh } from "../../mesh/hilight";
 import { unHash } from "../../services/hash";
+import { SPEGroup } from "../../mesh/particles";
 
 export enum GraphicalType {
     unit = 'unit',
@@ -19,6 +20,9 @@ export interface GraphicalComponent extends Component {
     nextLoc?: string;
     lerp?: number;
 
+    speGroup?: SPEGroup;
+    speTime?: number;
+
 }
 
 export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: GraphicalComponent, delta: number) {
@@ -28,6 +32,24 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
         map.add(comp.mesh);
     }
     const planet = sceneElement.ctx.gameState.planet!;
+
+    if (comp.speGroup) {
+        if (!comp.speTime) {
+            comp.speTime = 0;
+        }
+        comp.speGroup.tick(delta / 1000);
+        comp.speTime! += delta;
+        if (comp.speTime > 1000) {
+            comp.mesh.remove(comp.speGroup.mesh);
+            // @ts-ignore
+            for (const emitter of comp.speGroup.emitters) {
+                // @ts-ignore
+                comp.speGroup.removeEmitter(emitter);
+            }
+            comp.speGroup.dispose();
+            delete comp.speTime;
+        }
+    }
 
     if (comp.type === GraphicalType.unit) {
         const { loc, facing, type } = sceneElement.ctx.gameState.units[comp.key];
@@ -106,6 +128,7 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
         prevLoc: unit.loc,
     }
 }
+
 export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, loc: LocHash, defaultColor: number = 0xffffff, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
     const planet = sceneElement.ctx.gameState.planet!;
 

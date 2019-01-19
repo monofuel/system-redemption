@@ -126,6 +126,13 @@ export interface AssertFail {
   event: ServerEvent;
 }
 
+export interface DamageUnit {
+  kind: 'damageUnit';
+  uuid: string;
+  amount: number;
+  source?: string;
+}
+
 export interface SetPath {
   kind: 'setPath';
   uuid: string;
@@ -153,6 +160,7 @@ export interface ServerEvents {
   setPath: SetPath;
   destroyUnit: DestroyUnit;
   createMatch: CreateMatchEvent;
+  damageUnit: DamageUnit;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];

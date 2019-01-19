@@ -84,6 +84,7 @@ export interface Unit {
         facing: Direction;
         size: 1 | 2 | 3;
         loc: LocHash;
+        health?: number;
         destination?: LocHash;
         map: string;
         moveCooldown: number;

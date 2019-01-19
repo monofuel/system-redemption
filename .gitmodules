@@ -1,3 +1,6 @@
 [submodule "rts-assets"]
 	path = rts-assets
 	url = ../rts-assets.git
+[submodule "ShaderParticleEngine"]
+	path = ShaderParticleEngine
+	url = https://github.com/squarefeet/ShaderParticleEngine

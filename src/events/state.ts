@@ -21,6 +21,7 @@ import {
   SetPath,
   CreateMatchEvent,
   DestroyUnit,
+  DamageUnit,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
@@ -67,7 +68,8 @@ const eventApply: Record<
   selectUnits: applySelectUnits,
   setPath: applySetPath,
   createMatch: applyCreateMatch,
-  destroyUnit: applyDestroyUnit
+  destroyUnit: applyDestroyUnit,
+  damageUnit: applyDamageUnit,
 };
 
 export function newGameState(): GameState {
@@ -147,6 +149,10 @@ export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) 
 
 }
 export function applyNewUnit(state: GameState, event: NewUnit) {
+  const unitDef = state.unitDefinitions[event.unit.type];
+  if (!unitDef) {
+    throw new Error(`missing unit definition ${unitDef}`);
+  }
   // check if there is a unit already there
   for (const unit of Object.values(state.units)) {
     if (unit.loc === event.unit.loc) {
@@ -155,6 +161,7 @@ export function applyNewUnit(state: GameState, event: NewUnit) {
   }
 
   state.units[event.unit.uuid] = _.cloneDeep(event.unit);
+  state.units[event.unit.uuid].health = unitDef.maxHealth;
 }
 export function applyMoveUnit(state: GameState, event: MoveUnit) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
@@ -287,4 +294,10 @@ export function applyCreateMatch(state: GameState, event: CreateMatchEvent) {
 export function applyDestroyUnit(state: GameState, event: DestroyUnit) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
   delete state.units[event.uuid];
+}
+
+export function applyDamageUnit(state: GameState, event: DamageUnit) {
+  const { unit, unitDef } = getUnitInfo(state, event.uuid);
+  unit.health! -= event.amount;
+
 }

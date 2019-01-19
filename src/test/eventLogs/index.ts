@@ -5,10 +5,12 @@ import { hilightTestLog } from './hilight';
 import { slopesTestLog } from './slopes';
 import { selectionTestLog } from './selection';
 import { moveBlockTestLog } from './moveBlock';
+import { damageTestLog } from './damage';
 
 export const logs = {
     planetEditTestLog,
     unitMoveTestLog,
+    damageTestLog,
     slopeMoveTestLog,
     hilightTestLog,
     slopesTestLog,

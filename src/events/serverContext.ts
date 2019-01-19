@@ -166,6 +166,7 @@ export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
 
     for (const uuid in state.units) {
         const unit = state.units[uuid];
+        const def = state.unitDefinitions[unit.type]!;
         if (unit.destination && !unit.path) {
             const path = pathfind(state, uuid, unit.destination);
             if (path.length === 0) {
@@ -189,6 +190,12 @@ export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
                 kind: 'moveUnit',
                 uuid,
                 dir: unit.path[0]
+            })
+        }
+        if (unit.health && def.maxHealth !== 0 && unit.health <= 0) {
+            asyncEvents.push({
+                kind: 'destroyUnit',
+                uuid
             })
         }
     }
