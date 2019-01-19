@@ -66,7 +66,7 @@ class GameMatch {
         }
         for (const client of this.clients) {
             if (!frontendEventList.includes(e.kind)) {
-                client.send(e as ServerEvent);
+                client.send([e as ServerEvent]);
             }
         }
     }
@@ -81,15 +81,13 @@ class GameMatch {
             _.remove(this.clients, client);
         });
         ws.addEventListener('message', (e) => {
-            const payload: ServerEvent = JSON.parse(e.data);
-            this.ctx.queue.post(payload);
+            const payload: ServerEvent[] = JSON.parse(e.data);
+            for (const event of payload) {
+                this.ctx.queue.post(event);
+            }
         });
         console.log(`events: ${this.ctx.events.length}`);
-        for (const e of this.ctx.events) {
-            if (!frontendEventList.includes(e.event.kind)) {
-                client.send(e.event as ServerEvent);
-            }
-        }
+        client.send(this.ctx.events.filter((e) => !frontendEventList.includes(e.event.kind)).map((e) => e.event) as any);
     }
 
     public dispose() {
@@ -104,7 +102,7 @@ class ClientConnection {
     constructor(ws: ws) {
         this.ws = ws;
     }
-    send(e: ServerEvent) {
+    send(e: ServerEvent[]) {
         this.ws.send(JSON.stringify(e), (err) => {
             if (err) {
                 console.error(err);

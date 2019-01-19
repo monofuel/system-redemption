@@ -15,6 +15,7 @@ interface EventContextOpts {
 export class EventContextElement extends HTMLElement {
   public queue: EventQueue<EventKinds, Events>;
 
+  // TODO probably shouldn't store events during 'play' mode
   public events: LoggedEvent[] = [];
 
   public gameState: GameState;

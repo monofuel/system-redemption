@@ -185,19 +185,16 @@ export class PlayELement extends PlanetElement {
         const ws = new WebSocket(`${protocol}//${hostname}:${port}/ws?${params}`);
         ws.onopen = async () => {
             if (!opts.matchId) {
-                let i = 0;
+                ws.send(JSON.stringify(localLog));
                 for (const event of localLog) {
-                    console.log(`syncing ${i++}`);
-                    ws.send(JSON.stringify(event));
                     this.ctx.post(event);
-                    await delay(0);
                 }
             }
             this.ctx.post = (e) => {
                 if (frontendEventList.includes(e.kind)) {
                     this.ctx.queue.post(e);
                 } else {
-                    ws.send(JSON.stringify(e));
+                    ws.send(JSON.stringify([e]));
                 }
             }
             if (!opts.matchId) {
@@ -210,8 +207,10 @@ export class PlayELement extends PlanetElement {
             this.uiWrapper.innerHTML += '<admin-controls/>';
         }
         ws.onmessage = (e: MessageEvent) => {
-            const event = JSON.parse(e.data);
-            this.ctx.queue.post(event);
+            const events: ServerEvent[] = JSON.parse(e.data);
+            for (const event of events) {
+                this.ctx.queue.post(event);
+            }
             this.ctx.queue.flushAll();
         }
     }
