@@ -5,6 +5,7 @@ cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:
     - rts-assets/
+    - ShaderParticleEngine
 #  - node_modules/
 
 before_script:
