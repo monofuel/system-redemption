@@ -22,6 +22,7 @@ import {
   CreateMatchEvent,
   DestroyUnit,
   DamageUnit,
+  AttackUnit,
 } from '.';
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
@@ -70,6 +71,7 @@ const eventApply: Record<
   createMatch: applyCreateMatch,
   destroyUnit: applyDestroyUnit,
   damageUnit: applyDamageUnit,
+  attackUnit: applyAttackUnit,
 };
 
 export function newGameState(): GameState {
@@ -171,6 +173,8 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
   if (unit.moveCooldown !== 0) {
     throw new Error('unit movement still cooling down');
   }
+  delete unit.attack; // cancel attack order
+
   const [x, y] = unHash(unit.loc);
   let nextX = x;
   let nextY = y;
@@ -211,6 +215,11 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
     unit.path.shift()
   }
 }
+
+export function applyAttackUnit(state: GameState, event: AttackUnit) {
+  //
+}
+
 export function applyAssertion(state: GameState, event: Assertion) {
   event.fn(state);
 }

@@ -93,6 +93,12 @@ export interface DestroyUnit {
   uuid: string;
 }
 
+export interface AttackUnit {
+  kind: 'attackUnit';
+  uuid: string;
+  attack: string;
+}
+
 export interface SetDestination {
   kind: 'setDestination';
   uuids: string[];
@@ -161,6 +167,7 @@ export interface ServerEvents {
   destroyUnit: DestroyUnit;
   createMatch: CreateMatchEvent;
   damageUnit: DamageUnit;
+  attackEnemy: AttackUnit;
 }
 export type ServerEventKinds = keyof ServerEvents;
 export type ServerEvent = ServerEvents[ServerEventKinds];
