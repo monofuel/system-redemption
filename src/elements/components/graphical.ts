@@ -96,7 +96,7 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
     } else if (comp.type === GraphicalType.hilight) {
         const loc = sceneElement.ctx.gameState.hilight!.loc;
         if (loc) {
-            placeOnMap(planet, comp.mesh, loc, false);
+            placeOnMap(planet, comp.mesh, loc, false, true);
         }
     }
 }
@@ -175,14 +175,14 @@ export function randomColor(): GameColors {
     return (GameColors as any)[Object.keys(GameColors)[num]];
 
 }
-function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash, orient: boolean) {
-    obj.position.copy(vecForTile(map, loc));
+function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash, orient: boolean, min: boolean = false) {
+    obj.position.copy(vecForTile(map, loc, min));
     if (orient) {
         // orientToNormal(normal, obj);
     }
 }
 
-function vecForTile(map: FiniteMap, loc: LocHash): Vector3 {
+function vecForTile(map: FiniteMap, loc: LocHash, min: boolean = false): Vector3 {
     const [x, y] = unHash(loc);
     const tile = getTile(map, loc);
     const avgHeight = (tile[0] + tile[1] + tile[2] + tile[3]) / 4 * map.zScale;
@@ -190,8 +190,8 @@ function vecForTile(map: FiniteMap, loc: LocHash): Vector3 {
 
     const normal = getTileNormal(tile, map.zScale);
     const up = new Vector3(0, 0, 1);
-    let height = avgHeight;
-    if (up.equals(normal)) {
+    let height = minHeight;
+    if (!min && up.equals(normal)) {
         height = avgHeight;
     }
 

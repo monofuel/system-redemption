@@ -1,7 +1,8 @@
 import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color, Vector3 } from "three";
 import { GameColors, ModelType } from "../types/SR";
 
-const ASSET_ZIP = '/scripts/assets.zip';
+// NB. has to switch to /scripts/assets.zip to cache them locally
+const ASSET_ZIP = '/scripts/static/assets.zip';
 
 interface AssetPath {
     model: string;
