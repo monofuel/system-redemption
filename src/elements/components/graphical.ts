@@ -15,9 +15,13 @@ export enum GraphicalType {
 export interface GraphicalComponent extends Component {
     mesh: Mesh;
     type: GraphicalType;
+    prevLoc: string;
+    nextLoc?: string;
+    lerp?: number;
+
 }
 
-export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: GraphicalComponent) {
+export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: GraphicalComponent, delta: number) {
 
     const map = getMap(sceneElement);
     if (!map.getObjectByName(comp.key)) {
@@ -26,10 +30,32 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
     const planet = sceneElement.ctx.gameState.planet!;
 
     if (comp.type === GraphicalType.unit) {
-        const { loc, facing } = sceneElement.ctx.gameState.units[comp.key];
+        const { loc, facing, type } = sceneElement.ctx.gameState.units[comp.key];
+        const unitDef = sceneElement.ctx.gameState.unitDefinitions[type]!;
 
-        placeOnMap(planet, comp.mesh, loc, true);
+        if (loc !== comp.prevLoc && !comp.nextLoc) {
+            comp.nextLoc = loc;
+            comp.lerp = delta;
+        }
 
+        if (comp.nextLoc) {
+            const length = unitDef.move!.cooldown * (1000 / planet.tps);
+            comp.lerp! += delta;
+            const lerp = comp.lerp! / length;
+            const start = vecForTile(planet, comp.prevLoc);
+            const next = vecForTile(planet, comp.nextLoc);
+            comp.mesh.position.copy(start.lerp(next, lerp));
+
+            if (comp.lerp! >= length) {
+                delete comp.lerp;
+                comp.prevLoc = comp.nextLoc;
+                delete comp.nextLoc;
+            }
+        }
+        if (!comp.nextLoc) {
+            placeOnMap(planet, comp.mesh, comp.prevLoc, true);
+
+        }
         switch (facing) {
             case 'N':
                 comp.mesh.rotation.y = 0;
@@ -43,6 +69,8 @@ export function updateGraphicalComponent(sceneElement: ThreeSceneElement, comp: 
             case 'W':
                 comp.mesh.rotation.y = -Math.PI / 2;
         }
+
+
     } else if (comp.type === GraphicalType.hilight) {
         const loc = sceneElement.ctx.gameState.hilight!.loc;
         if (loc) {
@@ -74,7 +102,8 @@ export function unitGraphicalComp(sceneElement: ThreeSceneElement, unit: Unit): 
     return {
         key: unit.uuid,
         type: GraphicalType.unit,
-        mesh
+        mesh,
+        prevLoc: unit.loc,
     }
 }
 export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: string, loc: LocHash, defaultColor: number = 0xffffff, corners?: Array<0 | 1 | 2 | 3>): GraphicalComponent {
@@ -103,7 +132,8 @@ export function hilightGraphicalComp(sceneElement: ThreeSceneElement, key: strin
     return {
         key,
         type: GraphicalType.hilight,
-        mesh
+        mesh,
+        prevLoc: loc,
     }
 }
 
@@ -123,26 +153,26 @@ export function randomColor(): GameColors {
 
 }
 function placeOnMap(map: FiniteMap, obj: Object3D, loc: LocHash, orient: boolean) {
-    const tile = getTile(map, loc);
-    const avgHeight = (tile[0] + tile[1] + tile[2] + tile[3]) / 4;
-    const minHeight = _.min(tile)!;
-
-    const normal = getTileNormal(tile, map.zScale);
-    const up = new Vector3(0, 0, 1);
-
-    if (up.equals(normal)) {
-        obj.position.y = minHeight * map.zScale;
-    } else {
-        obj.position.y = minHeight * map.zScale;
-    }
-
-    const [x, y] = unHash(loc);
-
-    obj.position.x = x + 0.5;
-    obj.position.z = y + 0.5;
+    obj.position.copy(vecForTile(map, loc));
     if (orient) {
         // orientToNormal(normal, obj);
     }
+}
+
+function vecForTile(map: FiniteMap, loc: LocHash): Vector3 {
+    const [x, y] = unHash(loc);
+    const tile = getTile(map, loc);
+    const avgHeight = (tile[0] + tile[1] + tile[2] + tile[3]) / 4 * map.zScale;
+    const minHeight = _.min(tile)! * map.zScale;
+
+    const normal = getTileNormal(tile, map.zScale);
+    const up = new Vector3(0, 0, 1);
+    let height = avgHeight;
+    if (up.equals(normal)) {
+        height = avgHeight;
+    }
+
+    return new Vector3(x + 0.5, height, y + 0.5);
 }
 
 function getTileNormal(corners: TileHeights, zScale: number): Vector3 {

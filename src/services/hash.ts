@@ -41,6 +41,9 @@ export function unHash(hash: string): [number, number] {
         const { x, y } = mapOfHashes[hash];
         return [x, y];
     }
+    if (typeof hash !== 'string') {
+        debugger;
+    }
     const split = hash.split(':');
     const x = Number(split[0]);
     const y = Number(split[1]);

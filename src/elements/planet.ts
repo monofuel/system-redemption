@@ -25,7 +25,7 @@ export class PlanetElement extends ThreeSceneElement {
 
         this.ecs = new ECS(this);
         this.ecsLoop = new UpdateLoop('ecs', (delta: number): boolean => {
-            this.ecs.update();
+            this.ecs.update(delta);
             return false;
         }, 40);
         this.ecsLoop.start();
@@ -68,7 +68,7 @@ export class PlanetElement extends ThreeSceneElement {
             console.log(this.ctx.gameState.units[event.uuid]);
         })
 
-        this.ctx.queue.addListener('hilightUpdate', (event) => {
+        this.ctx.queue.addListener('hilightUpdate', (event: HilightUpdate) => {
             const key = 'hilight';
             if (!event.loc) {
                 this.ecs.removeGraphicalComponent(key);
@@ -90,7 +90,7 @@ export class PlanetElement extends ThreeSceneElement {
                 }
                 const hilight = getHilightMesh({
                     planet,
-                    loc: this.ctx.gameState.hilight!.loc!,
+                    loc: this.ctx.gameState.units[uuid].loc,
                     zScale: planet.zScale,
                     color: hilightColor,
                 })

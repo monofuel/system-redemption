@@ -2,7 +2,7 @@ import { FrontendEvent, ServerEvent, frontendEventList, EditorSelection } from "
 import { defaultUnitDefinitions } from "./units";
 import { UnitType, ModelType, GameColors } from "../../types/SR";
 
-const log: (ServerEvent | FrontendEvent)[] = [
+export const selectionTestLog: (ServerEvent | FrontendEvent)[] = [
     {
         "kind": "newFiniteMap",
         "map": {
@@ -251,10 +251,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     },
     {
         "kind": "hilightUpdate",
-        "loc": [
-            1,
-            0
-        ]
+        "loc": '1:0',
     },
     {
         "kind": "newUnit",
@@ -331,4 +328,3 @@ const log: (ServerEvent | FrontendEvent)[] = [
         "uuids": []
     }
 ] as any;
-export const selectionTestLog = log.filter((e: FrontendEvent | ServerEvent) => !frontendEventList.includes(e.kind));

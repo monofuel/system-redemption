@@ -18,7 +18,7 @@ export class ECS {
             this.removeGraphicalComponent(comp.key);
         }
         this.graphical[comp.key] = comp;
-        updateGraphicalComponent(this.sceneElement, comp);
+        updateGraphicalComponent(this.sceneElement, comp, 0);
     }
     removeGraphicalComponent(key: string) {
         const comp = this.graphical[key];
@@ -29,10 +29,10 @@ export class ECS {
         delete this.graphical[key];
     }
 
-    public update() {
+    public update(delta: number) {
         for (const key in this.graphical) {
             const g = this.graphical[key];
-            updateGraphicalComponent(this.sceneElement, g);
+            updateGraphicalComponent(this.sceneElement, g, delta);
 
         }
     }
