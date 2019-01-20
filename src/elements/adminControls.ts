@@ -14,6 +14,9 @@ export async function getAdminControlsElement() {
             this.appendChild(template.content.cloneNode(true));
             const playerLabel = document.getElementById('player-label') as HTMLInputElement;
             playerLabel.innerText = `Color: ${opts.color}`;
+            if (this.ctx.gameState.match) {
+                this.updateLinks(this.ctx.gameState.match.id);
+            }
             this.ctx.queue.addListener('createMatch', (e) => {
                 this.updateLinks(e.id);
             })

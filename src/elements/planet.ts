@@ -91,11 +91,12 @@ export class PlanetElement extends ThreeSceneElement {
                 }
                 const hilight = getHilightMesh({
                     planet,
-                    loc: this.ctx.gameState.units[uuid].loc,
                     zScale: planet.zScale,
                     color: hilightColor,
                 })
                 hilight.name = 'selection';
+                hilight.scale.set(1.7, 1.7, 1.7);
+                hilight.position.y += 0.2;
                 comp.mesh.add(hilight);
             }
 

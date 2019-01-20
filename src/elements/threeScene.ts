@@ -111,6 +111,7 @@ export class ThreeSceneElement extends HTMLElement {
     }
 
     this.dat.domElement.style.position = 'absolute';
+    this.dat.domElement.parentElement!.style.zIndex = '9000';
     this.dat.domElement.style.top = `${this.offsetTop}px`;
     this.dat.domElement.style.left = `${this.offsetLeft +
       this.offsetWidth -

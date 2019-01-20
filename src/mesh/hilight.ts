@@ -4,7 +4,7 @@ import { getTile } from '../planet';
 import _ from 'lodash';
 interface HilightOpts {
   planet: FiniteMap,
-  loc: LocHash,
+  loc?: LocHash,
   color: number;
   cornerColors?: [number, number, number, number];
   zScale: number;
@@ -12,7 +12,7 @@ interface HilightOpts {
 
 export function getHilightMesh({ planet, loc, color, cornerColors, zScale }: HilightOpts): Mesh {
   // TODO respect corners
-  const tile = getTile(planet, loc).map((n) => n * zScale);
+  const tile = loc ? getTile(planet, loc).map((n) => n * zScale) : [0, 0, 0, 0];
   const minHeight = _.min(tile)!;
   const height = tile.map((n) => (n - minHeight))
 
