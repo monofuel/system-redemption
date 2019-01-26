@@ -36,6 +36,7 @@ standalone_build:
   script:
     - docker-compose build
     - docker tag ${CONTAINER_REGISTRY}/sr_main:latest ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
+    - docker push ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
     - docker push ${CONTAINER_REGISTRY}/sr_main:latest
 
 standalone_test:

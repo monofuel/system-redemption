@@ -7,12 +7,22 @@ ADD ./yarn.lock /sr
 # disabled for now as it had issues in prod
 # ADD ./node_modules /sr/node_modules
 WORKDIR /sr
-RUN yarn
+RUN yarn --frozen-lockfile
 ADD . /sr
 
 RUN yarn build
 RUN yarn prepare:client
 
+
+FROM node:alpine
+ADD ./package.json /sr
+ADD ./yarn.lock /sr
+
+WORKDIR /sr
+RUN yarn --frozen-lockfile --production=true
+
+COPY --from=0 /sr/build .
+COPY --from=0 /sr/public .
 EXPOSE 3000
 
-CMD [ "yarn", "server" ]
+CMD [ "node", "build/server/server.js" ]
