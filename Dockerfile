@@ -15,6 +15,8 @@ RUN yarn prepare:client
 
 
 FROM node:alpine
+
+RUN mkdir /sr
 ADD ./package.json /sr
 ADD ./yarn.lock /sr
 
