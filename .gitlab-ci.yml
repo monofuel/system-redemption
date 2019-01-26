@@ -43,6 +43,7 @@ standalone_build:
 standalone_test:
   stage: test
   script:
+    - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
     - docker-compose run standalone yarn test
 
 # prod_deploy:
