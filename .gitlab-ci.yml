@@ -31,6 +31,8 @@ cache:
 before_script:
   - docker info
   - ls rts-assets/
+  - apk add py-pip --no-cache
+  - pip install docker-compose
 
 stages:
   - build
