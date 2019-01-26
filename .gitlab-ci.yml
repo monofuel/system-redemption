@@ -28,8 +28,8 @@ cache:
 #  - node_modules/
 
 before_script:
-  - docker info
   - apk add --no-cache git openssh-client
+  - docker info
   - git submodule sync --recursive
   - git submodule update --init --recursive
   - ls rts-assets/
