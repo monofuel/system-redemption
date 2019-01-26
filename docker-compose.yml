@@ -1,6 +1,9 @@
 version: '2'
 services:
   standalone:
+    image: ${CONTAINER_REGISTRY}/sr_main:latest
+    cache_from:
+      -  ${CONTAINER_REGISTRY}/sr_main:latest
     build:
       context: .
     restart: always
@@ -8,4 +11,3 @@ services:
       - '3000:3000'
     environment:
       SR_INTERFACE: 0.0.0.0
-      

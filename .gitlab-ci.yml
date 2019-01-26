@@ -1,22 +1,10 @@
 image: docker:git
 
-# TODO dind caching
 variables:
-   # When using dind service we need to instruct docker, to talk with the
-   # daemon started inside of the service. The daemon is available with
-   # a network connection instead of the default /var/run/docker.sock socket.
-   #
-   # The 'docker' hostname is the alias of the service container as described at
-   # https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#accessing-the-services
-   #
-   # Note that if you're using Kubernetes executor, the variable should be set to
-   # tcp://localhost:2375 because of how Kubernetes executor connects services
-   # to the job container
    DOCKER_HOST: tcp://localhost:2375/
-   # When using dind, it's wise to use the overlayfs driver for
-   # improved performance.
    DOCKER_DRIVER: overlay2
    GIT_SUBMODULE_STRATEGY: recursive
+   CONTAINER_REGISTRY: registry.gitlab.com/$CI_PROJECT_PATH
 
 services:
   - docker:dind
@@ -34,6 +22,8 @@ before_script:
   - apk add py-pip --no-cache
   - pip install docker-compose
 
+  # TODO pull docker image for caching and use cache-from
+
 stages:
   - build
   - test
@@ -43,6 +33,8 @@ standalone_build:
   stage: build
   script:
     - docker-compose build
+    - docker tag ${CONTAINER_REGISTRY}/sr_main:latest ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
+    - docker push ${CONTAINER_REGISTRY}/sr_main:latest
 
 standalone_test:
   stage: test
