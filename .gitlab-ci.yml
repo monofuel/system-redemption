@@ -1,4 +1,4 @@
-image: docker/compose:1.24.0-rc1
+# image: docker:git
 
 # TODO dind caching
 variables:
