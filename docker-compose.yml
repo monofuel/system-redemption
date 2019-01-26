@@ -2,9 +2,9 @@ version: '3.2'
 services:
   standalone:
     image: ${CONTAINER_REGISTRY}/sr_main:latest
-    cache_from:
-      -  ${CONTAINER_REGISTRY}/sr_main:latest
     build:
+      cache_from:
+        -  ${CONTAINER_REGISTRY}/sr_main:latest
       context: .
     restart: always
     ports:
