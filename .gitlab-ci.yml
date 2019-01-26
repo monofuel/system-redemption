@@ -17,8 +17,8 @@ variables:
    # improved performance.
    DOCKER_DRIVER: overlay2
 
- services:
-   - docker:dind
+services:
+  - docker:dind
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
