@@ -1,4 +1,4 @@
-# image: docker:git
+image: docker:git
 
 # TODO dind caching
 variables:
@@ -29,7 +29,6 @@ cache:
 #  - node_modules/
 
 before_script:
-  - apk add --no-cache git openssh-client
   - docker info
   - ls rts-assets/
 
