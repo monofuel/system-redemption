@@ -47,7 +47,7 @@ standalone_test:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker run -it ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
+    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
 
 prod_deploy:
   image: alpine/helm
