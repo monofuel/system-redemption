@@ -13,7 +13,6 @@ ADD . /sr
 RUN yarn prepare:client
 RUN yarn build
 
-
 FROM node:alpine
 
 RUN mkdir /sr
