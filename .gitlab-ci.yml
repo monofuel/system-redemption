@@ -22,8 +22,6 @@ before_script:
   - docker info
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.soggysquad.space
   - ls rts-assets/
-  - apk add py-pip --no-cache
-  - pip install docker-compose
 
   # TODO pull docker image for caching and use cache-from
 
