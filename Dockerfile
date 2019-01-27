@@ -7,7 +7,7 @@ ADD ./yarn.lock /sr
 # disabled for now as it had issues in prod
 # ADD ./node_modules /sr/node_modules
 WORKDIR /sr
-RUN yarn --frozen-lockfile
+RUN yarn --frozen-lockfile  && yarn cache clean
 ADD . /sr
 
 RUN yarn prepare:client
@@ -21,7 +21,7 @@ ADD ./package.json /sr
 ADD ./yarn.lock /sr
 
 WORKDIR /sr
-RUN yarn --frozen-lockfile --production=true
+RUN yarn --frozen-lockfile --production=true && yarn cache clean
 
 COPY --from=0 /sr/build .
 COPY --from=0 /sr/public .
