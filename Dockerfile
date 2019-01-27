@@ -10,8 +10,8 @@ WORKDIR /sr
 RUN yarn --frozen-lockfile
 ADD . /sr
 
-RUN yarn build
 RUN yarn prepare:client
+RUN yarn build
 
 
 FROM node:alpine

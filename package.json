@@ -6,10 +6,10 @@
   "scripts": {
     "server": "ts-node src/server.ts",
     "build": "concurrently 'yarn build:client' 'yarn build:server'",
-    "build:client": "yarn prepare:client; webpack --debug",
+    "build:client": "webpack --debug",
     "build:server": "tsc",
     "watch": "concurrently 'yarn watch:client' 'yarn watch:server'",
-    "watch:client": "yarn prepare:client; webpack --debug -w",
+    "watch:client": "webpack --debug -w",
     "watch:server": "tsc -w",
     "prepare:client": "ts-node ./build-src/main.ts",
     "test-ts": "mocha -r ts-node/register src/test/**/*.test.ts",
