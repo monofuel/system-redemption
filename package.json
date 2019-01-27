@@ -13,7 +13,7 @@
     "watch:server": "tsc -w",
     "prepare:client": "ts-node ./build-src/main.ts",
     "test-ts": "mocha -r ts-node/register src/test/**/*.test.ts",
-    "test": "mocha build/server/test/**/*.test.ts"
+    "test": "mocha build/server/test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,6 @@
     "css-loader": "^2.0.1",
     "jsdom": "^13.1.0",
     "madge": "^3.4.2",
-    "mocha": "^5.2.0",
     "node-sass": "^4.11.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
@@ -59,6 +58,7 @@
     "zip-dir": "^1.0.2"
   },
   "dependencies": {
+    "mocha": "^5.2.0",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
     "lodash": "^4.17.11",

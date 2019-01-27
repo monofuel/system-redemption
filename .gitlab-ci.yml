@@ -38,7 +38,7 @@ standalone_build:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
     - docker pull ${CONTAINER_REGISTRY}/sr_main:builder || true
     - docker build --target builder --cache-from ${CONTAINER_REGISTRY}/sr_main:builder -t ${CONTAINER_REGISTRY}/sr_main:builder .
-    - docker-compose build
+    - docker build --cache-from ${CONTAINER_REGISTRY}/sr_main:builder --cache-from ${CONTAINER_REGISTRY}/sr_main:latest -t ${CONTAINER_REGISTRY}/sr_main:latest .
     - docker tag ${CONTAINER_REGISTRY}/sr_main:latest ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
     - docker push ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
     - docker push ${CONTAINER_REGISTRY}/sr_main:latest
@@ -48,7 +48,7 @@ standalone_test:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker-compose run standalone 'yarn add mocha && yarn test'
+    - docker run -it ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
 
 prod_deploy:
   image: alpine/helm
