@@ -30,7 +30,7 @@ before_script:
 stages:
   - build
   - test
-  # - deploy
+  - deploy
 
 standalone_build:
   stage: build
