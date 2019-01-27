@@ -5,6 +5,7 @@ services:
     build:
       cache_from:
         -  ${CONTAINER_REGISTRY}/sr_main:latest
+        -  ${CONTAINER_REGISTRY}/sr_main:builder
       context: .
     restart: always
     ports:

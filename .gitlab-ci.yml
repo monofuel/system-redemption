@@ -35,16 +35,18 @@ standalone_build:
   stage: build
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
+    - docker pull ${CONTAINER_REGISTRY}/sr_main:builder || true
     - docker-compose build
     - docker tag ${CONTAINER_REGISTRY}/sr_main:latest ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
     - docker push ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
     - docker push ${CONTAINER_REGISTRY}/sr_main:latest
+    - docker push ${CONTAINER_REGISTRY}/sr_main:builder
 
 standalone_test:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker-compose run standalone yarn test
+    - docker-compose run standalone yarn install mocha && yarn test
 
 # prod_deploy:
 #   stage: deploy

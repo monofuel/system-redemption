@@ -12,7 +12,8 @@
     "watch:client": "yarn prepare:client; webpack --debug -w",
     "watch:server": "tsc -w",
     "prepare:client": "ts-node ./build-src/main.ts",
-    "test": "mocha -r ts-node/register src/test/**/*.test.ts"
+    "test-ts": "mocha -r ts-node/register src/test/**/*.test.ts",
+    "test": "mocha build/server/test/**/*.test.ts"
   },
   "repository": {
     "type": "git",
@@ -53,11 +54,11 @@
     "ncp": "^2.0.0",
     "@types/jszip": "^3.1.4",
     "three.xr.js": "^0.1.11",
+    "@types/express-ws": "^3.0.0",
     "webpack-cli": "^3.1.2",
     "zip-dir": "^1.0.2"
   },
   "dependencies": {
-    "@types/express-ws": "^3.0.0",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
     "lodash": "^4.17.11",
