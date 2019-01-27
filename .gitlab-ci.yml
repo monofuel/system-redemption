@@ -5,6 +5,7 @@ variables:
    DOCKER_DRIVER: overlay2
    GIT_SUBMODULE_STRATEGY: recursive
    CONTAINER_REGISTRY: registry.soggysquad.space/$CI_PROJECT_PATH
+   KUBECONFIG: /etc/deploy/config
 
 services:
   - docker:dind
@@ -47,10 +48,13 @@ standalone_test:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker-compose run standalone yarn install mocha && yarn test
+    - docker-compose run standalone yarn add mocha && yarn test
 
-# prod_deploy:
-#   stage: deploy
-#   script:
-#     - docker build -t deployer -f ./Dockerfile-deploy .
-#     - docker run -e VAGRANT_LINODE_KEY -e ANSIBLE_ID_RSA -e ANSIBLE_ID_RSA_PUB deployer bash -c 'mkdir -p /vagrant/.vagrant/machines/sr/linode; echo "12037264" > /vagrant/.vagrant/machines/sr/linode/id; echo "$ANSIBLE_ID_RSA" > /vagrant/id_rsa; echo "$ANSIBLE_ID_RSA_PUB" > /vagrant/id_rsa.pub; cd /vagrant && vagrant up --provider=linode && vagrant provision'
+prod_deploy:
+  image: alpine/helm
+  stage: deploy
+  script:
+    - mkdir -p /etc/deploy
+    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - kubectl config use-context soggy-k8s
+    - helm init --client-only
