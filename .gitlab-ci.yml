@@ -48,7 +48,7 @@ standalone_test:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker-compose run standalone yarn add mocha && yarn test
+    - docker-compose run standalone 'yarn add mocha && yarn test'
 
 prod_deploy:
   image: alpine/helm
