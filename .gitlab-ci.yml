@@ -38,7 +38,8 @@ standalone_build:
     - docker build --target builder --cache-from ${CONTAINER_REGISTRY}/sr_main:builder -t ${CONTAINER_REGISTRY}/sr_main:builder .
     - docker build --cache-from ${CONTAINER_REGISTRY}/sr_main:builder --cache-from ${CONTAINER_REGISTRY}/sr_main:latest -t ${CONTAINER_REGISTRY}/sr_main:latest .
     - docker tag ${CONTAINER_REGISTRY}/sr_main:latest ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
-    - docker push ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
+    # TODO I don't really care about old images currently, and don't have a system for pruning setup
+    # - docker push ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
     - docker push ${CONTAINER_REGISTRY}/sr_main:latest
     - docker push ${CONTAINER_REGISTRY}/sr_main:builder
 
