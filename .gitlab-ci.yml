@@ -53,6 +53,8 @@ standalone_test:
 prod_deploy:
   image: alpine/helm
   stage: deploy
+  only:
+    - master
   script:
     - mkdir -p /etc/deploy
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
