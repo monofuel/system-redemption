@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: registry.soggysquad.space/monofuel/system-redemption/sr_main:latest
+  repository: registry.soggysquad.space/monofuel/system-redemption/sr_main
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -13,21 +13,24 @@ nameOverride: ""
 fullnameOverride: ""
 
 service:
+  name: sr-svc
   type: ClusterIP
   port: 3000
+  protocol: TCP
 
 ingress:
   enabled: true
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  paths: []
+  paths:
+    - /
   hosts:
     - sr.soggysquad.space
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls:
+    - secretName: sr-secret
+      hosts:
+        - sr.soggysquad.space
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
