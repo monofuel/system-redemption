@@ -4,7 +4,7 @@ variables:
    DOCKER_HOST: tcp://localhost:2375/
    DOCKER_DRIVER: overlay2
    GIT_SUBMODULE_STRATEGY: recursive
-   CONTAINER_REGISTRY: registry.soggysquad.space/$CI_PROJECT_PATH
+   CONTAINER_REGISTRY: registry.japura.net/$CI_PROJECT_PATH
    KUBECONFIG: /etc/deploy/config
 
 services:
@@ -20,7 +20,7 @@ cache:
 # TODO need a new image that includes docker-compose on default
 before_script:
   - docker info
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.soggysquad.space
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.japura.net
   - ls rts-assets/
 
   # TODO pull docker image for caching and use cache-from
