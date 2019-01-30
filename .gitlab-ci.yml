@@ -28,7 +28,7 @@ before_script:
 stages:
   - build
   - test
-  - deploy
+  #- deploy
 
 standalone_build:
   stage: build
@@ -48,13 +48,13 @@ standalone_test:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
     - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
 
-prod_deploy:
-  image: alpine/helm
-  stage: deploy
-  only:
-    - master
-  script:
-    - mkdir -p /etc/deploy
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - kubectl config use-context soggy-k8s
-    - helm init --client-only
+# prod_deploy:
+#   image: alpine/helm
+#   stage: deploy
+#   only:
+#     - master
+#   script:
+#     - mkdir -p /etc/deploy
+#     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+#     - kubectl config use-context soggy-k8s
+#     - helm init --client-only
