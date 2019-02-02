@@ -31,6 +31,8 @@ stages:
   #- deploy
 
 standalone_build:
+  tags:
+    - docker
   stage: build
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
@@ -43,6 +45,8 @@ standalone_build:
     - docker push ${CONTAINER_REGISTRY}/sr_main:builder
 
 standalone_test:
+  tags:
+    - docker
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
