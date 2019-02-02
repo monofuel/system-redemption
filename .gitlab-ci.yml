@@ -20,7 +20,7 @@ cache:
 # TODO need a new image that includes docker-compose on default
 before_script:
   - docker info
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.japura.net
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.japura.net:5000
   - ls rts-assets/
 
   # TODO pull docker image for caching and use cache-from
