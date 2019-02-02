@@ -4,8 +4,8 @@ variables:
    DOCKER_HOST: tcp://localhost:2375/
    DOCKER_DRIVER: overlay2
    GIT_SUBMODULE_STRATEGY: recursive
-   CONTAINER_REGISTRY: registry.japura.net/$CI_PROJECT_PATH
-   KUBECONFIG: /etc/deploy/config
+   CONTAINER_REGISTRY: registry.japura.net:5000/$CI_PROJECT_PATH
+
 
 services:
   - docker:dind
