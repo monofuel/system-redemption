@@ -66,4 +66,4 @@ prod_deploy:
   script:
     - mkdir ~/.ssh
     - echo "$ANSIBLE_ID_RSA" ~/.ssh/id_rsa
-    - ansible-playbook playbooks/update-sr.yml
+    - ANSIBLE_CONFIG=./ansible.cfg ansible-playbook playbooks/update-sr.yml
