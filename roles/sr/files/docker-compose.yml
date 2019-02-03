@@ -16,7 +16,7 @@ services:
       - /opt/sr/certbot/conf:/etc/letsencrypt
       - /opt/sr/certbot/www:/var/www/certbot
   sr:
-    image: registry.japura.net/system-redemption/sr_main:latest
+    image: registry.japura.net:443/monofuel/system-redemption/sr_main:latest
     restart: always
     expose:
       - 3000
