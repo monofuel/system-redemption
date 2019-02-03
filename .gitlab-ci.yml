@@ -53,13 +53,12 @@ standalone_test:
     # TODO tests need dev dependencies, hmmm
     - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn install && yarn test'
 
-# prod_deploy:
-#   image: alpine/helm
-#   stage: deploy
-#   only:
-#     - master
-#   script:
-#     - mkdir -p /etc/deploy
-#     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-#     - kubectl config use-context soggy-k8s
-#     - helm init --client-only
+prod_deploy:
+  image: ansible/ansible
+  stage: deploy
+  only:
+    - master
+  script:
+    - mkdir ~/.ssh
+    - echo "$ANSIBLE_ID_RSA" ~/.ssh/id_rsa
+    - ansible-playbook playbooks/update-sr.yml
