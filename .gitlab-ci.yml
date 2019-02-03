@@ -54,6 +54,8 @@ standalone_test:
     - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn install && yarn test'
 
 prod_deploy:
+  tags:
+    - docker
   image: ansible/ansible
   stage: deploy
   only:
