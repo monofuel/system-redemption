@@ -47,6 +47,12 @@
   args:
     chdir: /home/core
   when: certbot_cert.stat.exists == False
+- name: pulling project
+  become: yes
+  become_user: core
+  shell: /opt/bin/docker-compose pull
+  args:
+    chdir: /home/core
 - name: stop project
   become: yes
   become_user: core
