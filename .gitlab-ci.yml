@@ -57,6 +57,9 @@ prod_deploy:
   tags:
     - docker
   image: williamyeh/ansible:alpine3
+  # override default before_script
+  before_script:
+    - ls
   stage: deploy
   only:
     - master
