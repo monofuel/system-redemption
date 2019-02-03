@@ -50,7 +50,8 @@ standalone_test:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
+    # TODO tests need dev dependencies, hmmm
+    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn install && yarn test'
 
 # prod_deploy:
 #   image: alpine/helm
