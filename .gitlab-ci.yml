@@ -51,12 +51,12 @@ standalone_test:
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
     # TODO tests need dev dependencies, hmmm
-    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn install && yarn test'
+    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
 
 prod_deploy:
   tags:
     - docker
-  image: ansible/ansible
+  image: williamyeh/ansible:alpine3
   stage: deploy
   only:
     - master
