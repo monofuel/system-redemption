@@ -68,4 +68,4 @@ prod_deploy:
     - echo "$ANSIBLE_ID_RSA" > ~/.ssh/id_rsa
     - chmod 700 ~/.ssh
     - chmod 600 ~/.ssh/id_rsa
-    - ANSIBLE_CONFIG=./ansible.cfg ansible-playbook -vvvv playbooks/update-sr.yml
+    - ANSIBLE_CONFIG=./ansible.cfg ansible-playbook playbooks/update-sr.yml
