@@ -1,20 +1,20 @@
-import dat from 'dat.gui';
-import { PerspectiveCamera, Scene, WebGLRenderer, OrbitControls } from 'three';
+import dat from "dat.gui";
+import { PerspectiveCamera, Scene, WebGLRenderer, OrbitControls } from "three";
 
-import { getParentContext, RollingStats } from '.';
-import { info } from '../logging';
-import { EventContextElement } from './eventContext';
-import './styles/threeScene.scss';
-import { Asset, loadAssets } from '../mesh/models';
-import { ModelType } from '../types/SR';
-import { UpdateLoop } from '../events/serverContext';
+import { getParentContext, RollingStats } from ".";
+import { info } from "../logging";
+import { EventContextElement } from "./eventContext";
+import "./styles/threeScene.scss";
+import { Asset, loadAssets } from "../mesh/models";
+import { ModelType } from "../types/SR";
+import { UpdateLoop } from "../events/serverContext";
 
 export class ThreeSceneElement extends HTMLElement {
   public renderer: WebGLRenderer;
   public scene: Scene;
   public camera: PerspectiveCamera;
 
-  public dat: dat.GUI;
+  public dat?: dat.GUI;
   public ctx: EventContextElement;
   protected updateLoops: { [key: string]: UpdateLoop } = {};
 
@@ -34,7 +34,7 @@ export class ThreeSceneElement extends HTMLElement {
   public assets!: Record<ModelType, Asset>;
   public onAssetsLoaded?: () => void;
 
-  constructor(ctx?: EventContextElement) {
+  constructor(ctx?: EventContextElement, useDatGui: boolean = true) {
     super();
 
     this.ctx = ctx || getParentContext(this);
@@ -53,47 +53,54 @@ export class ThreeSceneElement extends HTMLElement {
 
     this.frameTimeStats = new RollingStats(60);
     this.frameDeltaStats = new RollingStats(60);
-
-    this.dat = new dat.GUI();
+    if (useDatGui) {
+      this.dat = new dat.GUI();
+    }
     this.appendChild(this.renderer.domElement);
     this.renderer.setAnimationLoop(this.render.bind(this));
 
-    this.perfText = document.createElement('ul');
-    this.perfText.classList.add('hover-text');
-    this.frameRateLi = document.createElement('li');
-    this.frameTimeLi = document.createElement('li');
-    this.frameDeltaLi = document.createElement('li');
+    this.perfText = document.createElement("ul");
+    this.perfText.classList.add("hover-text");
+    this.frameRateLi = document.createElement("li");
+    this.frameTimeLi = document.createElement("li");
+    this.frameDeltaLi = document.createElement("li");
     this.perfText.appendChild(this.frameRateLi);
     this.perfText.appendChild(this.frameTimeLi);
     this.perfText.appendChild(this.frameDeltaLi);
-    const perfFolder = this.dat.addFolder('Performance');
-    (perfFolder as any).__ul.appendChild(this.perfText);
+    if (this.dat) {
+      const perfFolder = this.dat.addFolder("Performance");
+      (perfFolder as any).__ul.appendChild(this.perfText);
+    }
 
-    this.addUpdateLoop('stats', (delta: number) => {
-      this.updateHoverText();
-      return false;
-    }, 1);
+    this.addUpdateLoop(
+      "stats",
+      (delta: number) => {
+        this.updateHoverText();
+        return false;
+      },
+      1
+    );
 
     loadAssets((current: number, total: number) => {
       // console.log(`ASSETS: ${current}/${total}`);
-    }).then((assets) => {
+    }).then(assets => {
       this.assets = assets;
       if (this.onAssetsLoaded) {
         this.onAssetsLoaded();
       }
-    })
+    });
   }
 
   public addUpdateLoop(
     name: string,
     fn: (delta: number) => boolean,
-    freq: number,
+    freq: number
   ) {
     if (this.updateLoops[name]) {
       this.updateLoops[name].stop();
-      info('replacing update loop', { name, freq });
+      info("replacing update loop", { name, freq });
     } else {
-      info('attaching update loop', { name, freq });
+      info("attaching update loop", { name, freq });
     }
 
     const loop = new UpdateLoop(name, fn, freq);
@@ -109,21 +116,20 @@ export class ThreeSceneElement extends HTMLElement {
     ) {
       return;
     }
-
-    this.dat.domElement.style.position = 'absolute';
-    this.dat.domElement.parentElement!.style.zIndex = '9000';
-    this.dat.domElement.style.top = `${this.offsetTop}px`;
-    this.dat.domElement.style.left = `${this.offsetLeft +
-      this.offsetWidth -
-      this.dat.domElement.offsetWidth}px`;
-
+    if (this.dat) {
+      this.dat.domElement.style.position = "absolute";
+      this.dat.domElement.parentElement!.style.zIndex = "9000";
+      this.dat.domElement.style.top = `${this.offsetTop}px`;
+      this.dat.domElement.style.left = `${this.offsetLeft +
+        this.offsetWidth -
+        this.dat.domElement.offsetWidth}px`;
+    }
     this.camera.aspect = this.offsetWidth / this.offsetHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(this.offsetWidth, this.offsetHeight);
   }
 
   protected render() {
-
     // @ts-ignore
     if (this.renderer.xr && this.renderer.xr.sessionActive) {
       return;
@@ -146,11 +152,11 @@ export class ThreeSceneElement extends HTMLElement {
     // window.requestAnimationFrame(() => this.render());
   }
   private updateHoverText() {
-
     const delta = this.frameDeltaStats.get();
     this.frameRateLi.innerText = `FrameRate: ${(1000 / delta).toFixed(3)}fps`;
-    this.frameTimeLi.innerText = `FrameTime: ${this.frameTimeStats.get().toFixed(3)}ms`;
+    this.frameTimeLi.innerText = `FrameTime: ${this.frameTimeStats
+      .get()
+      .toFixed(3)}ms`;
     this.frameDeltaLi.innerText = `FrameDelta: ${delta.toFixed(3)}ms`;
-
   }
 }
