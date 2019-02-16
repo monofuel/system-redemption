@@ -20,6 +20,7 @@ export function getExplosionGroup(): SPEGroup {
             loop: 1
         },
         depthTest: true,
+        maxParticleCount: 100,
         depthWrite: false,
         blending: AdditiveBlending,
         scale: 20

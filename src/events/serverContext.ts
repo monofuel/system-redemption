@@ -222,8 +222,7 @@ function unitOnTick(state: GameState, asyncEvents: ServerEvent[], uuid: string) 
     // TODO check if we have a current target
     // check for enemies in range
     const nearby = unitsInRange(state, unit.loc, def.attack.range);
-    console.log(nearby);
-    nearby.sort((a, b) => b.dist - a.dist);
+    nearby.sort((a, b) => a.dist - b.dist);
     for (const { uuid: nearbyUuid } of nearby) {
       if (unit.uuid === nearbyUuid) {
         continue;

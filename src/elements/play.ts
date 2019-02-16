@@ -103,12 +103,12 @@ export class PlayELement extends PlanetElement {
           });
         } else {
           const uuid = this.getUnitAtMouse(e);
-          if (uuid) {
-            this.ctx.post({
-              kind: "selectUnits",
-              uuids: [uuid]
-            });
-          }
+
+          this.ctx.post({
+            kind: "selectUnits",
+            uuids: uuid ? [uuid] : []
+          });
+
         }
         delete this.dragStart;
         delete this.dragCurrent;
