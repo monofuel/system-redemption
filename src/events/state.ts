@@ -26,7 +26,7 @@ import {
 import _ from 'lodash'
 import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
 import { getTile } from '../planet';
-import { isMoveValid } from '../services/pathfind';
+import { isMoveValid, locDistance } from '../services/pathfind';
 import { unHash, getHash } from '../services/hash';
 
 export interface GameState {
@@ -90,9 +90,9 @@ export function newGameState(): GameState {
 /**
  * applyEvent applies the given event to the game state
  * event applicators must not append events!
- * 
+ *
  * onTick() may be used for on-tick async work that will append new events
- * 
+ *
  * @param state game state (mutable)
  * @param event to process
  */
@@ -299,5 +299,17 @@ export function applyDestroyUnit(state: GameState, event: DestroyUnit) {
 export function applyDamageUnit(state: GameState, event: DamageUnit) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
   unit.health! -= event.amount;
+
+  if (event.source) {
+    const { unit: attacker, unitDef: attackerDef } = getUnitInfo(state, event.source);
+    if (!attackerDef.attack) {
+      throw new Error(`unit cannot attack ${event.source}`);
+    }
+    const dist = locDistance(unit.loc, attacker.loc);
+    if (attackerDef.attack.range < dist) {
+      throw new Error(`attacking unit not in range ${event.source}, ${event.uuid}`);
+    }
+
+  }
 
 }

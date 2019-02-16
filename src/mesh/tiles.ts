@@ -360,7 +360,7 @@ export function getTileTexture(
 }
 
 
-const bufferedChunkCache: {
+let bufferedChunkCache: {
   [key: string]: {
     opts: MeshOpts;
     geom: BufferGeometry;
@@ -385,6 +385,9 @@ export function invalidateChunkCache(key: string) {
   delete bufferedChunkCache[key];
 }
 
+export function clearChunkCache() {
+  bufferedChunkCache = {};
+}
 
 // NB. tiles is assumed to not change. if the map is edited when using the cache, call invalidateChunkCache first
 function isOptsEqual(a: MeshOpts, b: MeshOpts): boolean {

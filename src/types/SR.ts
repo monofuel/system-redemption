@@ -67,6 +67,7 @@ export interface UnitDefinition {
         }
         attack?: {
                 layers: Layer[];
+                range: number;
         }
         storage?: {
                 maxIron?: number;

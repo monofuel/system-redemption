@@ -7,9 +7,11 @@ import { selectionTestLog } from './selection';
 import { moveBlockTestLog } from './moveBlock';
 import { damageTestLog } from './damage';
 import { unitBlockingTestLog } from './unitBlocking';
+import { attackRangeTestLog } from './attackRange';
 
 export const logs = {
     planetEditTestLog,
+    attackRangeTestLog,
     unitMoveTestLog,
     damageTestLog,
     unitBlockingTestLog,

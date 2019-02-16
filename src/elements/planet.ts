@@ -3,7 +3,7 @@ import { EventContextElement } from "./eventContext";
 import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, DirectionalLightHelper, Group, Mesh } from "three";
 import { Unit, LocHash } from "../types/SR";
 import { info } from "../logging";
-import { getPlanetObject, invalidateChunkCache } from "../mesh/tiles";
+import { getPlanetObject, invalidateChunkCache, clearChunkCache } from "../mesh/tiles";
 import { ECS } from "./components";
 import { unitGraphicalComp, hilightGraphicalComp, GraphicalType } from "./components/graphical";
 import { getChunkForTile } from "../planet";
@@ -47,6 +47,7 @@ export class PlanetElement extends ThreeSceneElement {
             for (const key in this.ecs.graphical) {
                 this.ecs.removeGraphicalComponent(key);
             }
+            clearChunkCache();
             this.loadMap();
         })
         this.ctx.queue.addListener('waterChange', (event) => {
@@ -161,7 +162,7 @@ export class PlanetElement extends ThreeSceneElement {
             mouseToVec(ev, this.offsetWidth, this.offsetHeight), true
         );
         if (!vec) {
-            if (this.ctx.gameState.hilight) {
+            if (this.ctx.gameState.hilight && this.ctx.gameState.hilight.loc) {
                 this.ctx.post({
                     kind: 'hilightUpdate'
                 })
