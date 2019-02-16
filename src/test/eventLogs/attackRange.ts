@@ -488,4 +488,20 @@ export const attackRangeTestLog: (ServerEvent | FrontendEvent)[] = [
       "moveCooldown": 0
     }
   },
+  {
+    kind: 'damageUnit',
+    uuid: "d0f49e80-84d5-4da8-85a4-7d350fb8399a",
+    amount: 5,
+    source: "d8f70167-74fe-401a-bfc0-c3275dafcbd7"
+  },
+  {
+    kind: 'assertFail',
+    reason: 'unit should be too far away',
+    event: {
+      kind: 'damageUnit',
+      uuid: "d0f49e80-84d5-4da8-85a4-7d350fb8399a",
+      amount: 5,
+      source: "5a626e3f-f4d2-4fff-a5fe-b6be470ffde3"
+    }
+  }
 ] as any;

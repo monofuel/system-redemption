@@ -124,6 +124,7 @@ export interface Assertion {
 export interface AssertFail {
   kind: 'assertFail';
   event: ServerEvent;
+  reason?: string;
 }
 
 export interface DamageUnit {
