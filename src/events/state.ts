@@ -21,13 +21,19 @@ import {
   SetPath,
   CreateMatchEvent,
   DestroyUnit,
-  DamageUnit,
-} from '.';
-import _ from 'lodash'
-import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash } from '../types/SR';
-import { getTile } from '../planet';
-import { isMoveValid, locDistance } from '../services/pathfind';
-import { unHash, getHash } from '../services/hash';
+  DamageUnit
+} from ".";
+import _ from "lodash";
+import {
+  FiniteMap,
+  Unit,
+  UnitType,
+  UnitDefinition,
+  LocHash
+} from "../types/SR";
+import { getTile } from "../planet";
+import { isMoveValid, getTileInDirection, locDistance } from "../services/pathfind";
+import { unHash, getHash } from "../services/hash";
 
 export interface GameState {
   planet?: FiniteMap;
@@ -37,20 +43,17 @@ export interface GameState {
   stage: {
     tick: number;
     mode: GameStage;
-  }
+  };
   hilight?: HilightUpdate;
   selectedUnits: string[];
   match?: {
     id: string;
-  },
+  };
   cache: {
-    unitLocations: Record<LocHash, string>
-  }
+    unitLocations: Record<LocHash, string>;
+  };
 }
-const eventApply: Record<
-  EventKinds,
-  (state: GameState, event: any) => void
-> = {
+const eventApply: Record<EventKinds, (state: GameState, event: any) => void> = {
   newFiniteMap: applyNewMap,
   mapEdit: applyMapEdit,
   waterChange: applyWaterChange,
@@ -69,7 +72,7 @@ const eventApply: Record<
   setPath: applySetPath,
   createMatch: applyCreateMatch,
   destroyUnit: applyDestroyUnit,
-  damageUnit: applyDamageUnit,
+  damageUnit: applyDamageUnit
 };
 
 export function newGameState(): GameState {
@@ -78,7 +81,7 @@ export function newGameState(): GameState {
     unitDefinitions: {},
     stage: {
       tick: 0,
-      mode: GameStage.init,
+      mode: GameStage.init
     },
     selectedUnits: [],
     cache: {
@@ -97,7 +100,10 @@ export function newGameState(): GameState {
  * @param event to process
  */
 
-export function applyEvent(state: GameState, event: ServerEvent | FrontendEvent) {
+export function applyEvent(
+  state: GameState,
+  event: ServerEvent | FrontendEvent
+) {
   const applyFN = eventApply[event.kind];
   if (!applyFN) {
     throw new Error(`missing apply function for event ${event.kind}`);
@@ -113,7 +119,7 @@ export function applyNewMap(state: GameState, event: NewFiniteMap) {
 }
 
 export function applyMapEdit(state: GameState, event: MapEdit) {
-  const map = state.planet
+  const map = state.planet;
   if (!map) {
     throw new Error(`map does not exist`);
   }
@@ -145,70 +151,56 @@ export function editorModeChange(state: GameState, event: EditorMode) {
   state.editorMode = event;
 }
 
-export function toggleLogViewerChange(state: GameState, event: ToggleLogViewer) {
-
-}
+export function toggleLogViewerChange(
+  state: GameState,
+  event: ToggleLogViewer
+) { }
 export function applyNewUnit(state: GameState, event: NewUnit) {
   const unitDef = state.unitDefinitions[event.unit.type];
   if (!unitDef) {
     throw new Error(`missing unit definition ${unitDef}`);
   }
   // check if there is a unit already there
-  for (const unit of Object.values(state.units)) {
-    if (unit.loc === event.unit.loc) {
-      throw new Error('unit already at location');
-    }
+  if (state.cache.unitLocations[event.unit.loc]) {
+    throw new Error(`unit already at location ${event.unit.loc}`);
   }
+  state.cache.unitLocations[event.unit.loc] = event.unit.uuid;
 
   state.units[event.unit.uuid] = _.cloneDeep(event.unit);
   state.units[event.unit.uuid].health = unitDef.maxHealth;
 }
 export function applyMoveUnit(state: GameState, event: MoveUnit) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
-  if (!(unitDef.move)) {
+  if (!unitDef.move) {
     throw new Error(`unit can't move`);
   }
   if (unit.moveCooldown !== 0) {
-    throw new Error('unit movement still cooling down');
-  }
-  const [x, y] = unHash(unit.loc);
-  let nextX = x;
-  let nextY = y;
-  switch (event.dir) {
-    case 'N':
-      nextY = y + 1;
-      break;
-    case 'S':
-      nextY = y - 1;
-      break;
-    case 'E':
-      nextX = x + 1;
-      break;
-    case 'W':
-      nextX = x - 1;
-      break;
-    default:
-      throw new Error(`invalid direction ${event.dir}`)
+    throw new Error("unit movement still cooling down");
   }
 
-  const nextLoc = getHash(nextX, nextY);
+  const nextLoc = getTileInDirection(unit.loc, event.dir);
 
   const prev = getTile(state.planet!, unit.loc);
   const next = getTile(state.planet!, nextLoc);
 
-  // TODO need to check if a unit is already there
+  if (state.cache.unitLocations[nextLoc]) {
+    throw new Error(`unit already at location ${nextLoc}`);
+  }
 
   const valid = isMoveValid(state.planet!, prev, next, event.dir);
   if (!valid) {
     throw new Error("movement is not valid");
   }
 
+  delete state.cache.unitLocations[unit.loc];
+  state.cache.unitLocations[nextLoc] = unit.uuid;
+
   unit.loc = nextLoc;
   unit.facing = event.dir;
 
   unit.moveCooldown = unitDef.move.cooldown;
   if (unit.path) {
-    unit.path.shift()
+    unit.path.shift();
   }
 }
 export function applyAssertion(state: GameState, event: Assertion) {
@@ -224,7 +216,7 @@ export function applyAssertFail(state: GameState, event: AssertFail) {
   }
   if (!e) {
     console.error(JSON.stringify(event.event));
-    throw new Error('AssertFail event did not fail');
+    throw new Error("AssertFail event did not fail");
   }
 }
 
@@ -265,7 +257,6 @@ export function getUnitInfo(state: GameState, uuid: string) {
 
 export function applySetDestination(state: GameState, event: SetDestination) {
   for (const uuid of event.uuids) {
-
     const { unit, unitDef } = getUnitInfo(state, uuid);
     if (!unitDef.move) {
       throw new Error(`unit cannot move: ${unit.type}`);
@@ -281,19 +272,23 @@ export function applySelectUnits(state: GameState, event: SelectUnits) {
 export function applySetPath(state: GameState, event: SetPath) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
   if (unit.destination !== event.dest) {
-    throw new Error(`destination does not match for unit ${event.uuid}, ${unit.destination}, ${event.dest}`);
+    throw new Error(
+      `destination does not match for unit ${event.uuid}, ${
+      unit.destination
+      }, ${event.dest}`
+    );
   }
   unit.path = event.path;
-
 }
 export function applyCreateMatch(state: GameState, event: CreateMatchEvent) {
   state.match = {
     id: event.id
-  }
+  };
 }
 export function applyDestroyUnit(state: GameState, event: DestroyUnit) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
   delete state.units[event.uuid];
+  delete state.cache.unitLocations[unit.loc];
 }
 
 export function applyDamageUnit(state: GameState, event: DamageUnit) {
