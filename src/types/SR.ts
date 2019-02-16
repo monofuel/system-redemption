@@ -68,6 +68,8 @@ export interface UnitDefinition {
         attack?: {
                 layers: Layer[];
                 range: number;
+                damage: number;
+                cooldown: number;
         }
         storage?: {
                 maxIron?: number;
@@ -89,6 +91,7 @@ export interface Unit {
         destination?: LocHash;
         map: string;
         moveCooldown: number;
+        attackCooldown?: number;
         path?: Direction[];
 }
 

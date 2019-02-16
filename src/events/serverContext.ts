@@ -8,9 +8,11 @@ import {
 import { GameState, newGameState, applyEvent } from "./state";
 import { EventQueue } from "./queues";
 import { info } from "../logging";
-import { pathfind, getTileInDirection } from "../services/pathfind";
+import { pathfind, getTileInDirection, locDistance } from "../services/pathfind";
 import { deflateSync } from "zlib";
 import { delay } from "../util";
+import { unHash } from "../services/hash";
+import { LocHash } from "../types/SR";
 
 interface LoggedEvent {
   event: ServerEvent;
@@ -171,41 +173,86 @@ export class ServerContext {
  */
 export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
   for (const uuid in state.units) {
-    const unit = state.units[uuid];
-    const def = state.unitDefinitions[unit.type]!;
-    if (unit.destination && !unit.path) {
-      const path = pathfind(state, uuid, unit.destination);
-      if (path.length === 0) {
-        // no path found, clear destination
-        asyncEvents.push({
-          kind: "setDestination",
-          uuids: [uuid]
-        });
-      } else {
-        asyncEvents.push({
-          kind: "setPath",
-          uuid,
-          dest: unit.destination,
-          path
-        });
-      }
-    }
-    if (unit.moveCooldown === 0 && unit.path && unit.path.length > 0) {
-      const dir = unit.path[0];
-      const nextLoc = getTileInDirection(unit.loc, dir);
-      if (!state.cache.unitLocations[nextLoc]) {
-        asyncEvents.push({
-          kind: "moveUnit",
-          uuid,
-          dir
-        });
-      }
-    }
-    if (unit.health && def.maxHealth !== 0 && unit.health <= 0) {
+    unitOnTick(state, asyncEvents, uuid);
+
+  }
+}
+
+function unitOnTick(state: GameState, asyncEvents: ServerEvent[], uuid: string) {
+  const unit = state.units[uuid];
+  const def = state.unitDefinitions[unit.type]!;
+  if (unit.destination && !unit.path) {
+    const path = pathfind(state, uuid, unit.destination);
+    if (path.length === 0) {
+      // no path found, clear destination
       asyncEvents.push({
-        kind: "destroyUnit",
-        uuid
+        kind: "setDestination",
+        uuids: [uuid]
+      });
+    } else {
+      asyncEvents.push({
+        kind: "setPath",
+        uuid,
+        dest: unit.destination,
+        path
       });
     }
   }
+  if (unit.moveCooldown === 0 && unit.path && unit.path.length > 0) {
+    const dir = unit.path[0];
+    const nextLoc = getTileInDirection(unit.loc, dir);
+    if (!state.cache.unitLocations[nextLoc]) {
+      asyncEvents.push({
+        kind: "moveUnit",
+        uuid,
+        dir
+      });
+      return;
+    }
+  }
+  if (unit.health && def.maxHealth !== 0 && unit.health <= 0) {
+    asyncEvents.push({
+      kind: "destroyUnit",
+      uuid
+    });
+    return;
+  }
+
+  if (def.attack && (!unit.attackCooldown || unit.attackCooldown <= 0)) {
+    // TODO check if we have a current target
+    // check for enemies in range
+    const nearby = unitsInRange(state, unit.loc, def.attack.range);
+    console.log(nearby);
+    nearby.sort((a, b) => b.dist - a.dist);
+    for (const { uuid: nearbyUuid } of nearby) {
+      if (unit.uuid === nearbyUuid) {
+        continue;
+      }
+      const nearbyUnit = state.units[nearbyUuid];
+      if (nearbyUnit.color !== unit.color) {
+        asyncEvents.push({
+          kind: 'damageUnit',
+          uuid: nearbyUnit.uuid,
+          amount: def.attack.damage,
+          source: unit.uuid,
+        })
+        return;
+      }
+    }
+  }
+}
+
+
+function unitsInRange(state: GameState, loc: LocHash, range: number): { uuid: string, dist: number }[] {
+  const units: { uuid: string, dist: number }[] = [];
+  for (const uuid in state.units) {
+    const unit = state.units[uuid];
+
+    const dist = locDistance(loc, unit.loc);
+    if (dist < range) {
+      units.push({ uuid, dist });
+    }
+  }
+  return units;
+
 }

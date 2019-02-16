@@ -236,6 +236,9 @@ export function applyGameTick(state: GameState, event: GameTick) {
     if (unit.moveCooldown > 0) {
       unit.moveCooldown--;
     }
+    if (unit.attackCooldown && unit.attackCooldown > 0) {
+      unit.attackCooldown--;
+    }
   }
 }
 
@@ -304,7 +307,10 @@ export function applyDamageUnit(state: GameState, event: DamageUnit) {
     if (attackerDef.attack.range < dist) {
       throw new Error(`attacking unit not in range ${event.source}, ${event.uuid}`);
     }
-
+    if (attacker.attackCooldown && attacker.attackCooldown > 0) {
+      throw new Error(`attacking unit still on cooldown ${event.source}`);
+    }
+    attacker.attackCooldown = attackerDef.attack.cooldown;
   }
 
 }

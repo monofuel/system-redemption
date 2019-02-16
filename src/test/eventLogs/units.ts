@@ -11,6 +11,12 @@ export const defaultUnitDefinitions: DefineUnit[] = [
             cost: 100,
             maxHealth: 200,
             layer: 'ground',
+            attack: {
+                layers: ['ground'],
+                damage: 5,
+                range: 3,
+                cooldown: 5
+            },
             graphical: {
                 model: ModelType.LightTankLvl1,
             },
@@ -28,6 +34,12 @@ export const defaultUnitDefinitions: DefineUnit[] = [
             cost: 100,
             maxHealth: 200,
             layer: 'ground',
+            attack: {
+                layers: ['ground'],
+                damage: 8,
+                range: 4,
+                cooldown: 5
+            },
             graphical: {
                 model: ModelType.LightTankLvl2,
             },
@@ -45,6 +57,12 @@ export const defaultUnitDefinitions: DefineUnit[] = [
             cost: 100,
             maxHealth: 200,
             layer: 'ground',
+            attack: {
+                layers: ['ground'],
+                damage: 15,
+                range: 3,
+                cooldown: 7,
+            },
             graphical: {
                 model: ModelType.LightTankLvl3,
             },
@@ -62,6 +80,12 @@ export const defaultUnitDefinitions: DefineUnit[] = [
             cost: 100,
             maxHealth: 200,
             layer: 'ground',
+            attack: {
+                layers: ['ground'],
+                damage: 15,
+                range: 5,
+                cooldown: 5
+            },
             graphical: {
                 model: ModelType.HeavyTankLvl3,
             },
