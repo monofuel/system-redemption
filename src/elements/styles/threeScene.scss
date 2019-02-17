@@ -103,11 +103,12 @@ $ui5: rgb(85, 85, 138);
 }
 
 .ui-button {
-  border-color: $ui3;
-  border-radius: 5px;
+  border-color: #0C1818;
+  background: rgba(#19194d,0.8);
+  border-radius: 1em;
+  border-width: 0.5em;
   border-style: solid;
   flex: 1;
-  border-width: 2px;
   font-size: large;
   text-align: center;
   cursor: pointer;
