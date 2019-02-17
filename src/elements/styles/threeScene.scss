@@ -26,17 +26,24 @@ three-scene {
   margin: 0;
 }
 
-$ui1: #4f4b45;
+// $ui1: #4f4b45;
+// $ui2: #7a8f77;
+// $ui3: #cfcfb6;
+// $ui4: #cbbc9c;
+//$ui5: #8e7c6c;
+
+$ui1: rgba(51, 39, 105, 0.8);
 $ui2: #7a8f77;
-$ui3: #cfcfb6;
-$ui4: #cbbc9c;
-$ui5: #8e7c6c;
+$ui3: #01CBC6;
+$ui4: #69E3DE;
+$ui5: rgb(85, 85, 138);
 
 @mixin ui-component {
   pointer-events: all;
   display: block;
   position: relative;
   border-radius: 3px;
+  border-width: 3px;
 
   color: $ui3;
   background: $ui1;
@@ -47,7 +54,8 @@ $ui5: #8e7c6c;
   flex: 1;
   flex-direction: row;
   display: flex;
-  width: 100%;
+  margin: 0.2em;
+  width: auto;
   span {
     margin: 3px;
   }
@@ -77,17 +85,17 @@ $ui5: #8e7c6c;
   @include ui-component;
   display: flex;
   flex-direction: column;
-  // width: 20%;
-  width: 190px;
-  margin: 20px;
-  padding: 5px;
-  height: auto;
+  width: 20em;
+  margin: 0px;
+  height: 100%;
 }
 
 .ui-title {
   border-color: $ui5;
+  background: rgba($ui5, 0.9);
   color: $ui4;
-  margin: 3px;
+  margin: 0.2em;
+
   border-radius: 5px;
   border-style: solid;
   flex: 1;

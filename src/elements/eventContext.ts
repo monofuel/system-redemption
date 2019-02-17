@@ -26,6 +26,10 @@ export class EventContextElement extends HTMLElement {
 
   constructor({ autoStart }: EventContextOpts = { autoStart: true }) {
     super();
+    const autostartAttr = this.getAttribute('autostart');
+    if (autostartAttr === 'false') {
+      autoStart = false;
+    }
     if ((window as any).ctx) {
       (window as any).ctx = [(window as any).ctx, this];
     } else {
