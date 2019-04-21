@@ -108,7 +108,7 @@ export async function getLandControlsElement() {
 
     private getButtons() {
       const buttons: NodeListOf<HTMLSpanElement> = document.querySelectorAll(
-        "land-controls .ui-button"
+        "land-controls .button"
       );
       for (const button of buttons) {
         this.buttonMap[button.id] = button;
