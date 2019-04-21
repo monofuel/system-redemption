@@ -1,100 +1,146 @@
 <template id="landControls">
-  <div id="landControls" , class="ui-leftbar">
-    <span class="ui-title"><b>Land</b></span>
-    <span class="ui-row">
-      <span class="ui-button" id="raiselower">
-        <span class="fas fa-sort-up"></span> /
-        <span class="fas fa-sort-down"></span>
-        <span class="tooltip">Left click to raise, right click to lower</span>
-      </span>
-      <span class="ui-button" id="clear">
-        clr <span class="tooltip">clear action from mouse click</span>
-      </span>
-    </span>
-    <!--
+<div class="box ui-leftbar" id="landControls">
+  <div class="panel">
+    <p class="panel-heading">
+      Editor
+    </p>
+    <div class="panel-block">
+      <div class="columns ui-row">
+        <div class="column">
+          <span class="button is-large" id="raiselower">
+            <span class="fas fa-sort-up"></span> /
+            <span class="fas fa-sort-down"></span>
+            <span class="tooltip">Left click to raise, right click to lower</span>
+          </span>
+        </div>
+        <div class="column">
+          <span class="button is-large" id="clear">
+            clr <span class="tooltip">clear action from mouse click</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <span class="ui-row">
-        <span class="ui-button" id="rampRaiseLower">
-          R <span class="fas fa-sort-up"></span> /
-          <span class="fas fa-sort-down"></span>
-          <span class="tooltip">Left click to raise a corner, right click to lower a corner</span>
+  <div class="panel">
+      <p class="panel-heading">
+        Water
+      </p>
+      <div class="panel-block">
+        <div class="columns ui-row">
+          <div class="column">
+            <span class="button is-large" id="raiseWater">
+              <span class="fas fa-sort-up"></span>
+            </span>
+          </div>
+          <div class="column">
+            <span class="button is-large" id="lowerWater">
+              <span class="fas fa-sort-down"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Units
+    </p>
+    <div class="panel-block">
+      <form>
+        <div class="ui-row">
+          <div class="select">
+            <select id="user-select">
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="grey">Grey</option>
+              <option value="red">Red</option>
+              <option value="white">White</option>
+              <option value="yellow">Yellow</option>
+            </select>
+          </div>
+          <div class="select">
+            <select id="unit-select">
+              <option value="tank">Light Tank 1</option>
+              <option value="ltank2">Light Tank 2</option>
+              <option value="ltank3">Light Tank 3</option>
+              <!--
+                  <option value='htank3'>Heavy Tank 3</option>
+                  -->
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="panel-block">
+      <div class="columns ui-row">
+        <div class="column">
+          <span class="button" id="newUnit">
+            <span>New Unit</span>
+          </span>
+        <span class="button" id="removeUnit">
+          <span>Remove Unit</span>
         </span>
-      </span>
-    -->
+      </div>
+    </div>
+  </div>
 
-    <span class="ui-title"><b>Water</b></span>
-    <span class="ui-row">
-      <span class="ui-button" id="raiseWater">
-        <span class="fas fa-sort-up"></span>
+  <div class="panel">
+    <p class="panel-heading">
+      Tools
+    </p>
+    <div class="panel-block">
+      <span class="button" id="toggleLogViewer">
+         Log
       </span>
-      <span class="ui-button" id="lowerWater">
-        <span class="fas fa-sort-down"></span>
-      </span>
-    </span>
+    </div>
+  </div>
 
-    <span class="ui-title">Units</span>
-    <form>
-      <span class="ui-row">
-        <select id='user-select'>
-          <option value='blue'>Blue</option>
-          <option value='green'>Green</option>
-          <option value='grey'>Grey</option>
-          <option value='red'>Red</option>
-          <option value='white'>White</option>
-          <option value='yellow'>Yellow</option>
-        </select>
-      </span>
-      <span class="ui-row">
-        <select id='unit-select'>
-          <option value='tank'>Light Tank 1</option>
-          <option value='ltank2'>Light Tank 2</option>
-          <option value='ltank3'>Light Tank 3</option>
-          <!--
-          <option value='htank3'>Heavy Tank 3</option>
-          -->
-        </select>
-      </span>
-      <span class="ui-row">
-        <span class="ui-button" id="newUnit">
-          <span>New Unit</span>
-        </span>
-      </span>
-    </form>
-    <span class="ui-row">
-      <span class="ui-button" id="removeUnit">
-        <span>Remove Unit</span>
-      </span>
+  <div class="panel">
+    <p class="panel-heading">
+      Replay
+    </p>
+    <div class="panel-block">
+      <span class="button" id="replay-realtime">
+        Slow
+     </span>
+     <span class="button" id="replay-fast">
+        Fast
     </span>
-    <span class="ui-title">Tools</span>
-    <span class="ui-row">
-      <span class="ui-button" id="toggleLogViewer"> Log </span>
-      <span style="flex: 1;"></span>
-    </span>
-    <span class="ui-title">Replay</span>
-    <span class="ui-row">
-      <span class="ui-button" id="replay-realtime"> slow </span>
-      <span class="ui-button" id="replay-fast"> fast </span>
-    </span>
-    <span class="ui-row">
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Map
+    </p>
+      <div class="panel-block">
       <span>
         <span>Chunk Size [1-16]</span>
-        <input type="number" id="chunkSize" value="8" min="1" max="16">
+        <input type="number" id="chunkSize" value="8" min="1" max="16" />
       </span>
-    </span>
-    <span class="ui-row">
+    </div>
+    <div class="panel-block">
       <span>
         <span>Map Chunks [1-16]</span>
-        <input type="number" id="mapChunks" value="2" min="1" max="16">
+        <input type="number" id="mapChunks" value="2" min="1" max="16" />
       </span>
-    </span>
-    <span class="ui-row">
-
-      <span class="ui-button" id="replay-reset"> New Map </span>
-    </span>
-    <span class="ui-title">Play!</span>
-    <span class="ui-row">
-      <a class="ui-button" href="/test/play/?mode=single"> Single </a>
-      <a class="ui-button" href="/test/play/?mode=multi"> Multi </a>
-    </span>
+    </div>
+    <div class="panel-block">
+      <span class="button" id="replay-reset"> New Map </span>
+    </div>
   </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Play!
+    </p>
+    <div class="panel-block">
+      <a class="button" href="/test/play/?mode=single"> Single </a>
+      <a class="button" href="/test/play/?mode=multi"> Multi </a>
+    </div>
+  </div>
+
+
+</div>
 </template>

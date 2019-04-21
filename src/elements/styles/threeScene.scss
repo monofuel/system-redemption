@@ -2,7 +2,6 @@ three-scene {
   display: block;
   width: 100%;
   height: 100%;
-
 }
 
 .HUDPanel {
@@ -26,29 +25,17 @@ three-scene {
   margin: 0;
 }
 
-// $ui1: #4f4b45;
-// $ui2: #7a8f77;
-// $ui3: #cfcfb6;
-// $ui4: #cbbc9c;
-//$ui5: #8e7c6c;
-
 $ui1: rgba(51, 39, 105, 0.8);
 $ui2: #7a8f77;
-$ui3: #01CBC6;
-$ui4: #69E3DE;
+$ui3: #01cbc6;
+$ui4: #69e3de;
 $ui5: rgb(85, 85, 138);
 
 @mixin ui-component {
   pointer-events: all;
   display: block;
   position: relative;
-  border-radius: 3px;
-  border-width: 3px;
-
-  color: $ui3;
-  background: $ui1;
 }
-
 
 .ui-row {
   flex: 1;
@@ -85,15 +72,13 @@ $ui5: rgb(85, 85, 138);
   @include ui-component;
   display: flex;
   flex-direction: column;
-  width: 20em;
+  width: 20rem;
   margin: 0px;
   height: 100%;
 }
 
 .ui-title {
-  border-color: $ui5;
   background: rgba($ui5, 0.9);
-  color: $ui4;
   margin: 0.2em;
 
   border-radius: 5px;
@@ -103,8 +88,8 @@ $ui5: rgb(85, 85, 138);
 }
 
 .ui-button {
-  border-color: #0C1818;
-  background: rgba(#19194d,0.8);
+  border-color: #0c1818;
+  background: rgba(#19194d, 0.8);
   border-radius: 1em;
   border-width: 0.15em;
   border-style: solid;
