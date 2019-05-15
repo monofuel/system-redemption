@@ -64,4 +64,4 @@ prod_deploy:
   only:
     - master
   script:
-    - ecs-cli compose up --region us-west-1
+    - ecs-cli compose --region us-west-1  --cluster system-redemption up
