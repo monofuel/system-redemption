@@ -3,7 +3,7 @@ FROM node:alpine as builder
 RUN mkdir /sr
 ADD ./package.json /sr
 ADD ./yarn.lock /sr
-RUN apk add --update python2
+RUN apk add --update python2 make
 # hack - cache node_modules in CI and include it in the container to improve performance
 # disabled for now as it had issues in prod
 # ADD ./node_modules /sr/node_modules
