@@ -1,13 +1,13 @@
 version: '3.2'
 services:
   standalone:
-    # image: ${CONTAINER_REGISTRY}/sr_main:latest
+    image: registry.gitlab.com/sr_main:latest
     build:
       # NB. this does not actually work
       # https://github.com/docker/compose/issues/883
-      #cache_from:
-      #  -  ${CONTAINER_REGISTRY}/sr_main:builder
-      #  -  ${CONTAINER_REGISTRY}/sr_main:latest
+      cache_from:
+        -  registry.gitlab.com/sr_main:builder
+        -  registry.gitlab.com/sr_main:latest
       context: .
     restart: always
     ports:
