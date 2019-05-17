@@ -56,7 +56,7 @@ standalone_test:
 prod_deploy:
   tags:
     - docker
-  image: sahsu/docker-ecs-cli
+  image: mesosphere/aws-cli
   # override default before_script
   before_script:
     - ls
@@ -64,4 +64,4 @@ prod_deploy:
   only:
     - master
   script:
-    - ecs-cli compose --region us-west-1  --cluster system-redemption up
+    - aws ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
