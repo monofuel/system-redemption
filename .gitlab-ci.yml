@@ -56,7 +56,7 @@ standalone_test:
 prod_deploy:
   tags:
     - docker
-  image: mesosphere/aws-cli
+  image: python:latest
   # override default before_script
   before_script:
     - ls
@@ -64,4 +64,5 @@ prod_deploy:
   only:
     - master
   script:
-    - ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
+    - pip install awscli
+    - aws ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
