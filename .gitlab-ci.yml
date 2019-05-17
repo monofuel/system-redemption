@@ -64,4 +64,4 @@ prod_deploy:
   only:
     - master
   script:
-    - aws ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
+    - ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
