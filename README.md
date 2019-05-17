@@ -1,5 +1,5 @@
 # SystemRedemption
-now on kubernetes with 50% more uptime or something!
+now on AWS ECS with 50% more uptime or something!
 ## Setup
 
 - run `yarn build` then `yarn server`
