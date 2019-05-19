@@ -13,7 +13,8 @@ import { getXRTestElement } from "./xrTest";
 import { PlayELement } from "./play";
 import { getAdminControlsElement } from "./adminControls";
 import { getUITestElement } from "./uiTest";
-import { LogEditorElement } from "./logEditor";
+import { LogEditorElement } from "./custom/logEditor";
+import CustomElements from "./custom";
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -28,8 +29,13 @@ class HelloWorld extends HTMLElement {
 }
 
 export function loadElements() {
-  window.customElements.define("hello-world", HelloWorld);
   window.customElements.define("event-context", EventContextElement);
+
+  for (const e of Object.keys(CustomElements)) {
+    window.customElements.define(e, CustomElements[e]);
+  }
+
+  window.customElements.define("hello-world", HelloWorld);
   window.customElements.define("tile-test", TileTestElement);
   window.customElements.define("log-player", LogPlayerElement);
   window.customElements.define("three-scene", ThreeSceneElement);
@@ -37,7 +43,6 @@ export function loadElements() {
   window.customElements.define("log-tests", LogTestElement);
   window.customElements.define("model-view", ModelViewElement);
   window.customElements.define("play-sr", PlayELement);
-  window.customElements.define("log-editor", LogEditorElement);
 }
 
 // NB. loading elements asyncronously kind of sucks, but
