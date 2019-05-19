@@ -1,5 +1,0 @@
----
-- hosts: sr.japura.net
-  become: yes
-  roles:
-    - sr

@@ -1,8 +1,0 @@
-[Unit]
-Description=gitlab volume
-
-[Mount]
-What=/dev/disk/by-id/scsi-0Linode_Volume_sr
-Where=/opt/sr
-Type=ext4
-Options=defaults
