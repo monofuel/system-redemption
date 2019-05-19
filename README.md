@@ -9,6 +9,8 @@ now on AWS ECS with 50% more uptime or something!
 
 ## Dev
 
+- `yarn test-ts` to run tests
+
 - `yarn prepare:client`
   - run once for setup or when deps / assets change
 - `yarn watch`

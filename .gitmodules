@@ -6,3 +6,6 @@
 	path = rts-assets
 	url = ../rts-assets.git
 	shallow = true
+[submodule "bulmaswatch"]
+	path = bulmaswatch
+	url = git@github.com:jenil/bulmaswatch.git

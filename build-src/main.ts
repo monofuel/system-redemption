@@ -30,9 +30,6 @@ async function main() {
     fs.mkdirSync("./build/client");
   }
 
-  // TODO fetch font & licensing
-  // http://unifoundry.com/pub/unifont/unifont-12.0.01/font-builds/unifont-12.0.01.ttf
-
   // https://jenil.github.io/bulmaswatch/solar/bulmaswatch.min.css
 
   await copyFiles();
@@ -60,6 +57,15 @@ async function copyFiles() {
   fs.copyFileSync(
     "node_modules/bulma/css/bulma.css.map",
     "build/client/bulma.css.map"
+  );
+
+  fs.copyFileSync(
+    "bulmaswatch/solar/bulmaswatch.min.css",
+    "build/client/bulmaswatch.min.css"
+  );
+  fs.copyFileSync(
+    "bulmaswatch/solar/bulmaswatch.min.css.map",
+    "build/client/bulmaswatch.min.css.map"
   );
 
   await copyDir("node_modules/three/build", "build/client/three", opts);
