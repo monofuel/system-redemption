@@ -12,8 +12,8 @@ import _ from "lodash";
 import { getXRTestElement } from "./xrTest";
 import { PlayELement } from "./play";
 import { getAdminControlsElement } from "./adminControls";
-import { getLogEditorElement } from "./logEditor";
 import { getUITestElement } from "./uiTest";
+import { LogEditorElement } from "./logEditor";
 
 class HelloWorld extends HTMLElement {
   constructor() {
@@ -37,6 +37,7 @@ export function loadElements() {
   window.customElements.define("log-tests", LogTestElement);
   window.customElements.define("model-view", ModelViewElement);
   window.customElements.define("play-sr", PlayELement);
+  window.customElements.define("log-editor", LogEditorElement);
 }
 
 // NB. loading elements asyncronously kind of sucks, but
@@ -49,7 +50,6 @@ export async function loadAsyncElements() {
     "admin-controls",
     await getAdminControlsElement()
   );
-  window.customElements.define("log-editor", await getLogEditorElement());
   window.customElements.define("ui-test", await getUITestElement());
   const xrELement = await getXRTestElement();
   if (xrELement) {
