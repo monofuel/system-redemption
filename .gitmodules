@@ -8,4 +8,4 @@
 	shallow = true
 [submodule "bulmaswatch"]
 	path = bulmaswatch
-	url = git@github.com:jenil/bulmaswatch.git
+	url = https://github.com/jenil/bulmaswatch
