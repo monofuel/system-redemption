@@ -36,6 +36,7 @@ export function loadElements() {
     window.customElements.define(e, CustomElements[e]);
   }
 
+  // TODO remove these
   window.customElements.define("hello-world", HelloWorld);
   window.customElements.define("tile-test", TileTestElement);
   window.customElements.define("log-player", LogPlayerElement);
@@ -46,6 +47,7 @@ export function loadElements() {
   window.customElements.define("play-sr", PlayELement);
 }
 
+// TODO remove this
 // NB. loading elements asyncronously kind of sucks, but
 // I don't want to have to include the <template> elements on every page
 export async function loadAsyncElements() {
@@ -62,6 +64,7 @@ export async function loadAsyncElements() {
   }
 }
 
+// TODO remove this
 export async function loadTemplate(name: string): Promise<HTMLTemplateElement> {
   const url = `/templates/${name}.html`;
   const resp = await fetch(url);
