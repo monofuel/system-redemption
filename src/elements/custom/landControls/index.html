@@ -1,0 +1,146 @@
+<template id="landControls">
+<div class="box ui-leftbar" id="landControls">
+  <div class="panel">
+    <p class="panel-heading">
+      Editor
+    </p>
+    <div class="panel-block">
+      <div class="columns ui-row">
+        <div class="column control">
+          <span class="button is-large" id="raiselower">
+            <span class="fas fa-sort-up"></span> /
+            <span class="fas fa-sort-down"></span>
+            <span class="tooltip">Left click to raise, right click to lower</span>
+          </span>
+        </div>
+        <div class="column control">
+          <span class="button is-large" id="clear">
+            clr <span class="tooltip">clear action from mouse click</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+      <p class="panel-heading">
+        Water
+      </p>
+      <div class="panel-block">
+        <div class="columns ui-row">
+          <div class="column">
+            <span class="button is-large" id="raiseWater">
+              <span class="fas fa-sort-up"></span>
+            </span>
+          </div>
+          <div class="column">
+            <span class="button is-large" id="lowerWater">
+              <span class="fas fa-sort-down"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Units
+    </p>
+    <div class="panel-block">
+      <form>
+        <div class="ui-row">
+          <div class="select">
+            <select id="user-select">
+              <option value="blue">Blue</option>
+              <option value="green">Green</option>
+              <option value="grey">Grey</option>
+              <option value="red">Red</option>
+              <option value="white">White</option>
+              <option value="yellow">Yellow</option>
+            </select>
+          </div>
+          <div class="select">
+            <select id="unit-select">
+              <option value="tank">Light Tank 1</option>
+              <option value="ltank2">Light Tank 2</option>
+              <option value="ltank3">Light Tank 3</option>
+              <!--
+                  <option value='htank3'>Heavy Tank 3</option>
+                  -->
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="panel-block">
+      <div class="columns ui-row">
+        <div class="column">
+          <span class="button" id="newUnit">
+            <span>New Unit</span>
+          </span>
+        <span class="button" id="removeUnit">
+          <span>Remove Unit</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Tools
+    </p>
+    <div class="panel-block">
+      <span class="button" id="toggleLogViewer">
+         Log
+      </span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Replay
+    </p>
+    <div class="panel-block">
+      <span class="button" id="replay-realtime">
+        Slow
+     </span>
+     <span class="button" id="replay-fast">
+        Fast
+    </span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Map
+    </p>
+      <div class="panel-block">
+      <span>
+        <span>Chunk Size [1-16]</span>
+        <input class="input" type="number" id="chunkSize" value="8" min="1" max="16" />
+      </span>
+    </div>
+    <div class="panel-block">
+      <span>
+        <span>Map Chunks [1-16]</span>
+        <input class="input" type="number" id="mapChunks" value="2" min="1" max="16" />
+      </span>
+    </div>
+    <div class="panel-block">
+      <span class="button" id="replay-reset"> New Map </span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="panel-heading">
+      Play!
+    </p>
+    <div class="panel-block">
+      <a class="button" href="/test/play/?mode=single"> Single </a>
+      <a class="button" href="/test/play/?mode=multi"> Multi </a>
+    </div>
+  </div>
+
+
+</div>
+</template>

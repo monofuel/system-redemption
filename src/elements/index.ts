@@ -1,6 +1,5 @@
 import { Vector2 } from "three";
 import { EventContextElement } from "./eventContext";
-import { getLandControlsElement } from "./landControls";
 import { LogPlayerElement } from "./logPlayer";
 import { getLogViewerElement } from "./logViewer";
 import { MapEditorElement } from "./mapEditor";
@@ -29,6 +28,8 @@ class HelloWorld extends HTMLElement {
 }
 
 export function loadElements() {
+  // NB. this one has to load first
+  // other elements traverse the dom to find it
   window.customElements.define("event-context", EventContextElement);
 
   for (const e of Object.keys(CustomElements)) {
@@ -49,7 +50,6 @@ export function loadElements() {
 // I don't want to have to include the <template> elements on every page
 export async function loadAsyncElements() {
   // TODO: with more elements, should load them in parallel
-  window.customElements.define("land-controls", await getLandControlsElement());
   window.customElements.define("log-viewer", await getLogViewerElement());
   window.customElements.define(
     "admin-controls",
