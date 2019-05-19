@@ -1,10 +1,9 @@
-import { getParentContext, loadTemplate } from "../..";
+import { getParentContext } from "../..";
 import { EditorSelection } from "../../../events";
 import { EventContextElement } from "../../eventContext";
 import _ from "lodash";
 import { getDefaultEditorMap } from "../../mapEditor";
 import templateStr from "./index.html";
-
 import { CustomElement } from "../CustomElement";
 
 const holdingButtons = [

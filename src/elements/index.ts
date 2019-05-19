@@ -1,7 +1,6 @@
 import { Vector2 } from "three";
 import { EventContextElement } from "./eventContext";
 import { LogPlayerElement } from "./logPlayer";
-import { getLogViewerElement } from "./logViewer";
 import { MapEditorElement } from "./mapEditor";
 import { ThreeSceneElement } from "./threeScene";
 import { TileTestElement } from "./tiles";
@@ -10,9 +9,6 @@ import { ModelViewElement } from "./modelView";
 import _ from "lodash";
 import { getXRTestElement } from "./xrTest";
 import { PlayELement } from "./play";
-import { getAdminControlsElement } from "./adminControls";
-import { getUITestElement } from "./uiTest";
-import { LogEditorElement } from "./custom/logEditor";
 import CustomElements from "./custom";
 
 class HelloWorld extends HTMLElement {
@@ -47,17 +43,7 @@ export function loadElements() {
   window.customElements.define("play-sr", PlayELement);
 }
 
-// TODO remove this
-// NB. loading elements asyncronously kind of sucks, but
-// I don't want to have to include the <template> elements on every page
 export async function loadAsyncElements() {
-  // TODO: with more elements, should load them in parallel
-  window.customElements.define("log-viewer", await getLogViewerElement());
-  window.customElements.define(
-    "admin-controls",
-    await getAdminControlsElement()
-  );
-  window.customElements.define("ui-test", await getUITestElement());
   const xrELement = await getXRTestElement();
   if (xrELement) {
     window.customElements.define("xr-test", xrELement);
