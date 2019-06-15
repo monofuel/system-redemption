@@ -1,12 +1,11 @@
-import { EventKinds, Events, FrontendEvent, ServerEvent } from '../events';
-import { EventQueue } from '../events/queues';
-import { info } from '../logging';
-import { delay } from '../util';
-import { GameState, newGameState, applyEvent } from '../events/state';
-import { LoggedEvent } from '../matchMaker';
-import { UpdateLoop } from '../events/serverContext';
-
-
+import { EventKinds, Events, FrontendEvent, ServerEvent } from "../events";
+import { EventQueue } from "../events/queues";
+import { info } from "../logging";
+import { delay } from "../util";
+import { GameState, newGameState, applyEvent } from "../events/state";
+import { LoggedEvent } from "../matchMaker";
+import { UpdateLoop } from "../events/serverContext";
+import { logs } from "../test/eventLogs";
 
 interface EventContextOpts {
   autoStart: boolean;
@@ -26,8 +25,9 @@ export class EventContextElement extends HTMLElement {
 
   constructor({ autoStart }: EventContextOpts = { autoStart: true }) {
     super();
-    const autostartAttr = this.getAttribute('autostart');
-    if (autostartAttr === 'false') {
+
+    const autostartAttr = this.getAttribute("autostart");
+    if (autostartAttr === "false") {
       autoStart = false;
     }
     if ((window as any).ctx) {
@@ -37,43 +37,54 @@ export class EventContextElement extends HTMLElement {
     }
     this.gameState = newGameState();
 
-    this.post = (e) => {
+    this.post = e => {
       this.queue.post(e);
-    }
+    };
 
     this.queue = new EventQueue({
       postSyncronous: false,
-      preHandler: (event) => {
+      preHandler: event => {
         applyEvent(this.gameState, event);
       },
       logger: (event, timestamp, listeners) => {
         this.events.push({ event, timestamp, listeners });
-        if (event.kind !== 'gameTick' && event.kind !== 'hilightUpdate') {
-
-          info('event posted', {
+        if (event.kind !== "gameTick" && event.kind !== "hilightUpdate") {
+          info("event posted", {
             event: JSON.stringify(event),
             timestamp,
-            listeners,
+            listeners
           });
-
         }
         if (this.onGameEvent) {
           this.onGameEvent(event);
         }
-      },
+      }
     });
 
-
     this.flushLoop = new UpdateLoop(
-      'queueFlush',
+      "queueFlush",
       (delta: number) => {
         this.queue.flushAll();
         return false;
       },
-      30,
+      30
     );
     if (autoStart) {
       this.flushLoop.start();
+    }
+
+    // HACK load a test replay
+    const url = new URL(window.location.href);
+    const key = url.searchParams.get("replay");
+    if (key) {
+      const log = (logs as any)[key as any];
+      delay(0)
+        .then(async () => {
+          await this.replayLog(key, true, log);
+        })
+        .catch(err => {
+          console.error(err);
+        });
     }
   }
 
@@ -86,7 +97,7 @@ export class EventContextElement extends HTMLElement {
     this.events = [];
 
     for (const event of events) {
-      if (event.kind === 'assertion') {
+      if (event.kind === "assertion") {
         continue;
       }
       this.queue.post(event);
@@ -94,29 +105,37 @@ export class EventContextElement extends HTMLElement {
     }
   }
 
-  public async replayLog(title: string, repeat: boolean, events: Array<ServerEvent | FrontendEvent>, realtime: boolean = true) {
+  public async replayLog(
+    title: string,
+    repeat: boolean,
+    events: Array<ServerEvent | FrontendEvent>,
+    realtime: boolean = true
+  ) {
     do {
       this.gameState = newGameState();
       this.events = [];
 
-      info('starting event log', { title });
+      info("starting event log", { title });
       const mapEvent = events[0];
       let tps = 2;
-      if (mapEvent.kind === 'newFiniteMap') {
+      if (mapEvent.kind === "newFiniteMap") {
         tps = mapEvent.map.tps;
       }
-
 
       for (const event of events) {
         this.queue.post(event);
         this.queue.flushAll();
         // TODO use TPS to rate limit with game tick events
         // TODO figure out how to handle replays with game ticks and normal events
-        if (event.kind !== 'gameTick' && event.kind !== 'defineUnit' && realtime) {
+        if (
+          event.kind !== "gameTick" &&
+          event.kind !== "defineUnit" &&
+          realtime
+        ) {
           await delay(400);
         }
       }
-      info('completed event log', { title });
+      info("completed event log", { title });
     } while (repeat);
   }
 
