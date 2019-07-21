@@ -2,6 +2,7 @@
     "editor.formatOnSave": true,
     "tslint.autoFixOnSave": true,
     "files.exclude": {
+        "bulmaswatch": true,
         "ShaderParticleEngine": true
     }
 }
