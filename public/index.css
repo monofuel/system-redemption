@@ -22,3 +22,7 @@
 body {
   background: #002b36;
 }
+
+iframe {
+  border-width: 1;
+}
