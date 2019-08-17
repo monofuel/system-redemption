@@ -1,6 +1,10 @@
 {
-    "editor.formatOnSave": true,
-    "tslint.autoFixOnSave": true,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "files.insertFinalNewline": true
+  "editor.formatOnSave": true,
+  "tslint.autoFixOnSave": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.insertFinalNewline": true,
+  "files.exclude": {
+    "bulmaswatch": true,
+    "ShaderParticleEngine": true
+  }
 }

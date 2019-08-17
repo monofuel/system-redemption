@@ -128,3 +128,38 @@ a {
   border-radius: 6px;
   padding: 5px 0;
 }
+
+// ui-test
+
+.ui-test {
+  display: flex;
+  flex-direction: row;
+}
+
+// bulma overrides
+
+.box {
+  padding: 0.15rem;
+}
+
+.column {
+  padding: 0.15rem;
+}
+
+.panel-heading {
+  padding: 0.15rem;
+}
+.panel-block {
+  padding: 0.15rem;
+}
+
+.panel {
+  margin-bottom: 0.15rem !important;
+}
+
+// fix dat.gui with bulma
+
+li.title {
+  margin-bottom: 0 !important;
+  font-size: 1rem !important;
+}

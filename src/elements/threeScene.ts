@@ -8,6 +8,7 @@ import "./styles/threeScene.scss";
 import { Asset, loadAssets } from "../mesh/models";
 import { ModelType } from "../types/SR";
 import { UpdateLoop } from "../events/serverContext";
+import { LoadingBarElement } from "./custom/loadingBar";
 
 export class ThreeSceneElement extends HTMLElement {
   public renderer: WebGLRenderer;
@@ -81,10 +82,19 @@ export class ThreeSceneElement extends HTMLElement {
       1
     );
 
+    const assetLoadingBar = new LoadingBarElement();
+    this.appendChild(assetLoadingBar);
+    assetLoadingBar.style.position = "absolute";
+    assetLoadingBar.style.left = "50%";
+    assetLoadingBar.style.top = "10%";
+
     loadAssets((current: number, total: number) => {
-      // console.log(`ASSETS: ${current}/${total}`);
+      console.log(`ASSETS: ${current}/${total}`);
+      assetLoadingBar.progress.max = total;
+      assetLoadingBar.progress.value = current;
     }).then(assets => {
       this.assets = assets;
+      this.removeChild(assetLoadingBar);
       if (this.onAssetsLoaded) {
         this.onAssetsLoaded();
       }

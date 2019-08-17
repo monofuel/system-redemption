@@ -3,6 +3,8 @@ import { EventContextElement } from "./eventContext";
 import { LogPlayerElement } from "./logPlayer";
 import { delay } from "../util";
 import _ from "lodash";
+import { ServerEvent } from "../events/actions/game";
+import { FrontendEvent } from "../events/actions/frontend";
 
 export class LogTestElement extends HTMLElement {
   constructor() {
@@ -12,10 +14,11 @@ export class LogTestElement extends HTMLElement {
     this.style.overflowY = "auto";
     this.style.flexWrap = "wrap";
     for (const key of Object.keys(logs)) {
+      /* 
       const iframe = document.createElement("iframe");
       iframe.src = `/test/chunk/logTest.html?replay=${key}`;
       this.appendChild(iframe);
-      /* 
+      */
       const log: Array<ServerEvent | FrontendEvent> = (logs as any)[key];
       const context = new EventContextElement({ autoStart: false });
       const logPlayer = new LogPlayerElement(context, false);
@@ -33,14 +36,14 @@ export class LogTestElement extends HTMLElement {
       this.appendChild(context);
       context.appendChild(logPlayer);
 
-      delay(0)
+      // delay for 1 second to let everything load
+      delay(1000)
         .then(async () => {
           await context.replayLog(key, repeat, log);
         })
         .catch(err => {
           console.error(err);
         });
-        */
     }
   }
 }
