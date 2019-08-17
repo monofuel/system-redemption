@@ -4,34 +4,31 @@ import {
   OrbitControls,
   MOUSE,
   Vector3,
-  Vertex,
-} from 'three';
-import { mouseToVec } from '.';
+  Vertex
+} from "three";
+import { mouseToVec } from ".";
+import { getFlatMap } from "../planet/tiles";
+import _ from "lodash";
+import { defaultUnitDefinitions } from "../test/eventLogs/units";
+import { newTank } from "../unit";
+import { PlanetElement } from "./planet";
+import { TileHeights } from "../types/SR";
+import { info } from "../logging";
+import { getHash } from "../services/hash";
 import {
-  EditorMode,
   EditorSelection,
-  MapEditType,
-  ServerEvent,
   frontendEventList,
-  HilightUpdate,
-} from '../events';
-import { getFlatMap } from '../planet/tiles';
-import _ from 'lodash';
-import { defaultUnitDefinitions } from '../test/eventLogs/units';
-import { newTank } from '../unit';
-import { PlanetElement } from './planet';
-import { TileHeights } from '../types/SR';
-import { info } from '../logging';
-import { getHash } from '../services/hash';
+  EditorMode
+} from "../events/actions/frontend";
+import { ServerEvent } from "../events/actions/game";
 
 export class MapEditorElement extends PlanetElement {
-
   private controls: OrbitControls;
   protected usePlanetCache: boolean = true;
   constructor() {
     super();
 
-    const localLogStr = localStorage.getItem('default-eventlog');
+    const localLogStr = localStorage.getItem("default-eventlog");
 
     if (localLogStr) {
       try {
@@ -47,15 +44,14 @@ export class MapEditorElement extends PlanetElement {
       this.ctx.loadLog(getDefaultEditorMap());
     }
 
-
     this.ctx.onGameEvent = this.onGameEvent.bind(this);
 
     // this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
 
-    this.ctx.queue.addListener(
-      'editorMode',
-      this.onEditorModeChange.bind(this),
+    this.ctx.frontendQueue.addListener(
+      "editorMode",
+      this.onEditorModeChange.bind(this)
     );
 
     this.oncontextmenu = (ev: MouseEvent) => {
@@ -69,20 +65,23 @@ export class MapEditorElement extends PlanetElement {
 
     this.onmousemove = (ev: MouseEvent) => {
       ev.preventDefault();
-      if (!this.ctx.gameState.editorMode) {
+      if (!this.ctx.frontendContext.state.editorMode) {
         return;
       }
-      const mode = this.ctx.gameState.editorMode;
+      const mode = this.ctx.frontendContext.state.editorMode;
 
-      if (!([EditorSelection.raiselower, EditorSelection.newUnit].includes(mode.selection))) {
+      if (
+        ![EditorSelection.raiselower, EditorSelection.newUnit].includes(
+          mode.selection
+        )
+      ) {
         return;
       }
       this.hilightAtMouse(ev);
-
     };
 
     const mouseUp = (ev: MouseEvent) => {
-      const editorMode = this.ctx.gameState.editorMode;
+      const editorMode = this.ctx.frontendContext.state.editorMode;
       if (!editorMode) {
         return;
       }
@@ -98,7 +97,7 @@ export class MapEditorElement extends PlanetElement {
       if (dragDistance > 5) {
         return;
       }
-      const hilight = this.ctx.gameState.hilight;
+      const hilight = this.ctx.frontendContext.state.hilight;
       switch (editorMode.selection) {
         case EditorSelection.raiselower:
           if (hilight && hilight.loc && hilight.corner) {
@@ -137,38 +136,36 @@ export class MapEditorElement extends PlanetElement {
 
             const start = Date.now();
             const perfFn = () => {
-              this.ctx.queue.removeListener('mapEdit', perfFn);
+              this.ctx.gameQueue.removeListener("mapEdit", perfFn);
               const end = Date.now();
               info("map edit delta", { delta: end - start });
-            }
-            this.ctx.queue.addListener('mapEdit', perfFn);
+            };
+            this.ctx.gameQueue.addListener("mapEdit", perfFn);
             this.ctx.post({
-              kind: 'mapEdit',
+              kind: "mapEdit",
               edit: editType,
-              loc: hilight.loc,
+              loc: hilight.loc
             });
-
           }
           return;
         case EditorSelection.newUnit:
           if (hilight && hilight.loc) {
-
             this.ctx.post({
-              kind: 'newUnit',
+              kind: "newUnit",
               unit: {
                 ...newTank(),
                 type: editorMode.unitType!,
                 color: editorMode.user!,
-                loc: hilight.loc,
+                loc: hilight.loc
               }
-            })
+            });
           }
           return;
         case EditorSelection.removeUnit:
           const uuid = this.getUnitAtMouse(ev);
           if (uuid) {
             this.ctx.post({
-              kind: 'destroyUnit',
+              kind: "destroyUnit",
               uuid
             });
           }
@@ -178,16 +175,15 @@ export class MapEditorElement extends PlanetElement {
       }
     };
     // this.onmouseleave = mouseEnd;
-    this.addEventListener('mouseup', mouseUp, true);
+    this.addEventListener("mouseup", mouseUp, true);
 
     this.controls = new OrbitControls(this.camera, this);
 
     // leave left mouse button free for the game
     this.controls.mouseButtons = {
       LEFT: MOUSE.RIGHT,
-      RIGHT: MOUSE.MIDDLE,
+      RIGHT: MOUSE.MIDDLE
     } as any;
-
 
     this.controls.target.set(0, 0, 0);
     this.controls.update();
@@ -195,32 +191,29 @@ export class MapEditorElement extends PlanetElement {
   }
 
   public onGameEvent() {
-    const log = _.map(this.ctx.events, (e) => e.event);
+    const log = _.map(this.ctx.events, e => e.event);
 
     // only include server events
-    const logStr = JSON.stringify(log.filter((e) => !frontendEventList.includes(e.kind)));
-    localStorage.setItem('default-eventlog', logStr);
+    const logStr = JSON.stringify(
+      log.filter(e => !frontendEventList.includes(e.kind))
+    );
+    localStorage.setItem("default-eventlog", logStr);
   }
 
-  public onEditorModeChange(event: EditorMode) {
-
-  }
+  public onEditorModeChange(event: EditorMode) {}
 }
-export function getDefaultEditorMap(size: number = 4, chunkSize: number = 8): ServerEvent[] {
-
-  const map = _.cloneDeep(getFlatMap(
-    'foobar',
-    size,
-    chunkSize,
-    1.8,
-  ));
+export function getDefaultEditorMap(
+  size: number = 4,
+  chunkSize: number = 8
+): ServerEvent[] {
+  const map = _.cloneDeep(getFlatMap("foobar", size, chunkSize, 1.8));
   map.grid[0][0].grid[0][0] = [1, 1, 1, 1];
 
   return [
     {
-      kind: 'newFiniteMap',
+      kind: "newFiniteMap",
       map
     },
     ...defaultUnitDefinitions
-  ]
+  ];
 }

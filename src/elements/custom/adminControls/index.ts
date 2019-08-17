@@ -14,10 +14,10 @@ export class AdminControlsElement extends CustomElement {
       "player-label"
     ) as HTMLInputElement;
     playerLabel.innerText = `Color: ${opts.color}`;
-    if (this.ctx.gameState.match) {
-      this.updateLinks(this.ctx.gameState.match.id);
+    if (this.ctx.gameContext.state.match) {
+      this.updateLinks(this.ctx.gameContext.state.match.id);
     }
-    this.ctx.queue.addListener("createMatch", e => {
+    this.ctx.gameQueue.addListener("createMatch", e => {
       this.updateLinks(e.id);
     });
   }

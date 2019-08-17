@@ -1,23 +1,59 @@
-import { EventKinds, Events, FrontendEvent, ServerEvent } from "../events";
 import { EventQueue } from "../events/queues";
 import { info } from "../logging";
 import { delay } from "../util";
-import { GameState, newGameState, applyEvent } from "../events/state";
 import { LoggedEvent } from "../matchMaker";
 import { UpdateLoop } from "../events/serverContext";
 import { logs } from "../test/eventLogs";
+import {
+  ServerEvents,
+  ServerEventKinds,
+  ServerEvent
+} from "../events/actions/game";
+import { FrontendState, newFrontendState } from "../events/store/frontend";
+import {
+  FrontendEventKinds,
+  FrontendEvents,
+  FrontendEvent,
+  frontendEventList
+} from "../events/actions/frontend";
+import { GameState, newGameState } from "../events/store/game";
+import { Context } from "../events";
+import {
+  gameReducer,
+  GameReducer,
+  GameReducerMap
+} from "../events/reducers/game";
+import {
+  frontendReducer,
+  FrontendReducerMap,
+  FrontendReducer
+} from "../events/reducers/frontend";
 
 interface EventContextOpts {
   autoStart: boolean;
 }
 
 export class EventContextElement extends HTMLElement {
-  public queue: EventQueue<EventKinds, Events>;
+  public gameQueue: EventQueue<ServerEventKinds, ServerEvents>;
+  public frontendQueue: EventQueue<FrontendEventKinds, FrontendEvents>;
 
   // TODO probably shouldn't store events during 'play' mode
   public events: LoggedEvent[] = [];
 
-  public gameState: GameState;
+  public gameContext: Context<
+    GameState,
+    ServerEventKinds,
+    GameReducerMap,
+    ServerEvent,
+    GameReducer
+  >;
+  public frontendContext: Context<
+    FrontendState,
+    FrontendEventKinds,
+    FrontendReducerMap,
+    FrontendEvent,
+    FrontendReducer
+  >;
   private flushLoop: UpdateLoop;
 
   public onGameEvent?: (event: LoggedEvent) => void;
@@ -35,26 +71,53 @@ export class EventContextElement extends HTMLElement {
     } else {
       (window as any).ctx = this;
     }
-    this.gameState = newGameState();
+    this.gameContext = new Context(gameReducer, newGameState());
+    this.frontendContext = new Context(frontendReducer, newFrontendState());
 
-    this.post = e => {
-      this.queue.post(e);
+    this.post = event => {
+      if (frontendEventList.includes(event.kind)) {
+        this.frontendQueue.post(event as FrontendEvent);
+      } else {
+        this.gameQueue.post(event as ServerEvent);
+      }
     };
 
-    this.queue = new EventQueue({
+    this.gameQueue = new EventQueue<ServerEventKinds, ServerEvents>({
       postSyncronous: false,
-      preHandler: event => {
-        applyEvent(this.gameState, event);
+      preHandler: (event: ServerEvent) => {
+        this.gameContext.apply(event);
       },
       logger: (event, timestamp, listeners) => {
         this.events.push({ event, timestamp, listeners });
-        if (event.kind !== "gameTick" && event.kind !== "hilightUpdate") {
-          info("event posted", {
+        if (event.kind !== "gameTick") {
+          info("game event posted", {
             event: JSON.stringify(event),
             timestamp,
             listeners
           });
         }
+        if (this.onGameEvent) {
+          // TODO could pass in previous state and next state
+          this.onGameEvent(event);
+        }
+      }
+    });
+
+    this.frontendQueue = new EventQueue<FrontendEventKinds, FrontendEvents>({
+      postSyncronous: false,
+      preHandler: (event: FrontendEvent) => {
+        this.frontendContext.apply(event);
+      },
+      logger: (event, timestamp, listeners) => {
+        this.events.push({ event, timestamp, listeners });
+
+        // TODO probably shouldn't log these
+        info("frontend event posted", {
+          event: JSON.stringify(event),
+          timestamp,
+          listeners
+        });
+
         if (this.onGameEvent) {
           this.onGameEvent(event);
         }
@@ -64,7 +127,8 @@ export class EventContextElement extends HTMLElement {
     this.flushLoop = new UpdateLoop(
       "queueFlush",
       (delta: number) => {
-        this.queue.flushAll();
+        this.frontendQueue.flushAll();
+        this.gameQueue.flushAll();
         return false;
       },
       30
@@ -93,15 +157,21 @@ export class EventContextElement extends HTMLElement {
   }
 
   public loadLog(events: Array<ServerEvent | FrontendEvent>) {
-    this.gameState = newGameState();
+    this.gameContext.resetState();
+    this.frontendContext.resetState();
     this.events = [];
 
     for (const event of events) {
       if (event.kind === "assertion") {
         continue;
       }
-      this.queue.post(event);
-      this.queue.flushAll();
+      if (frontendEventList.includes(event.kind)) {
+        this.frontendQueue.post(event as FrontendEvent);
+        this.frontendQueue.flushAll();
+      } else {
+        this.gameQueue.post(event as ServerEvent);
+        this.gameQueue.flushAll();
+      }
     }
   }
 
@@ -112,7 +182,7 @@ export class EventContextElement extends HTMLElement {
     realtime: boolean = true
   ) {
     do {
-      this.gameState = newGameState();
+      this.gameContext.resetState();
       this.events = [];
 
       info("starting event log", { title });
@@ -123,8 +193,13 @@ export class EventContextElement extends HTMLElement {
       }
 
       for (const event of events) {
-        this.queue.post(event);
-        this.queue.flushAll();
+        if (frontendEventList.includes(event.kind)) {
+          this.frontendQueue.post(event as FrontendEvent);
+          this.frontendQueue.flushAll();
+        } else {
+          this.gameQueue.post(event as ServerEvent);
+          this.gameQueue.flushAll();
+        }
         // TODO use TPS to rate limit with game tick events
         // TODO figure out how to handle replays with game ticks and normal events
         if (
@@ -149,12 +224,19 @@ export class EventContextElement extends HTMLElement {
     const offset = startTime - eventLog[0].timestamp;
 
     for (const log of eventLog) {
-      if (realtime) {
+      if (realtime && frontendEventList.includes(log.event.kind)) {
         while (log.timestamp > Date.now() - offset) {
           await delay(100);
         }
       }
-      this.queue.post(log.event);
+      const event = log.event;
+      if (frontendEventList.includes(event.kind)) {
+        this.frontendQueue.post(event as FrontendEvent);
+        this.frontendQueue.flushAll();
+      } else {
+        this.gameQueue.post(event as ServerEvent);
+        this.gameQueue.flushAll();
+      }
       // await delay(100);
     }
   }

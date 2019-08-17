@@ -1,18 +1,18 @@
-import {
-  ServerEvent,
-  ServerEventKinds,
-  ServerEvents,
-  GameStage,
-  FrontendEvent
-} from ".";
-import { GameState, newGameState, applyEvent } from "./state";
 import { EventQueue } from "./queues";
 import { info } from "../logging";
-import { pathfind, getTileInDirection, locDistance } from "../services/pathfind";
+import {
+  pathfind,
+  getTileInDirection,
+  locDistance
+} from "../services/pathfind";
 import { deflateSync } from "zlib";
 import { delay } from "../util";
 import { unHash } from "../services/hash";
-import { LocHash } from "../types/SR";
+import { LocHash, GameStage } from "../types/SR";
+import { ServerEvent, ServerEventKinds, ServerEvents } from "./actions/game";
+import { GameState, newGameState } from "./store/game";
+import { Context } from ".";
+import { GameReducerMap, GameReducer, gameReducer } from "./reducers/game";
 
 interface LoggedEvent {
   event: ServerEvent;
@@ -62,20 +62,26 @@ export class ServerContext {
   public queue: EventQueue<ServerEventKinds, ServerEvents>;
 
   public events: LoggedEvent[] = [];
-  public gameState: GameState;
+  public gameContext: Context<
+    GameState,
+    ServerEventKinds,
+    GameReducerMap,
+    ServerEvent,
+    GameReducer
+  >;
   private asyncEvents: ServerEvent[] = [];
 
   private gameTickLoop?: UpdateLoop;
   private flushLoop: UpdateLoop;
 
-  public onGameEvent?: (event: ServerEvent | FrontendEvent) => void;
+  public onGameEvent?: (event: ServerEvent) => void;
 
   constructor() {
-    this.gameState = newGameState();
+    this.gameContext = new Context(gameReducer, newGameState());
     this.queue = new EventQueue({
       postSyncronous: false,
       preHandler: event => {
-        applyEvent(this.gameState, event);
+        this.gameContext.apply(event);
       },
       logger: (event, timestamp, listeners) => {
         this.events.push({ event, timestamp, listeners });
@@ -91,7 +97,7 @@ export class ServerContext {
     });
 
     this.queue.addListener("gameTick", () => {
-      if (this.gameState.stage.mode === GameStage.running) {
+      if (this.gameContext.state.stage.mode === GameStage.running) {
         const events = this.onTick();
         info("handling ontick events", { length: events.length });
         for (const e of events) {
@@ -104,7 +110,7 @@ export class ServerContext {
       this.gameTickLoop = new UpdateLoop(
         "gameTick",
         delta => {
-          if (this.gameState.stage.mode === GameStage.running) {
+          if (this.gameContext.state.stage.mode === GameStage.running) {
             info("game tick", { delta });
 
             this.queue.post({
@@ -112,7 +118,7 @@ export class ServerContext {
             });
             this.queue.flushAll();
           }
-          return this.gameState.stage.mode === GameStage.done;
+          return this.gameContext.state.stage.mode === GameStage.done;
         },
         tps
       );
@@ -136,7 +142,7 @@ export class ServerContext {
     }
   }
   public async loadLog(events: Array<ServerEvent>) {
-    this.gameState = newGameState();
+    this.gameContext.resetState();
     this.events = [];
 
     for (const event of events) {
@@ -152,7 +158,7 @@ export class ServerContext {
   // it does game tick work for appending new events
   onTick(): ServerEvent[] {
     const results: ServerEvent[] = [];
-    onTick(this.gameState, this.asyncEvents);
+    onTick(this.gameContext.state, this.asyncEvents);
 
     while (this.asyncEvents.length > 0) {
       results.push(this.asyncEvents.shift()!);
@@ -174,11 +180,14 @@ export class ServerContext {
 export function onTick(state: GameState, asyncEvents: ServerEvent[]) {
   for (const uuid in state.units) {
     unitOnTick(state, asyncEvents, uuid);
-
   }
 }
 
-function unitOnTick(state: GameState, asyncEvents: ServerEvent[], uuid: string) {
+function unitOnTick(
+  state: GameState,
+  asyncEvents: ServerEvent[],
+  uuid: string
+) {
   const unit = state.units[uuid];
   const def = state.unitDefinitions[unit.type]!;
   if (unit.destination && !unit.path) {
@@ -230,20 +239,23 @@ function unitOnTick(state: GameState, asyncEvents: ServerEvent[], uuid: string) 
       const nearbyUnit = state.units[nearbyUuid];
       if (nearbyUnit.color !== unit.color) {
         asyncEvents.push({
-          kind: 'damageUnit',
+          kind: "damageUnit",
           uuid: nearbyUnit.uuid,
           amount: def.attack.damage,
-          source: unit.uuid,
-        })
+          source: unit.uuid
+        });
         return;
       }
     }
   }
 }
 
-
-function unitsInRange(state: GameState, loc: LocHash, range: number): { uuid: string, dist: number }[] {
-  const units: { uuid: string, dist: number }[] = [];
+function unitsInRange(
+  state: GameState,
+  loc: LocHash,
+  range: number
+): { uuid: string; dist: number }[] {
+  const units: { uuid: string; dist: number }[] = [];
   for (const uuid in state.units) {
     const unit = state.units[uuid];
 
@@ -253,5 +265,4 @@ function unitsInRange(state: GameState, loc: LocHash, range: number): { uuid: st
     }
   }
   return units;
-
 }

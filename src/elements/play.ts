@@ -1,17 +1,13 @@
 import { PlanetElement } from "./planet";
 import { OrbitControls, MOUSE, Vector2, Vector3 } from "three";
-import {
-  ServerEvent,
-  GameStage,
-  FrontendEvent,
-  GameStageChange,
-  frontendEventList
-} from "../events";
 import { onTick, UpdateLoop } from "../events/serverContext";
 import { info } from "../logging";
 import { mouseToVec } from ".";
 import { parseQueryOpts, QueryOpts, LoggedEvent } from "../matchMaker";
 import { delay } from "../util";
+import { ServerEvent } from "../events/actions/game";
+import { GameStage } from "../types/SR";
+import { FrontendEvent, frontendEventList } from "../events/actions/frontend";
 
 export class PlayELement extends PlanetElement {
   private asyncEvents: ServerEvent[] = [];
@@ -80,7 +76,7 @@ export class PlayELement extends PlanetElement {
     this.addEventListener("mousemove", (ev: MouseEvent) => {
       this.dragCurrent = ev;
 
-      if (this.ctx.gameState.selectedUnits.length > 0) {
+      if (this.ctx.frontendContext.state.selectedUnits.length > 0) {
         this.hilightAtMouse(ev);
       }
     });
@@ -108,7 +104,6 @@ export class PlayELement extends PlanetElement {
             kind: "selectUnits",
             uuids: uuid ? [uuid] : []
           });
-
         }
         delete this.dragStart;
         delete this.dragCurrent;
@@ -117,7 +112,7 @@ export class PlayELement extends PlanetElement {
         if (dragDistance > 5) {
           return;
         }
-        if (this.ctx.gameState.selectedUnits.length === 0) {
+        if (this.ctx.frontendContext.state.selectedUnits.length === 0) {
           return;
         }
         const dest = this.getTileAtRay(
@@ -134,7 +129,7 @@ export class PlayELement extends PlanetElement {
         });
         this.ctx.post({
           kind: "setDestination",
-          uuids: this.ctx.gameState.selectedUnits,
+          uuids: this.ctx.frontendContext.state.selectedUnits,
           dest
         });
       }
@@ -146,7 +141,7 @@ export class PlayELement extends PlanetElement {
       }
     });
 
-    this.ctx.queue.addListener("gameTick", () => {
+    this.ctx.gameQueue.addListener("gameTick", () => {
       if (this.opts.mode === "single") {
         const events = this.onTick();
         for (const e of events) {
@@ -156,17 +151,17 @@ export class PlayELement extends PlanetElement {
     });
 
     if (this.opts.mode === "single") {
-      const { tps } = this.ctx.gameState.planet!;
+      const { tps } = this.ctx.gameContext.state.planet!;
       this.gameTickLoop = new UpdateLoop(
         "gameTick",
         delta => {
-          if (this.ctx.gameState.stage.mode === GameStage.running) {
+          if (this.ctx.gameContext.state.stage.mode === GameStage.running) {
             info("game tick", { delta });
             this.ctx.post({
               kind: "gameTick"
             });
           }
-          return this.ctx.gameState.stage.mode === GameStage.done;
+          return this.ctx.gameContext.state.stage.mode === GameStage.done;
         },
         tps
       );
@@ -205,12 +200,16 @@ export class PlayELement extends PlanetElement {
       if (!opts.matchId) {
         ws.send(JSON.stringify(localLog));
         for (const event of localLog) {
-          this.ctx.post(event);
+          if (frontendEventList.includes(event.kind)) {
+            this.ctx.post(event as FrontendEvent);
+          } else {
+            this.ctx.post(event as ServerEvent);
+          }
         }
       }
       this.ctx.post = e => {
         if (frontendEventList.includes(e.kind)) {
-          this.ctx.queue.post(e);
+          this.ctx.frontendQueue.post(e as FrontendEvent);
         } else {
           ws.send(JSON.stringify([e]));
         }
@@ -227,9 +226,9 @@ export class PlayELement extends PlanetElement {
     ws.onmessage = (e: MessageEvent) => {
       const events: ServerEvent[] = JSON.parse(e.data);
       for (const event of events) {
-        this.ctx.queue.post(event);
+        this.ctx.gameQueue.post(event);
       }
-      this.ctx.queue.flushAll();
+      this.ctx.gameQueue.flushAll();
     };
   }
 
@@ -356,7 +355,7 @@ export class PlayELement extends PlanetElement {
   onTick(): ServerEvent[] {
     const results: ServerEvent[] = [];
 
-    onTick(this.ctx.gameState, this.asyncEvents);
+    onTick(this.ctx.gameContext.state, this.asyncEvents);
     while (this.asyncEvents.length > 0) {
       results.push(this.asyncEvents.shift()!);
     }

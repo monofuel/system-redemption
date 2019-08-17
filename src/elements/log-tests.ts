@@ -3,7 +3,6 @@ import { EventContextElement } from "./eventContext";
 import { LogPlayerElement } from "./logPlayer";
 import { delay } from "../util";
 import _ from "lodash";
-import { FrontendEvent, ServerEvent } from "../events";
 
 export class LogTestElement extends HTMLElement {
   constructor() {

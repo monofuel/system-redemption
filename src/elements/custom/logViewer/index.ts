@@ -1,9 +1,9 @@
 import { getParentContext, loadTemplate } from "../../";
-import { ToggleLogViewer } from "../../../events";
 import { EventContextElement } from "../../eventContext";
 
 import templateStr from "./index.html";
 import { CustomElement } from "../CustomElement";
+import { ToggleLogViewer } from "../../../events/actions/frontend";
 
 export class LogViewerElement extends CustomElement {
   private buttonMap: { [key: string]: Element } = {};
@@ -11,7 +11,10 @@ export class LogViewerElement extends CustomElement {
   constructor() {
     super(templateStr);
     this.ctx = getParentContext(this);
-    this.ctx.queue.addListener("toggleLogViewer", this.toggle.bind(this));
+    this.ctx.frontendQueue.addListener(
+      "toggleLogViewer",
+      this.toggle.bind(this)
+    );
 
     const close: HTMLSpanElement = document.querySelector(
       "log-viewer #close"

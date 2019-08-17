@@ -1,10 +1,10 @@
 import { getParentContext } from "../..";
-import { EditorSelection } from "../../../events";
 import { EventContextElement } from "../../eventContext";
 import _ from "lodash";
 import { getDefaultEditorMap } from "../../mapEditor";
 import templateStr from "./index.html";
 import { CustomElement } from "../CustomElement";
+import { EditorSelection } from "../../../events/actions/frontend";
 
 const holdingButtons = [
   "raiselower",
@@ -23,7 +23,7 @@ export class LandControlsElement extends CustomElement {
     this.ctx = getParentContext(this);
     this.getButtons();
     this.unitSelect = document.getElementById("unit-select") as any;
-    const gameState = this.ctx.gameState;
+    const gameState = this.ctx.frontendContext.state;
     this.unitSelect.onchange = e => {
       if (gameState.editorMode) {
         this.ctx.post({

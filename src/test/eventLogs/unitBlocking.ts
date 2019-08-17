@@ -1,4 +1,5 @@
-import { FrontendEvent, ServerEvent } from "../../events";
+import { ServerEvent } from "../../events/actions/game";
+import { FrontendEvent } from "../../events/actions/frontend";
 
 export const unitBlockingTestLog: (ServerEvent | FrontendEvent)[] = [
   {

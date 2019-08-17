@@ -1,4 +1,6 @@
 {
     "editor.formatOnSave": true,
-    "tslint.autoFixOnSave": true
+    "tslint.autoFixOnSave": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "files.insertFinalNewline": true
 }

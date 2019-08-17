@@ -1,7 +1,8 @@
-import { GameState, getUnitInfo } from "../events/state";
 import { Direction, TileHeights, LocHash, FiniteMap } from "../types/SR";
 import { unHash, getHash } from "./hash";
 import { getTile } from "../planet";
+import { getUnitInfo } from "../events/reducers/game";
+import { GameState } from "../events/store/game";
 
 interface LocCost {
   loc: string;
