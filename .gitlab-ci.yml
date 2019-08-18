@@ -1,11 +1,10 @@
 image: docker:git
 
 variables:
-   GIT_SUBMODULE_STRATEGY: recursive
-   CONTAINER_REGISTRY: registry.gitlab.com/$CI_PROJECT_PATH
-   #DOCKER_HOST: tcp://docker:2375/
-   #DOCKER_DRIVER: overlay2
-
+  GIT_SUBMODULE_STRATEGY: recursive
+  CONTAINER_REGISTRY: registry.gitlab.com/$CI_PROJECT_PATH
+  #DOCKER_HOST: tcp://docker:2375/
+  #DOCKER_DRIVER: overlay2
 
 services:
   - docker:dind
@@ -52,6 +51,14 @@ standalone_test:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
     # TODO tests need dev dependencies, hmmm
     - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
+
+standalone_coverage:
+  tags:
+    - docker
+  stage: test
+  script:
+    - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
+    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn coverage'
 
 prod_deploy:
   tags:
