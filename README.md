@@ -1,5 +1,7 @@
 # SystemRedemption
 
+[![Coverage Status](https://coveralls.io/repos/gitlab/monofuel34089/system-redemption/badge.svg?branch=master)](https://coveralls.io/gitlab/monofuel34089/system-redemption?branch=master)
+
 now on AWS ECS with 50% more uptime or something!
 
 ## Setup
