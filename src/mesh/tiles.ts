@@ -23,14 +23,8 @@ interface PlanetMeshOpts {
   wireframe: boolean;
 }
 
-export function getPlanetObject({
-  gameMap,
-  cache,
-  wireframe
-}: PlanetMeshOpts): Object3D {
-  const {
-    landColor, edgeColor, cliffColor, waterColor, waterHeight, zScale, size, chunkSize,
-  } = gameMap;
+export function getPlanetObject({ gameMap, cache, wireframe }: PlanetMeshOpts): Object3D {
+  const { landColor, edgeColor, cliffColor, waterColor, waterHeight, zScale, size, chunkSize } = gameMap;
   const tileTex = getTileTexture(landColor, edgeColor);
 
   const landMaterial = new MeshPhongMaterial({
@@ -38,14 +32,14 @@ export function getPlanetObject({
     side: FrontSide,
     map: tileTex,
     flatShading: true,
-    wireframe
+    wireframe,
   });
   const cliffMaterial = new MeshPhongMaterial({
     color: cliffColor,
     side: FrontSide,
     flatShading: true,
     shininess: 0,
-    wireframe
+    wireframe,
   });
 
   const waterMaterial = new MeshPhongMaterial({
@@ -54,11 +48,12 @@ export function getPlanetObject({
     flatShading: true,
     transparent: true,
     opacity: 0.8,
-    wireframe
+    wireframe,
   });
 
   const mapObj = new Object3D();
   mapObj.name = gameMap.name;
+  mapObj.matrixAutoUpdate = false;
 
   for (let y = 0; y < gameMap.size; y++) {
     for (let x = 0; x < gameMap.size; x++) {
@@ -85,7 +80,7 @@ export function getPlanetObject({
         tiles,
         waterHeight,
         skipSides: sides,
-        zScale
+        zScale,
       });
       const chunk = new Mesh(geom, [landMaterial, cliffMaterial, waterMaterial]);
       chunk.translateX(x * gameMap.chunkSize);
@@ -106,12 +101,7 @@ interface MeshOpts {
   skipSides: Direction[];
   zScale: number;
 }
-export function getTileGeom({
-  tiles,
-  waterHeight,
-  skipSides: sides,
-  zScale,
-}: MeshOpts): BufferGeometry {
+export function getTileGeom({ tiles, waterHeight, skipSides: sides, zScale }: MeshOpts): BufferGeometry {
   const geom = new Geometry();
 
   for (let y = 0; y < tiles.grid.length; y++) {
@@ -173,8 +163,6 @@ export function getTileGeom({
 
   geom.rotateX(-Math.PI / 2);
 
-
-
   const bufferedGeom = new BufferGeometry();
   bufferedGeom.fromGeometry(geom);
   return bufferedGeom;
@@ -203,7 +191,6 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
     geom.faces.push(new Face3(2, 3, 1, undefined, undefined, 0));
   }
 
-
   // add cliff around sides
   geom.vertices.push(
     new Vector3(0, 0, -1), // 4
@@ -226,32 +213,16 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
 
   // set texture UV
   for (let i = 0; i < geom.faces.length; i += 2) {
-    geom.faceVertexUvs[0][i] = [
-      new Vector2(0, 0),
-      new Vector2(0, 1),
-      new Vector2(1, 1),
-    ];
+    geom.faceVertexUvs[0][i] = [new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1)];
 
-    geom.faceVertexUvs[0][i + 1] = [
-      new Vector2(0, 0),
-      new Vector2(1, 0),
-      new Vector2(1, 1),
-    ];
+    geom.faceVertexUvs[0][i + 1] = [new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1)];
   }
 
   // set a face at the bottom of the mesh
   geom.faces.push(new Face3(7, 4, 5, undefined, undefined, 1));
   geom.faces.push(new Face3(4, 7, 6, undefined, undefined, 1));
-  geom.faceVertexUvs[0][geom.faces.length - 1] = [
-    new Vector2(0, 0),
-    new Vector2(0, 1),
-    new Vector2(1, 1),
-  ];
-  geom.faceVertexUvs[0][geom.faces.length] = [
-    new Vector2(0, 0),
-    new Vector2(1, 0),
-    new Vector2(1, 1),
-  ];
+  geom.faceVertexUvs[0][geom.faces.length - 1] = [new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1)];
+  geom.faceVertexUvs[0][geom.faces.length] = [new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1)];
 
   geom.computeFaceNormals();
   geom.computeFlatVertexNormals();
@@ -260,11 +231,7 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
   return geom;
 }
 
-function getWaterGeomForTile(
-  corners: TileHeights,
-  waterHeight: number,
-  zScale: number,
-): Geometry | null {
+function getWaterGeomForTile(corners: TileHeights, waterHeight: number, zScale: number): Geometry | null {
   if (corners.filter((corner) => corner > waterHeight).length === 4) {
     // if all 4 corners are above the water height, no water!
     return null;
@@ -308,17 +275,9 @@ function getWaterGeomForTile(
   // set texture UV
   // water doesn't have a texture yet, but this makes three.js happy.
   for (let i = 0; i < geom.faces.length; i += 2) {
-    geom.faceVertexUvs[0][i] = [
-      new Vector2(0, 0),
-      new Vector2(0, 1),
-      new Vector2(1, 1),
-    ];
+    geom.faceVertexUvs[0][i] = [new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1)];
 
-    geom.faceVertexUvs[0][i + 1] = [
-      new Vector2(0, 0),
-      new Vector2(1, 0),
-      new Vector2(1, 1),
-    ];
+    geom.faceVertexUvs[0][i + 1] = [new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1)];
   }
 
   geom.uvsNeedUpdate = true;
@@ -327,14 +286,11 @@ function getWaterGeomForTile(
 
 const tileTexCache: {
   [key: number]: {
-    [key: number]: CanvasTexture
-  }
+    [key: number]: CanvasTexture;
+  };
 } = {};
 
-export function getTileTexture(
-  landColor: number,
-  edgeColor: number,
-): CanvasTexture {
+export function getTileTexture(landColor: number, edgeColor: number): CanvasTexture {
   if (tileTexCache[landColor] && tileTexCache[landColor][edgeColor]) {
     return tileTexCache[landColor][edgeColor];
   }
@@ -359,7 +315,6 @@ export function getTileTexture(
   return tex;
 }
 
-
 let bufferedChunkCache: {
   [key: string]: {
     opts: MeshOpts;
@@ -376,8 +331,8 @@ function getCachedTileMesh(opts: MeshOpts): BufferGeometry {
   const geom = getTileGeom(opts);
   bufferedChunkCache[key] = {
     opts,
-    geom
-  }
+    geom,
+  };
   return geom;
 }
 
@@ -391,12 +346,12 @@ export function clearChunkCache() {
 
 // NB. tiles is assumed to not change. if the map is edited when using the cache, call invalidateChunkCache first
 function isOptsEqual(a: MeshOpts, b: MeshOpts): boolean {
-
-  return a.chunkHash === b.chunkHash &&
+  return (
+    a.chunkHash === b.chunkHash &&
     a.waterHeight === b.waterHeight &&
     _.isEqual(a.skipSides, b.skipSides) &&
     a.zScale === b.zScale &&
     a.size === b.size &&
     a.chunkSize === b.chunkSize
-
+  );
 }
