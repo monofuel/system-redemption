@@ -1,10 +1,10 @@
-import { testTilesMap } from "../../planet/tiles";
-import _ from "lodash";
-import { newTank } from "../../unit";
-import { assert } from "chai";
-import { defaultUnitDefinitions } from "./units";
-import { GameState } from "../../events/store/game";
-import { ServerEvent } from "../../events/actions/game";
+import { testTilesMap } from '../../planet/tiles';
+import _ from 'lodash';
+import { newTank } from '../../unit';
+import { assert } from 'chai';
+import { defaultUnitDefinitions } from './units';
+import { GameState } from '../../events/store/game';
+import { ServerEvent } from '../../events/actions/game';
 
 const map = _.cloneDeep(testTilesMap);
 map.waterHeight = -1;
@@ -15,217 +15,175 @@ map.grid = [
       x: 0,
       y: 0,
       grid: [
-        [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ],
-        [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ],
-        [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ],
-        [
-          [1, 1, 1, 1],
-          [1, 1, 1, 1],
-          [1, 1, 1, 1],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ],
-        [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [1, 1, 1, 1],
-          [1, 1, 1, 1],
-          [1, 1, 1, 1],
-          [0, 0, 0, 0]
-        ],
-        [
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]
-        ]
-      ]
-    }
-  ]
+        [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        [[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+        [[0, 0, 0, 0], [0, 0, 0, 0], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 0]],
+        [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+      ],
+    },
+  ] as any,
 ];
 
 const tank = newTank();
 
 export const unitMoveTestLog: ServerEvent[] = [
   {
-    kind: "newFiniteMap",
-    map
+    kind: 'newFiniteMap',
+    map,
   },
   ...defaultUnitDefinitions,
   {
-    kind: "newUnit",
+    kind: 'newUnit',
     unit: {
       ...tank,
-      loc: "0:5"
-    }
+      loc: '0:5',
+    },
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
       const unit = state.units[tank.uuid];
       assert.equal(unit.moveCooldown, 1);
-      assert.equal(unit.loc, "1:5");
-    }
+      assert.equal(unit.loc, '1:5');
+    },
   },
   {
-    kind: "assertFail",
+    kind: 'assertFail',
     event: {
-      kind: "moveUnit",
+      kind: 'moveUnit',
       uuid: tank.uuid,
-      dir: "E"
-    }
+      dir: 'E',
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
       const unit = state.units[tank.uuid];
-      assert.equal(unit.loc, "2:5");
-    }
+      assert.equal(unit.loc, '2:5');
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
       const unit = state.units[tank.uuid];
-      assert.equal(unit.loc, "5:5");
-    }
+      assert.equal(unit.loc, '5:5');
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "S"
+    dir: 'S',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "S"
+    dir: 'S',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "W"
+    dir: 'W',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "W"
+    dir: 'W',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "S"
+    dir: 'S',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tank.uuid,
-    dir: "N"
-  }
+    dir: 'N',
+  },
 ];

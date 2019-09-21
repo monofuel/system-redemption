@@ -1,21 +1,17 @@
-import { assert } from "chai";
-import { AssertionError, deepEqual } from "assert";
-import { GameColors, UnitType, ModelType } from "../../types/SR";
-import { ServerEvent } from "../../events/actions/game";
-import {
-  FrontendEvent,
-  EditorSelection,
-  frontendEventList
-} from "../../events/actions/frontend";
-import { GameState } from "../../events/store/game";
+import { assert } from 'chai';
+import { AssertionError, deepEqual } from 'assert';
+import { GameColors, UnitType, ModelType } from '../../types/SR';
+import { ServerEvent } from '../../events/actions/game';
+import { FrontendEvent, EditorSelection, frontendEventList } from '../../events/actions/frontend';
+import { GameState } from '../../events/store/game';
 
-const tankUUID = "e3798619-9d8b-422e-b61c-ed84a1272577";
+const tankUUID = 'e3798619-9d8b-422e-b61c-ed84a1272577';
 
 const log: (ServerEvent | FrontendEvent)[] = [
   {
-    kind: "newFiniteMap",
+    kind: 'newFiniteMap',
     map: {
-      name: "foobar",
+      name: 'foobar',
       version: 1,
       tps: 2,
       landColor: 4215094,
@@ -36,239 +32,237 @@ const log: (ServerEvent | FrontendEvent)[] = [
               [[1, 1, 1, 1], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]]
-            ]
-          }
-        ]
-      ]
-    }
+              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+            ],
+          },
+        ],
+      ] as any,
+    },
   },
   {
-    kind: "defineUnit",
+    kind: 'defineUnit',
     unit: {
       type: UnitType.tank,
       size: 1,
       buildTime: 10,
       cost: 100,
       maxHealth: 200,
-      layer: "ground",
+      layer: 'ground',
       graphical: {
-        model: ModelType.LightTankLvl1
+        model: ModelType.LightTankLvl1,
       },
       move: {
-        cooldown: 2
-      }
-    }
+        cooldown: 2,
+      },
+    },
   },
   {
-    kind: "editorMode",
+    kind: 'editorMode',
     selection: EditorSelection.raiselower,
     user: GameColors.blue,
-    unitType: UnitType.tank
+    unitType: UnitType.tank,
   },
 
   {
-    kind: "mapEdit",
+    kind: 'mapEdit',
     edit: [1, 1, 1, 1],
-    loc: "0:0"
+    loc: '0:0',
   },
 
   {
-    kind: "editorMode",
+    kind: 'editorMode',
     selection: EditorSelection.newUnit,
     user: GameColors.blue,
-    unitType: UnitType.tank
+    unitType: UnitType.tank,
   },
 
   {
-    kind: "newUnit",
+    kind: 'newUnit',
     unit: {
-      uuid: "e3798619-9d8b-422e-b61c-ed84a1272577",
+      uuid: 'e3798619-9d8b-422e-b61c-ed84a1272577',
       type: UnitType.tank,
-      facing: "E",
+      facing: 'E',
       size: 1,
-      loc: "0:0",
+      loc: '0:0',
       color: GameColors.blue,
-      map: "test",
-      moveCooldown: 0
-    }
+      map: 'test',
+      moveCooldown: 0,
+    },
   },
 
   {
-    kind: "editorMode",
-    selection: EditorSelection.raiselower
+    kind: 'editorMode',
+    selection: EditorSelection.raiselower,
   },
 
   {
-    kind: "mapEdit",
+    kind: 'mapEdit',
     edit: [1, 1, 1, 1],
-    loc: "1:1"
+    loc: '1:1',
   },
 
   {
-    kind: "hilightUpdate"
+    kind: 'hilightUpdate',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("0:0", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('0:0', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("1:0", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('1:0', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
 
   {
-    kind: "assertFail",
+    kind: 'assertFail',
     event: {
-      kind: "moveUnit",
+      kind: 'moveUnit',
       uuid: tankUUID,
-      dir: "N"
-    }
+      dir: 'N',
+    },
   },
 
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "E"
+    dir: 'E',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("2:0", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('2:0', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "N"
+    dir: 'N',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("2:1", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('2:1', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "assertFail",
+    kind: 'assertFail',
     event: {
-      kind: "moveUnit",
+      kind: 'moveUnit',
       uuid: tankUUID,
-      dir: "W"
-    }
+      dir: 'W',
+    },
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "N"
+    dir: 'N',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("2:2", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('2:2', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "W"
+    dir: 'W',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("1:2", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('1:2', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "assertFail",
+    kind: 'assertFail',
     event: {
-      kind: "moveUnit",
+      kind: 'moveUnit',
       uuid: tankUUID,
-      dir: "S"
-    }
+      dir: 'S',
+    },
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "W"
+    dir: 'W',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("0:2", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('0:2', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "moveUnit",
+    kind: 'moveUnit',
     uuid: tankUUID,
-    dir: "S"
+    dir: 'S',
   },
   {
-    kind: "assertion",
+    kind: 'assertion',
     fn: (state: GameState) => {
-      assert.deepEqual("0:1", state.units[tankUUID].loc);
-    }
+      assert.deepEqual('0:1', state.units[tankUUID].loc);
+    },
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "gameTick"
+    kind: 'gameTick',
   },
   {
-    kind: "assertFail",
+    kind: 'assertFail',
     event: {
-      kind: "moveUnit",
+      kind: 'moveUnit',
       uuid: tankUUID,
-      dir: "E"
-    }
-  }
+      dir: 'E',
+    },
+  },
 ];
 
-export const moveBlockTestLog = log.filter(
-  (e: FrontendEvent | ServerEvent) => !frontendEventList.includes(e.kind)
-);
+export const moveBlockTestLog = log.filter((e: FrontendEvent | ServerEvent) => !frontendEventList.includes(e.kind));

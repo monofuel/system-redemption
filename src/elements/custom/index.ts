@@ -1,18 +1,21 @@
-import { LogEditorElement } from "./logEditor";
-import { CustomElement } from "./CustomElement";
-import { LandControlsElement } from "./landControls";
-import { LogViewerElement } from "./logViewer";
-import { AdminControlsElement } from "./adminControls";
-import { UITestElement } from "./uiTest";
-import { LoadingBarElement } from "./loadingBar";
+import { LogEditorElement } from './logEditor';
+import { CustomElement } from './CustomElement';
+import { LandControlsElement } from './landControls';
+import { LogViewerElement } from './logViewer';
+import { AdminControlsElement } from './adminControls';
+import { UITestElement } from './uiTest';
+import { LoadingBarElement } from './loadingBar';
+import { TestMenuElement } from './testMenu';
+import { LitElement } from 'lit-element';
 
-const events: { [key: string]: new () => CustomElement } = {
-  "log-editor": LogEditorElement,
-  "land-controls": LandControlsElement,
-  "log-viewer": LogViewerElement,
-  "admin-controls": AdminControlsElement,
-  "ui-test": UITestElement,
-  "loading-bar": LoadingBarElement
+const events: { [key: string]: new () => CustomElement | LitElement } = {
+  'log-editor': LogEditorElement,
+  'land-controls': LandControlsElement,
+  'log-viewer': LogViewerElement,
+  'admin-controls': AdminControlsElement,
+  'ui-test': UITestElement,
+  'loading-bar': LoadingBarElement,
+  'test-menu': TestMenuElement,
 };
 
 export default events;

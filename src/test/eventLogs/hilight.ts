@@ -1,12 +1,12 @@
-import { defaultUnitDefinitions } from "./units";
-import { ServerEvent } from "../../events/actions/game";
-import { FrontendEvent } from "../../events/actions/frontend";
+import { defaultUnitDefinitions } from './units';
+import { ServerEvent } from '../../events/actions/game';
+import { FrontendEvent } from '../../events/actions/frontend';
 
 export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
   {
-    kind: "newFiniteMap",
+    kind: 'newFiniteMap',
     map: {
-      name: "foobar",
+      name: 'foobar',
       version: 1,
       tps: 2,
       landColor: 4215094,
@@ -27,8 +27,8 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
               [[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 2, 2], [2, 2, 2, 2]],
               [[3, 2, 3, 2], [2, 2, 2, 2], [2, 2, 3, 3], [2, 3, 2, 3]],
               [[2, 2, 2, 2], [3, 2, 3, 3], [3, 3, 3, 3], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]]
-            ]
+              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+            ],
           },
           {
             x: 0,
@@ -37,9 +37,9 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]]
-            ]
-          }
+              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+            ],
+          },
         ],
         [
           {
@@ -49,8 +49,8 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]]
-            ]
+              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+            ],
           },
           {
             x: 1,
@@ -59,82 +59,82 @@ export const hilightTestLog: (ServerEvent | FrontendEvent)[] = [
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]]
-            ]
-          }
-        ]
-      ]
-    }
+              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+            ],
+          },
+        ],
+      ] as any,
+    },
   },
   ...defaultUnitDefinitions,
 
   {
-    kind: "hilightUpdate",
-    loc: "1:1"
+    kind: 'hilightUpdate',
+    loc: '1:1',
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2"
+    kind: 'hilightUpdate',
+    loc: '2:2',
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [0]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [0],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [1]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [1],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [2]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [2],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [3]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [3],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [0, 3]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [0, 3],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [0, 1, 3]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [0, 1, 3],
   },
 
   {
-    kind: "hilightUpdate",
-    loc: "2:2",
-    corner: [0, 1, 2, 3]
+    kind: 'hilightUpdate',
+    loc: '2:2',
+    corner: [0, 1, 2, 3],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:1",
-    corner: [0, 1]
+    kind: 'hilightUpdate',
+    loc: '2:1',
+    corner: [0, 1],
   },
   {
-    kind: "hilightUpdate",
-    loc: "2:0",
-    corner: [2, 3]
+    kind: 'hilightUpdate',
+    loc: '2:0',
+    corner: [2, 3],
   },
   {
-    kind: "hilightUpdate",
-    loc: "3:1",
-    corner: [1, 2]
+    kind: 'hilightUpdate',
+    loc: '3:1',
+    corner: [1, 2],
   },
   {
-    kind: "hilightUpdate",
-    loc: "0:1",
-    corner: [2, 1]
+    kind: 'hilightUpdate',
+    loc: '0:1',
+    corner: [2, 1],
   },
   {
-    kind: "hilightUpdate",
-    loc: "1:2",
-    corner: [0, 1, 3]
-  }
+    kind: 'hilightUpdate',
+    loc: '1:2',
+    corner: [0, 1, 3],
+  },
 ];

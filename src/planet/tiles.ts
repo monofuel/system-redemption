@@ -1,27 +1,27 @@
-import { FiniteMap, PlanetTiles, TileHeights } from '../types/SR';
+import { FiniteMap, PlanetTiles, TileHeights, Biomes, TileBiomes } from '../types/SR';
 
 export function getFlatTiles(x: number, y: number, size: number): PlanetTiles {
   const grid: TileHeights[][] = [];
+  const biomes: TileBiomes[][] = [];
   for (let i = 0; i < size; i++) {
     const row: TileHeights[] = [];
+    const biomeRow: TileBiomes[] = [];
     grid.push(row);
+    biomes.push(biomeRow);
     for (let j = 0; j < size; j++) {
       row.push([2, 2, 2, 2]);
+      biomeRow.push([Biomes.grass, Biomes.grass, Biomes.grass, Biomes.grass, Biomes.grass]);
     }
   }
   return {
     x,
     y,
     grid,
+    biomes,
   };
 }
 
-export function getFlatMap(
-  name: string,
-  size: number,
-  chunkSize: number,
-  waterHeight: number,
-): FiniteMap {
+export function getFlatMap(name: string, size: number, chunkSize: number, waterHeight: number): FiniteMap {
   const grid: PlanetTiles[][] = [];
   for (let i = 0; i < size; i++) {
     const row: PlanetTiles[] = [];
@@ -48,8 +48,7 @@ export function getFlatMap(
 }
 
 export const testTiles: PlanetTiles = {
-  x: 0,
-  y: 0,
+  ...getFlatTiles(0, 0, 4),
   grid: [
     [[1, 1, 1, 1], [1, 1, 1, 1], [0, 0, 0, 0], [0, 0, 0, 0]],
     [[1, 1, 1, 1], [1, 1, 1, 1], [1, 0, 1, 0], [0, 0, 0, 0]],
