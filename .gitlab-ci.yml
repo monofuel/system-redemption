@@ -70,4 +70,4 @@ prod_deploy:
     - master
   script:
     - pip install awscli
-    - aws ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
+    #- aws ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
