@@ -5,16 +5,16 @@ import * as ws from 'ws';
 import ExpressWS from 'express-ws';
 import { info } from './logging';
 import { parseQueryOpts, newGameMatch, getMatch } from './matchMaker';
+import config from './config';
 
-const hostname = process.env.SR_INTERFACE || '0.0.0.0';
-const port = process.env.SR_PORT ? Number(process.env.SR_PORT) : 3000;
+const hostname = config.get('ip');
+const port = config.get('port');
+const basePath = config.get('baseDir');
 
 let server: http.Server;
 
 export async function initWeb() {
   const filename = path.basename(__filename);
-  // HACK ts path and built js path are in different directories when executed
-  let basePath = filename.endsWith('.js') ? path.join(__dirname, '../../') : path.join(__dirname, '../');
 
   const app = express();
   ExpressWS(app);
