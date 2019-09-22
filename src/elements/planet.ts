@@ -1,36 +1,19 @@
-import { ThreeSceneElement } from "./threeScene";
-import { EventContextElement } from "./eventContext";
-import {
-  HemisphereLight,
-  DirectionalLight,
-  Vector2,
-  Raycaster,
-  Vector3,
-  DirectionalLightHelper,
-  Group,
-  Mesh
-} from "three";
-import { Unit, LocHash } from "../types/SR";
-import { info } from "../logging";
-import {
-  getPlanetObject,
-  invalidateChunkCache,
-  clearChunkCache
-} from "../mesh/tiles";
-import { ECS } from "./components";
-import {
-  unitGraphicalComp,
-  hilightGraphicalComp,
-  GraphicalType
-} from "./components/graphical";
-import { getChunkForTile } from "../planet";
-import { getHilightMesh } from "../mesh/hilight";
-import { getHash } from "../services/hash";
-import { mouseToVec } from ".";
-import _ from "lodash";
-import { UpdateLoop } from "../events/serverContext";
-import { getExplosionGroup } from "../mesh/particles";
-import { HilightUpdate, EditorSelection } from "../events/actions/frontend";
+import { ThreeSceneElement } from './threeScene';
+import { EventContextElement } from './eventContext';
+import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, Group, Mesh } from 'three';
+import { Unit, LocHash } from '../types/SR';
+import { info } from '../logging';
+import { getPlanetObject, invalidateChunkCache, clearChunkCache } from '../mesh/tiles';
+import { ECS } from './components';
+import { unitGraphicalComp, hilightGraphicalComp, GraphicalType } from './components/graphical';
+import { getChunkForTile } from '../planet';
+import { getHilightMesh } from '../mesh/hilight';
+import { getHash } from '../services/hash';
+import { mouseToVec } from '.';
+import _ from 'lodash';
+import { UpdateLoop } from '../events/serverContext';
+import { getExplosionGroup } from '../mesh/particles';
+import { HilightUpdate, EditorSelection } from '../events/actions/frontend';
 
 export class PlanetElement extends ThreeSceneElement {
   protected ecsLoop: UpdateLoop;
@@ -43,12 +26,12 @@ export class PlanetElement extends ThreeSceneElement {
 
     this.ecs = new ECS(this);
     this.ecsLoop = new UpdateLoop(
-      "ecs",
+      'ecs',
       (delta: number): boolean => {
         this.ecs.update(delta);
         return false;
       },
-      40
+      40,
     );
     this.ecsLoop.start();
 
@@ -64,61 +47,44 @@ export class PlanetElement extends ThreeSceneElement {
 
     this.scene.add(sun);
 
-    this.ctx.gameQueue.addListener("newFiniteMap", event => {
+    this.ctx.gameQueue.addListener('newFiniteMap', (event) => {
       for (const key in this.ecs.graphical) {
         this.ecs.removeGraphicalComponent(key);
       }
       clearChunkCache();
       this.loadMap();
     });
-    this.ctx.gameQueue.addListener("waterChange", event => {
+    this.ctx.gameQueue.addListener('waterChange', (event) => {
       this.loadMap();
     });
-    this.ctx.gameQueue.addListener("mapEdit", event => {
-      invalidateChunkCache(
-        getChunkForTile(this.ctx.gameContext.state.planet!, event.loc)
-      );
+    this.ctx.gameQueue.addListener('mapEdit', (event) => {
+      invalidateChunkCache(getChunkForTile(this.ctx.gameContext.state.planet!, event.loc));
       this.loadMap();
 
       const hilight = this.ctx.frontendContext.state.hilight;
       if (hilight && hilight.loc) {
-        const key = "hilight";
-        const comp = hilightGraphicalComp(
-          this,
-          key,
-          hilight.loc,
-          hilight.color,
-          hilight.corner
-        );
+        const key = 'hilight';
+        const comp = hilightGraphicalComp(this, key, hilight.loc, hilight.color, hilight.corner);
         this.ecs.addGraphicalComponent(comp);
       }
     });
 
-    this.ctx.gameQueue.addListener("moveUnit", event => {
+    this.ctx.gameQueue.addListener('moveUnit', (event) => {
       console.log(event);
       console.log(this.ctx.gameContext.state.units[event.uuid]);
     });
 
-    this.ctx.frontendQueue.addListener(
-      "hilightUpdate",
-      (event: HilightUpdate) => {
-        const key = "hilight";
-        if (!event.loc) {
-          this.ecs.removeGraphicalComponent(key);
-        } else {
-          const comp = hilightGraphicalComp(
-            this,
-            key,
-            event.loc,
-            event.color,
-            event.corner
-          );
-          this.ecs.addGraphicalComponent(comp);
-        }
+    this.ctx.frontendQueue.addListener('hilightUpdate', (event: HilightUpdate) => {
+      const key = 'hilight';
+      if (!event.loc) {
+        this.ecs.removeGraphicalComponent(key);
+      } else {
+        const comp = hilightGraphicalComp(this, key, event.loc, event.color, event.corner);
+        this.ecs.addGraphicalComponent(comp);
       }
-    );
+    });
 
-    this.ctx.frontendQueue.addListener("selectUnits", event => {
+    this.ctx.frontendQueue.addListener('selectUnits', (event) => {
       const planet = this.ctx.gameContext.state.planet!;
       const uuids = event.uuids;
       const hilightColor = 0xba2b0e;
@@ -131,9 +97,9 @@ export class PlanetElement extends ThreeSceneElement {
         const hilight = getHilightMesh({
           planet,
           zScale: planet.zScale,
-          color: hilightColor
+          color: hilightColor,
         });
-        hilight.name = "selection";
+        hilight.name = 'selection';
         hilight.scale.set(1.7, 1.7, 1.7);
         hilight.position.y += 0.2;
         comp.mesh.add(hilight);
@@ -141,7 +107,7 @@ export class PlanetElement extends ThreeSceneElement {
 
       for (const uuid in this.ecs.graphical) {
         const comp = this.ecs.graphical[uuid];
-        const selection = comp.mesh.getObjectByName("selection");
+        const selection = comp.mesh.getObjectByName('selection');
         if (selection && !event.uuids.includes(comp.key)) {
           comp.mesh.remove(selection);
         }
@@ -149,10 +115,10 @@ export class PlanetElement extends ThreeSceneElement {
     });
 
     this.onAssetsLoaded = () => {
-      this.ctx.gameQueue.addListener("destroyUnit", event => {
+      this.ctx.gameQueue.addListener('destroyUnit', (event) => {
         this.ecs.removeGraphicalComponent(event.uuid);
       });
-      this.ctx.gameQueue.addListener("damageUnit", e => {
+      this.ctx.gameQueue.addListener('damageUnit', (e) => {
         const comp = this.ecs.graphical[e.uuid];
         if (comp) {
           comp.speGroup = getExplosionGroup();
@@ -160,7 +126,7 @@ export class PlanetElement extends ThreeSceneElement {
           comp.mesh.add(mesh);
         }
       });
-      this.ctx.gameQueue.addListener("newUnit", event => {
+      this.ctx.gameQueue.addListener('newUnit', (event) => {
         this.addUnit(this.ctx.gameContext.state.units[event.unit.uuid]);
       });
       for (const unit of Object.values(this.ctx.gameContext.state.units)) {
@@ -194,17 +160,11 @@ export class PlanetElement extends ThreeSceneElement {
   protected hilightAtMouse(ev: MouseEvent) {
     const mode = this.ctx.frontendContext.state.editorMode;
 
-    const vec = this.getPointAtRay(
-      mouseToVec(ev, this.offsetWidth, this.offsetHeight),
-      true
-    );
+    const vec = this.getPointAtRay(mouseToVec(ev, this.offsetWidth, this.offsetHeight), true);
     if (!vec) {
-      if (
-        this.ctx.frontendContext.state.hilight &&
-        this.ctx.frontendContext.state.hilight.loc
-      ) {
+      if (this.ctx.frontendContext.state.hilight && this.ctx.frontendContext.state.hilight.loc) {
         this.ctx.post({
-          kind: "hilightUpdate"
+          kind: 'hilightUpdate',
         });
       }
       return;
@@ -247,9 +207,9 @@ export class PlanetElement extends ThreeSceneElement {
 
     const existing = this.ctx.frontendContext.state.hilight;
     const newState: HilightUpdate = {
-      kind: "hilightUpdate",
+      kind: 'hilightUpdate',
       loc: getHash(loc[0], loc[1]),
-      corner: corners.length > 0 ? corners : undefined
+      corner: corners.length > 0 ? corners : undefined,
     };
 
     if (_.isEqual(existing, newState)) {
@@ -264,10 +224,7 @@ export class PlanetElement extends ThreeSceneElement {
     this.ecs.addGraphicalComponent(comp);
   }
 
-  protected getTileAtRay(
-    screenLoc: Vector2,
-    ignoreWater: boolean
-  ): LocHash | null {
+  protected getTileAtRay(screenLoc: Vector2, ignoreWater: boolean): LocHash | null {
     const vec = this.getPointAtRay(screenLoc, ignoreWater);
     if (!vec) {
       return null;
@@ -277,16 +234,11 @@ export class PlanetElement extends ThreeSceneElement {
     return getHash(x, y);
   }
 
-  protected getPointAtRay(
-    screenLoc: Vector2,
-    ignoreWater: boolean
-  ): Vector3 | null {
+  protected getPointAtRay(screenLoc: Vector2, ignoreWater: boolean): Vector3 | null {
     const raycaster = new Raycaster();
     raycaster.setFromCamera(screenLoc, this.camera);
 
-    const mapGroup = this.scene.getObjectByName(
-      this.ctx.gameContext.state.planet!.name
-    );
+    const mapGroup = this.scene.getObjectByName(this.ctx.gameContext.state.planet!.name);
     if (!mapGroup) {
       return null;
     }
@@ -311,9 +263,7 @@ export class PlanetElement extends ThreeSceneElement {
       // fudge the number over a little to prevent flickering over cliffs
       vec.add(new Vector3(0.001, 0.001, 0.001));
       let { x, y } = vec;
-      const maxSize =
-        this.ctx.gameContext.state.planet!.size *
-        this.ctx.gameContext.state.planet!.chunkSize;
+      const maxSize = this.ctx.gameContext.state.planet!.size * this.ctx.gameContext.state.planet!.chunkSize;
       if (x < 0) {
         vec.x = 0;
       }
@@ -335,11 +285,11 @@ export class PlanetElement extends ThreeSceneElement {
   private loadMap() {
     const gameMap = this.ctx.gameContext.state.planet;
     if (!gameMap) {
-      throw new Error("game map not loaded");
+      throw new Error('game map not loaded');
     }
-    info("loading map", { name: gameMap.name });
+    info('loading map', { name: gameMap.name });
     const sun = new DirectionalLight(gameMap.sunColor, 0.8);
-    sun.name = "gameMap-sun";
+    sun.name = 'gameMap-sun';
     sun.translateY(40);
     sun.translateX(50);
     sun.lookAt(0, 0, 0);
@@ -353,9 +303,9 @@ export class PlanetElement extends ThreeSceneElement {
     const mapObj = getPlanetObject({
       gameMap,
       cache: this.usePlanetCache,
-      wireframe: false
+      wireframe: false,
     });
-    mapObj.name = "map";
+    mapObj.name = 'map';
 
     if (!mapGroup) {
       mapGroup = new Group();
@@ -366,19 +316,13 @@ export class PlanetElement extends ThreeSceneElement {
       mapGroup.position.set(offset, 0, offset);
       this.scene.add(mapGroup);
     } else {
-      const oldMap = mapGroup.getObjectByName("map")!;
+      const oldMap = mapGroup.getObjectByName('map')!;
       mapGroup.remove(oldMap);
     }
     mapGroup.add(mapObj);
     const hilight = this.ctx.frontendContext.state.hilight;
     if (hilight && hilight.loc) {
-      const comp = hilightGraphicalComp(
-        this,
-        "hilight",
-        hilight.loc,
-        hilight.color,
-        hilight.corner
-      );
+      const comp = hilightGraphicalComp(this, 'hilight', hilight.loc, hilight.color, hilight.corner);
       this.ecs.addGraphicalComponent(comp);
     }
   }
