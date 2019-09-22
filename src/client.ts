@@ -8,4 +8,6 @@ async function loadClient() {
   info('document loaded');
 }
 
-loadClient();
+if (require.main === module) {
+  loadClient();
+}
