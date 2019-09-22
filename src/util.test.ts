@@ -2,7 +2,7 @@ import { delay, toHexColor } from './util';
 import { assert } from 'chai';
 
 describe('delay', () => {
-  const threshold = 10;
+  const threshold = 30;
   it('should wait about 100 ms', async () => {
     const time = Date.now();
     const delayTime = 100;
