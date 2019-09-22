@@ -20,17 +20,10 @@ const defaultOpts: EventQueueOpts = {
   },
 };
 
-export class EventQueue<
-  Kinds extends keyof EventMap,
-  EventMap extends Record<Kinds, { kind: Kinds }>
-  > {
+export class EventQueue<Kinds extends keyof EventMap, EventMap extends Record<Kinds, { kind: Kinds }>> {
   private opts: EventQueueOpts;
-  private listenerMap: Partial<
-    Record<Kinds, Array<(event: EventMap[Kinds]) => void>>
-  > = {};
-  private eventLog: Partial<
-    Record<Kinds, Array<{ event: EventMap[Kinds]; timestamp: number }>>
-  > = {};
+  private listenerMap: Partial<Record<Kinds, Array<(event: EventMap[Kinds]) => void>>> = {};
+  private eventLog: Partial<Record<Kinds, Array<{ event: EventMap[Kinds]; timestamp: number }>>> = {};
   private processing: boolean = false;
 
   constructor(opts: Partial<EventQueueOpts> = {}) {
@@ -89,21 +82,14 @@ export class EventQueue<
    * @param kind enum value for kind
    * @param fn function to handle events of that kind
    */
-  public addListener<Kind extends Kinds>(
-    kind: Kind,
-    fn: (event: EventMap[Kind]) => void,
-  ) {
-    let listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this
-      .listenerMap[kind];
+  public addListener<Kind extends Kinds>(kind: Kind, fn: (event: EventMap[Kind]) => void) {
+    let listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this.listenerMap[kind];
     if (!listeners) {
       listeners = this.listenerMap[kind] = [] as any;
     }
     (listeners as any).push(fn);
   }
-  public removeListener<Kind extends Kinds>(
-    kind: Kind,
-    fn: (event: EventMap[Kind]) => void,
-  ) {
+  public removeListener<Kind extends Kinds>(kind: Kind, fn: (event: EventMap[Kind]) => void) {
     const listeners = this.listenerMap[kind];
     if (!listeners) {
       throw new Error(`no listener for ${kind}`);
@@ -117,9 +103,7 @@ export class EventQueue<
 
   private appendToLog(event: EventMap[Kinds]) {
     const kind = event.kind;
-    let eventLog:
-      | Array<{ event: EventMap[Kinds]; timestamp: number }>
-      | undefined = this.eventLog[kind];
+    let eventLog: Array<{ event: EventMap[Kinds]; timestamp: number }> | undefined = this.eventLog[kind];
     if (!eventLog) {
       eventLog = this.eventLog[kind] = [] as any;
     }
@@ -131,14 +115,12 @@ export class EventQueue<
 
   private publishEvent(event: EventMap[Kinds], timestamp: number) {
     const kind = event.kind;
-    const listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this
-      .listenerMap[kind];
+    const listeners: Array<(event: EventMap[Kinds]) => void> | undefined = this.listenerMap[kind];
     if (this.processing) {
       // events should only be published by onTick() or async tasks
       // events must not enqueue other events as that would break replayability
-      throw new Error("Do not publish events syncronously in the handler of other events");
+      throw new Error('Do not publish events syncronously in the handler of other events');
     }
-
 
     try {
       this.processing = true;
@@ -155,6 +137,5 @@ export class EventQueue<
     } finally {
       this.processing = false;
     }
-
   }
 }
