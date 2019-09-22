@@ -3,21 +3,16 @@ image: docker:git
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   CONTAINER_REGISTRY: registry.gitlab.com/$CI_PROJECT_PATH
-  #DOCKER_HOST: tcp://docker:2375/
-  #DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375/
   DOCKER_DRIVER: overlay2
-  # See https://github.com/docker-library/docker/pull/166
+  # See https://about.gitlab.com/2019/07/31/docker-in-docker-with-docker-19-dot-03/
   DOCKER_TLS_CERTDIR: ''
 
 services:
-  - name: docker:dind
-    entrypoint: ['env', '-u', 'DOCKER_HOST']
-    command: ['dockerd-entrypoint.sh']
+  - docker:dind
 
-# before_script:
+before_script:
+  - docker info
 # - ls rts-assets/
-# - docker info
 # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
 # TODO pull docker image for caching and use cache-from
 
