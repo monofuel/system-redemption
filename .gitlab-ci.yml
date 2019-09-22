@@ -16,12 +16,10 @@ cache:
     - ShaderParticleEngine
 #  - node_modules/
 
-# TODO need a new image that includes docker-compose on default
 before_script:
-  - docker info
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
   - ls rts-assets/
-
+  # - docker info
+  # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
   # TODO pull docker image for caching and use cache-from
 
 stages:
