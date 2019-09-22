@@ -10,8 +10,8 @@ variables:
 services:
   - docker:dind
 
-before_script:
-  - docker info
+#before_script:
+#  - docker info
 # - ls rts-assets/
 # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
 # TODO pull docker image for caching and use cache-from
@@ -32,6 +32,7 @@ standalone_build:
     - docker
   stage: build
   script:
+    - docker info
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
     - docker pull ${CONTAINER_REGISTRY}/sr_main:builder || true
