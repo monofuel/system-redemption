@@ -16,20 +16,6 @@
       "protocol": "inspector"
     },
     {
-      "name": "all tests",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-      "stopOnEntry": false,
-      "console": "integratedTerminal",
-      "args": [
-        "-r",
-        "ts-node/register",
-        "--no-timeouts",
-        "src/test/**/*.test.ts"
-      ]
-    },
-    {
       "name": "test current file",
       "type": "node",
       "request": "launch",
@@ -45,6 +31,9 @@
       "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
       "stopOnEntry": false,
       "console": "integratedTerminal",
+      "env": {
+        "SR_PORT": "3030"
+      },
       "args": ["--i"]
     }
   ]

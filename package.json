@@ -12,8 +12,8 @@
     "watch:client": "webpack --debug -w",
     "watch:server": "tsc -w",
     "prepare:client": "ts-node ./build-src/main.ts",
-    "test": "jest",
-    "coverage": "jest --coverage --coverageReporters=text-lcov | coveralls"
+    "test": ". ./env/test.env && jest --detectOpenHandles",
+    "coverage": ". ./env/test.env && jest --coverage --coverageReporters=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
