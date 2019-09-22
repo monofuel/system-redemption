@@ -58,7 +58,8 @@ standalone_coverage:
   stage: test
   script:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - docker run -e COVERALLS_REPO_TOKEN -e COVERALLS_SERVICE_NAME -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn coverage'
+    - echo `env` > ./.env
+    - docker run --env-file ./.env -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn coverage'
 
 prod_deploy:
   tags:
