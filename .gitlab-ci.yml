@@ -47,19 +47,17 @@ standalone_test:
   tags:
     - docker
   stage: test
+  image: ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
   script:
-    - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    # TODO tests need dev dependencies, hmmm
-    - docker run -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn test'
+    - yarn test
 
 standalone_coverage:
   tags:
     - docker
+  image: ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
   stage: test
   script:
-    - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
-    - echo `env` > ./.env
-    - docker run --env-file ./.env -t ${CONTAINER_REGISTRY}/sr_main:latest sh -c 'yarn coverage'
+    - yarn coverage
 
 prod_deploy:
   tags:
