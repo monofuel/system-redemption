@@ -9,18 +9,11 @@ variables:
 services:
   - docker:dind
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - rts-assets/
-    - ShaderParticleEngine
-#  - node_modules/
-
-before_script:
-  - ls rts-assets/
-  # - docker info
-  # - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
-  # TODO pull docker image for caching and use cache-from
+# before_script:
+# - ls rts-assets/
+# - docker info
+# - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
+# TODO pull docker image for caching and use cache-from
 
 stages:
   - build
@@ -28,6 +21,12 @@ stages:
   - deploy
 
 standalone_build:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - rts-assets/
+      - ShaderParticleEngine
+      #- node_modules/
   tags:
     - docker
   stage: build
