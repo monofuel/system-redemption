@@ -11,9 +11,9 @@ describe('delay', () => {
     assert.isAtLeast(delta, delayTime);
   });
 
-  it('should wait about 1 ms', async () => {
+  it('should wait about 5 ms', async () => {
     const time = Date.now();
-    const delayTime = 1;
+    const delayTime = 5;
     await delay(delayTime);
     const end = Date.now();
     const delta = end - time;
