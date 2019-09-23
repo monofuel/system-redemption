@@ -1,6 +1,12 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.client.json',
+      diagnostics: false,
+    },
+  },
   collectCoverageFrom: ['src/**/*.ts'],
   name: 'client',
   displayName: 'client',
@@ -9,7 +15,7 @@ module.exports = {
     '^.+\\.(s*)css$': 'identity-obj-proxy',
   },
   transform: {
-    '^.+\\.[t|j]sx?$': 'babel-jest',
+    '^.+\\.[t|j]sx?$': 'ts-jest',
     '^.+\\.html$': '<rootDir>/src/test/utils/htmlLoader.js',
   },
   // transformIgnorePatterns: ['<rootDir>/node_modules/*'],
@@ -19,5 +25,5 @@ module.exports = {
   // the setupFiles option was not found.'
   rootDir: './../../',
 
-  testMatch: ['<rootDir>/src/elements/**/*.client.ts'],
+  testMatch: ['<rootDir>/src/**/*.client.ts'],
 };
