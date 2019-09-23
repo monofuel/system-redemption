@@ -9,7 +9,6 @@ import {
   ToggleLogViewer,
 } from '../events/actions/frontend';
 
-// TODO fix these tests
 describe('test event system', () => {
   describe('posting syncronously', () => {
     const uiQueue = new EventQueue<FrontendEventKinds, FrontendEvents>({
