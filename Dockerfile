@@ -38,8 +38,8 @@ ADD ./package.json /sr
 ADD ./yarn.lock /sr
 
 WORKDIR /sr
-# RUN yarn --frozen-lockfile --production=true && yarn cache clean
-RUN yarn --frozen-lockfile && yarn cache clean
+RUN yarn --frozen-lockfile --production=true && yarn cache clean
+# RUN yarn --frozen-lockfile && yarn cache clean
 
 COPY --from=0 /sr/build ./build
 COPY --from=0 /sr/public ./public
