@@ -1,14 +1,14 @@
-const path = require("path");
+const path = require('path');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
-  entry: "./src/client.ts",
-  devtool: "inline-source-map",
-  mode: "development",
+  entry: './src/client.ts',
+  devtool: 'inline-source-map',
+  mode: 'development',
   externals: {
-    lodash: "_",
-    three: "THREE",
-    "dat.gui": "dat"
+    lodash: '_',
+    three: 'THREE',
+    'dat.gui': 'dat',
   },
   plugins: [
     // new BundleAnalyzerPlugin()
@@ -17,26 +17,26 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
-        exclude: /node_modules/
+        use: 'ts-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.(s*)css$/,
-        use: ["style-loader", "css-loader", "sass-loader"]
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.(html)$/,
         use: {
-          loader: "html-loader"
-        }
-      }
-    ]
+          loader: 'html-loader',
+        },
+      },
+    ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"]
+    extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "build/client")
-  }
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'build/client'),
+  },
 };
