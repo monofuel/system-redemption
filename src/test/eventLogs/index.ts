@@ -8,16 +8,18 @@ import { moveBlockTestLog } from './moveBlock';
 import { damageTestLog } from './damage';
 import { unitBlockingTestLog } from './unitBlocking';
 import { attackRangeTestLog } from './attackRange';
+import { biomesTestLog } from './biomes';
 
 export const logs = {
-    planetEditTestLog,
-    attackRangeTestLog,
-    unitMoveTestLog,
-    damageTestLog,
-    unitBlockingTestLog,
-    slopeMoveTestLog,
-    hilightTestLog,
-    slopesTestLog,
-    selectionTestLog,
-    moveBlockTestLog
+  planetEditTestLog,
+  attackRangeTestLog,
+  unitMoveTestLog,
+  damageTestLog,
+  unitBlockingTestLog,
+  slopeMoveTestLog,
+  hilightTestLog,
+  slopesTestLog,
+  selectionTestLog,
+  moveBlockTestLog,
+  biomesTestLog,
 };

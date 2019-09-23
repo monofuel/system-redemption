@@ -144,7 +144,7 @@ export class EventContextElement extends HTMLElement {
       const log = (logs as any)[key as any];
       delay(0)
         .then(async () => {
-          await this.replayLog(key, true, log);
+          await this.replayLog(key, false, log);
         })
         .catch(err => {
           console.error(err);

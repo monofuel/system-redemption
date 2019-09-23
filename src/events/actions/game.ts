@@ -5,96 +5,98 @@ import {
   Unit,
   UnitDefinition,
   GameStage,
-  Direction
-} from "../../types/SR";
-import { GameState } from "../store/game";
+  Direction,
+  TileBiomes,
+} from '../../types/SR';
+import { GameState } from '../store/game';
 
 export interface NewFiniteMap {
-  kind: "newFiniteMap";
+  kind: 'newFiniteMap';
   map: FiniteMap;
 }
 
 export const MapEditType = {
   raise: [1, 1, 1, 1] as TileHeights,
-  lower: [-1, -1, -1, -1] as TileHeights
+  lower: [-1, -1, -1, -1] as TileHeights,
 };
 
 export interface MapEdit {
-  kind: "mapEdit";
+  kind: 'mapEdit';
   // added to the existing tile
   edit: TileHeights;
+  biomes?: TileBiomes;
   loc: LocHash;
 }
 
 export interface WaterChange {
-  kind: "waterChange";
+  kind: 'waterChange';
   amount: number;
 }
 
 export interface NewUnit {
-  kind: "newUnit";
+  kind: 'newUnit';
   unit: Unit;
 }
 
 export interface DefineUnit {
-  kind: "defineUnit";
+  kind: 'defineUnit';
   unit: UnitDefinition;
 }
 
 export interface MoveUnit {
-  kind: "moveUnit";
+  kind: 'moveUnit';
   uuid: string;
   dir: Direction;
 }
 
 export interface DestroyUnit {
-  kind: "destroyUnit";
+  kind: 'destroyUnit';
   uuid: string;
 }
 
 export interface SetDestination {
-  kind: "setDestination";
+  kind: 'setDestination';
   uuids: string[];
   dest?: LocHash;
 }
 
 export interface GameStageChange {
-  kind: "gameStageChange";
+  kind: 'gameStageChange';
   mode: GameStage;
 }
 
 export interface GameTick {
-  kind: "gameTick";
+  kind: 'gameTick';
 }
 
 // Only for testing
 export interface Assertion {
-  kind: "assertion";
+  kind: 'assertion';
   fn: (gameState: GameState) => void;
 }
 // Only for testing
 export interface AssertFail {
-  kind: "assertFail";
+  kind: 'assertFail';
   event: ServerEvent;
   reason?: string;
 }
 
 export interface DamageUnit {
-  kind: "damageUnit";
+  kind: 'damageUnit';
   uuid: string;
   amount: number;
   source?: string;
 }
 
 export interface SetPath {
-  kind: "setPath";
+  kind: 'setPath';
   uuid: string;
   dest: LocHash;
   path: Direction[];
 }
 
 export interface CreateMatchEvent {
-  kind: "createMatch";
+  kind: 'createMatch';
   id: string;
 }
 
