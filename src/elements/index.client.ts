@@ -2,6 +2,7 @@ import { EventContextElement } from './eventContext';
 
 describe('frontend test', () => {
   it('test loading elements', () => {
+    // TODO waiting on custom element support
     // loadElements();
     //  window.customElements.define('event-context', EventContextElement);
     //window.customElements.define('tile-test', TileTestElement);
