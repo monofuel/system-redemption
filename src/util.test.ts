@@ -2,14 +2,13 @@ import { delay, toHexColor } from './util';
 import { assert } from 'chai';
 
 describe('delay', () => {
-  const threshold = 30;
   it('should wait about 100 ms', async () => {
     const time = Date.now();
     const delayTime = 100;
     await delay(delayTime);
     const end = Date.now();
-    const delta = end - time - delayTime;
-    assert.isBelow(Math.abs(delta), threshold);
+    const delta = end - time;
+    assert.isAtLeast(delta, delayTime);
   });
 
   it('should wait about 1 ms', async () => {
@@ -17,8 +16,8 @@ describe('delay', () => {
     const delayTime = 1;
     await delay(delayTime);
     const end = Date.now();
-    const delta = end - time - delayTime;
-    assert.isBelow(Math.abs(delta), threshold);
+    const delta = end - time;
+    assert.isAtLeast(delta, delayTime);
   });
 
   it('should wait about 200 ms', async () => {
@@ -26,8 +25,8 @@ describe('delay', () => {
     const delayTime = 200;
     await delay(delayTime);
     const end = Date.now();
-    const delta = end - time - delayTime;
-    assert.isBelow(Math.abs(delta), threshold);
+    const delta = end - time;
+    assert.isAtLeast(delta, delayTime);
   });
 });
 
