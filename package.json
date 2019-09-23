@@ -18,8 +18,8 @@
     "watch:client": "webpack --debug -w",
     "watch:server": "tsc -w",
     "prepare:client": "ts-node ./build-src/main.ts",
-    "test": "NODE_ENV=test jest --detectOpenHandles --projects ./ ./src/elements",
-    "coverage": "NODE_ENV=test jest  --projects ./ ./src/elements --coverage --coverageReporters=text-lcov | coveralls"
+    "test": "NODE_ENV=test jest --detectOpenHandles --projects ./ ./src/elements --maxWorkers=2",
+    "coverage": "NODE_ENV=test jest  --projects ./ ./src/elements --maxWorkers=2 --coverage --coverageReporters=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
