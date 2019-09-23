@@ -49,6 +49,7 @@ standalone_test:
   stage: test
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
+    - yarn install --build-from-source --frozen-lockfile
     - yarn test
 
 standalone_coverage:
@@ -57,6 +58,7 @@ standalone_coverage:
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   stage: test
   script:
+    - yarn install --build-from-source --frozen-lockfile
     - yarn coverage
 
 prod_deploy:
