@@ -25,7 +25,7 @@ RUN apk --no-cache add \
 # disabled for now as it had issues in prod
 # ADD ./node_modules /sr/node_modules
 WORKDIR /sr
-RUN yarn install --frozen-lockfile  && yarn cache clean
+RUN yarn install --build-from-source --frozen-lockfile  && yarn cache clean
 ADD . /sr
 
 RUN yarn prepare:client
