@@ -27,7 +27,7 @@ standalone_build:
     paths:
       - rts-assets/
       - ShaderParticleEngine
-      #- node_modules/
+      - node_modules/
   tags:
     - docker
   stage: build
@@ -44,6 +44,12 @@ standalone_build:
     - docker push ${CONTAINER_REGISTRY}/sr_main:builder
 
 standalone_test:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - rts-assets/
+      - ShaderParticleEngine
+      - node_modules/
   tags:
     - docker
   stage: test
@@ -52,6 +58,12 @@ standalone_test:
     - yarn test
 
 standalone_coverage:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - rts-assets/
+      - ShaderParticleEngine
+      - node_modules/
   tags:
     - docker
   image: ${CONTAINER_REGISTRY}/sr_main:builder
