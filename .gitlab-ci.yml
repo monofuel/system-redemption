@@ -47,7 +47,7 @@ standalone_test:
   tags:
     - docker
   stage: test
-  image: ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
+  image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
     - yarn
     - yarn test
@@ -55,7 +55,7 @@ standalone_test:
 standalone_coverage:
   tags:
     - docker
-  image: ${CONTAINER_REGISTRY}/sr_main:$CI_COMMIT_SHA
+  image: ${CONTAINER_REGISTRY}/sr_main:builder
   stage: test
   script:
     - echo $COVERALLS_REPO_TOKEN
