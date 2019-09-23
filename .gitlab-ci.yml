@@ -49,7 +49,6 @@ standalone_test:
   stage: test
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
-    - yarn
     - yarn test
 
 standalone_coverage:
@@ -58,8 +57,6 @@ standalone_coverage:
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   stage: test
   script:
-    - echo $COVERALLS_REPO_TOKEN
-    - yarn
     - yarn coverage
 
 prod_deploy:
