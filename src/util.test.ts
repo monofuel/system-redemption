@@ -6,7 +6,7 @@ describe('delay', () => {
     const time = Date.now();
     const delayTime = 100;
     await delay(delayTime);
-    const end = Date.now();
+    const end = Date.now() + 1;
     const delta = end - time;
     assert.isAtLeast(delta, delayTime);
   });
@@ -15,7 +15,7 @@ describe('delay', () => {
     const time = Date.now();
     const delayTime = 5;
     await delay(delayTime);
-    const end = Date.now();
+    const end = Date.now() + 1;
     const delta = end - time;
     assert.isAtLeast(delta, delayTime);
   });
@@ -24,7 +24,7 @@ describe('delay', () => {
     const time = Date.now();
     const delayTime = 200;
     await delay(delayTime);
-    const end = Date.now();
+    const end = Date.now() + 1;
     const delta = end - time;
     assert.isAtLeast(delta, delayTime);
   });
