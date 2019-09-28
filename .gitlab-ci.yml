@@ -72,5 +72,6 @@ prod_deploy:
     - master
   script:
     - terraform init
+    - echo $TF_VAR_linode_token
     - export TF_VAR_sr_main_sha=${CI_COMMIT_SHA}
     - terraform apply -auto-approve
