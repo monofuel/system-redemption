@@ -45,7 +45,7 @@ COPY --from=0 /sr/build ./build
 COPY --from=0 /sr/public ./public
 COPY --from=0 /sr/config ./config
 
-ENV BASE_DIR '/sr/build'
+ENV BASE_DIR '/sr'
 EXPOSE 3000
 
 CMD [ "node", "build/server/server.js" ]
