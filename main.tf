@@ -81,7 +81,7 @@ resource "aws_ecs_task_definition" "sr" {
 [
 
   {
-    "image": "registry.gitlab.com/monofuel34089/system-redemption/sr_main:latest",
+    "image": "registry.gitlab.com/monofuel34089/system-redemption/sr_main:${var.sr_main_sha}",
     "cpu": 256,
     "portMappings": [
             {
@@ -90,6 +90,16 @@ resource "aws_ecs_task_definition" "sr" {
                 "protocol": "tcp"
             }
         ],
+    "environment": [
+      {
+        "name": "NODE_ENV",
+        "value": "production"
+      },
+      {
+        "name": "PORT",
+        "value": "3000"
+      }
+    ],
     "essential": true,
     "memory": 512,
     "name": "sr"

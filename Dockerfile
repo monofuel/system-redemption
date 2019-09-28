@@ -43,6 +43,7 @@ RUN yarn --frozen-lockfile --production=true && yarn cache clean
 
 COPY --from=0 /sr/build ./build
 COPY --from=0 /sr/public ./public
+COPY --from=0 /sr/config ./config
 EXPOSE 3000
 
 CMD [ "node", "build/server/server.js" ]

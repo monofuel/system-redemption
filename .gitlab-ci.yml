@@ -64,13 +64,11 @@ standalone_coverage:
 prod_deploy:
   tags:
     - docker
-  image: python:latest
-  # override default before_script
-  before_script:
-    - ls
+  image: hashicorp/terraform
   stage: deploy
   only:
     - master
   script:
-    - pip install awscli
-    #- aws ecs update-service --region us-east-1 --cluster sr --service sr-service --force-new-deployment
+    - terraform init
+    - export TF_VAR_sr_main_sha=${CI_COMMIT_SHA}
+    - terraform apply -auto-approve
