@@ -22,7 +22,7 @@ const config = convict({
     arg: 'port',
   },
   baseDir: {
-    doc: 'base project directory (may be different for js and ts files)',
+    doc: './build project directory (may be different for js and ts files)',
     default: path.join(__dirname, '../'),
     env: 'BASE_DIR',
   },

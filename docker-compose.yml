@@ -1,7 +1,7 @@
 version: '3'
 services:
   standalone:
-    image: registry.gitlab.com/sr_main:latest
+    image: registry.gitlab.com/monofuel34089/system-redemption/sr_main:latest
     build:
       # NB. this does not actually work
       # https://github.com/docker/compose/issues/883
@@ -14,3 +14,13 @@ services:
       - '3000:3000'
     environment:
       IP_ADDRESS: 0.0.0.0
+  deploy:
+    image: hashicorp/terraform
+    entrypoint: /bin/ash
+    volumes:
+      - ./:/sr
+    environment:
+      - TF_VAR_linode_token
+      - LINODE_TOKEN
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
