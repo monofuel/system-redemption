@@ -1,4 +1,6 @@
 
+# I spent way too much time on this
+
 terraform {
 	backend "s3" {
 		bucket = "mono-terraform"
@@ -257,6 +259,14 @@ resource "linode_domain_record" "sr" {
   ttl_sec     = 3600
 }
 
+resource "linode_domain_record" "srcf" {
+  domain_id   = "${linode_domain.monofuel-dev.id}"
+  name        = "srcf"
+  record_type = "CNAME"
+  target      = "${aws_cloudfront_distribution.sr_distribution.domain_name}"
+  ttl_sec     = 3600
+}
+
 resource "aws_iam_role" "svc" {
   name = "${var.name}-ecs-role"
 
@@ -286,4 +296,68 @@ resource "aws_cloudwatch_log_group" "svc" {
   count = "${length(var.log_groups)}"
   name  = "${element(var.log_groups, count.index)}"
   tags  = "${merge(var.tags, map("Name", format("%s", var.name)))}"
+}
+
+
+
+resource "aws_cloudfront_distribution" "sr_distribution" {
+
+  # https://dz4u3167mid4w.cloudfront.net/test/
+
+  // origin is where CloudFront gets its content from.
+  origin {
+    // We need to set up a "custom" origin because otherwise CloudFront won't
+    // redirect traffic from the root domain to the www domain, that is from
+    // runatlantis.io to www.runatlantis.io.
+    custom_origin_config {
+      // These are all the defaults.
+      http_port              = "80"
+      https_port             = "443"
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1", "TLSv1.1", "TLSv1.2"]
+    }
+
+    // Here we're using our S3 bucket's URL!
+    domain_name = "sr.monofuel.dev"
+    // This can be any name to identify this origin.
+    origin_id   = "srcf.monofuel.dev"
+  }
+
+  enabled             = true
+  default_root_object = "index.html"
+
+  // All values are defaults from the AWS console.
+  default_cache_behavior {
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
+    allowed_methods        = ["GET", "HEAD"]
+    cached_methods         = ["GET", "HEAD"]
+    // This needs to match the `origin_id` above.
+    target_origin_id       = "srcf.monofuel.dev"
+    min_ttl                = 0
+    default_ttl            = 86400
+    max_ttl                = 31536000
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  # TODO need to fix this
+  # aliases = ["srcf.monofuel.dev"]
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  // Here's where our certificate is loaded in!
+  viewer_certificate {
+    acm_certificate_arn = "arn:aws:acm:us-east-1:817239375577:certificate/9ec65f89-6b32-4f63-bfdb-6c2ff1583aff"
+    ssl_support_method  = "sni-only"
+  }
 }
