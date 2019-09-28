@@ -64,11 +64,13 @@ standalone_coverage:
 prod_deploy:
   tags:
     - docker
-  image: hashicorp/terraform
+  image:
+    name: hashicorp/terraform
+    entrypoint: ['']
   stage: deploy
   only:
     - master
   script:
     - terraform init
     - export TF_VAR_sr_main_sha=${CI_COMMIT_SHA}
-    - terraform apply -auto-approve
+    - apply -auto-approve
