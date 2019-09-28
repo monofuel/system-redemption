@@ -38,9 +38,6 @@ export type Layer = 'ground' | 'air' | 'water';
 // corner heights: TL TR BL BR
 export type TileHeights = [number, number, number, number];
 
-// biomes: Top, North, South, East, West
-export type TileBiomes = [Biomes, Biomes, Biomes, Biomes, Biomes];
-
 export enum UnitType {
   tank = 'tank',
   ltank2 = 'ltank2',
@@ -53,7 +50,14 @@ export interface PlanetTiles {
   y: number;
 
   grid: TileHeights[][];
-  biomes: TileBiomes[][];
+  biomes: Biomes[][];
+}
+
+export interface BiomeColors {
+  landColor: number;
+  edgeColor: number;
+  waterColor: number;
+  cliffColor: number;
 }
 
 export interface FiniteMap {
@@ -61,10 +65,7 @@ export interface FiniteMap {
   version: number;
   tps: number;
   waterHeight: number;
-  landColor: number;
-  edgeColor: number;
-  waterColor: number;
-  cliffColor: number;
+  biomeColors: Record<Biomes, BiomeColors>;
   sunColor: number;
   zScale: number;
   size: number; // number of PlanetTile chunks

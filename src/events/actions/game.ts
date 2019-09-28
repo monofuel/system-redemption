@@ -1,13 +1,4 @@
-import {
-  FiniteMap,
-  TileHeights,
-  LocHash,
-  Unit,
-  UnitDefinition,
-  GameStage,
-  Direction,
-  TileBiomes,
-} from '../../types/SR';
+import { FiniteMap, TileHeights, LocHash, Unit, UnitDefinition, GameStage, Direction, Biomes } from '../../types/SR';
 import { GameState } from '../store/game';
 
 export interface NewFiniteMap {
@@ -24,7 +15,7 @@ export interface MapEdit {
   kind: 'mapEdit';
   // added to the existing tile
   edit: TileHeights;
-  biomes?: TileBiomes;
+  biome?: Biomes;
   loc: LocHash;
 }
 

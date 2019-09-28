@@ -7,7 +7,7 @@ export const biomesTestLog: ServerEvent[] = [
   buildFiniteMap(getFlatMap('biomeTest', 6, 1, 0)),
   buildMapEdit({
     edit: [4, 4, 4, 4],
-    biomes: [Biomes.snow, Biomes.snow, Biomes.snow, Biomes.snow, Biomes.snow],
+    biome: Biomes.snow,
     loc: '1:1',
   }),
 ];

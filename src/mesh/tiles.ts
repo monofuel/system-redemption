@@ -11,8 +11,9 @@ import {
   Vector2,
   Vector3,
   BufferGeometry,
+  Material,
 } from 'three';
-import { Direction, FiniteMap, PlanetTiles, TileHeights } from '../types/SR';
+import { Direction, FiniteMap, PlanetTiles, TileHeights, BiomeColors, Biomes } from '../types/SR';
 import { toHexColor } from '../util';
 import { getHash } from '../services/hash';
 import _ from 'lodash';
@@ -24,33 +25,10 @@ interface PlanetMeshOpts {
 }
 
 export function getPlanetObject({ gameMap, cache, wireframe }: PlanetMeshOpts): Object3D {
-  const { landColor, edgeColor, cliffColor, waterColor, waterHeight, zScale, size, chunkSize } = gameMap;
-  const tileTex = getTileTexture(landColor, edgeColor);
+  const { biomeColors, waterHeight, zScale, size, chunkSize } = gameMap;
 
-  const landMaterial = new MeshPhongMaterial({
-    shininess: 0,
-    side: FrontSide,
-    map: tileTex,
-    flatShading: true,
-    wireframe,
-  });
-  const cliffMaterial = new MeshPhongMaterial({
-    color: cliffColor,
-    side: FrontSide,
-    flatShading: true,
-    shininess: 0,
-    wireframe,
-  });
-
-  const waterMaterial = new MeshPhongMaterial({
-    color: waterColor,
-    side: FrontSide,
-    flatShading: true,
-    transparent: true,
-    opacity: 0.8,
-    wireframe,
-  });
-
+  const biomeMaterialMap = getAllBiomeTextures(biomeColors, wireframe);
+  const materialList = getBiomeMaterialsList(biomeMaterialMap);
   const mapObj = new Object3D();
   mapObj.name = gameMap.name;
   mapObj.matrixAutoUpdate = false;
@@ -82,7 +60,7 @@ export function getPlanetObject({ gameMap, cache, wireframe }: PlanetMeshOpts): 
         skipSides: sides,
         zScale,
       });
-      const chunk = new Mesh(geom, [landMaterial, cliffMaterial, waterMaterial]);
+      const chunk = new Mesh(geom, materialList);
       chunk.translateX(x * gameMap.chunkSize);
       chunk.translateZ(y * gameMap.chunkSize);
       chunk.rotateY(-Math.PI / 2);
@@ -107,9 +85,11 @@ export function getTileGeom({ tiles, waterHeight, skipSides: sides, zScale }: Me
   for (let y = 0; y < tiles.grid.length; y++) {
     for (let x = 0; x < tiles.grid.length; x++) {
       const tile = tiles.grid[x][y];
+      const biome = tiles.biomes[x][y];
+      const biomeOffset = getBiomeOffset(biome);
       const matrix = new Matrix4().makeTranslation(x, y, 0);
 
-      const tileGeom = getGeomForTile(tile, zScale);
+      const tileGeom = getGeomForTile(tile, zScale, biomeOffset);
 
       /*
       // Remove internal edges before merging into chunk
@@ -168,8 +148,9 @@ export function getTileGeom({ tiles, waterHeight, skipSides: sides, zScale }: Me
   return bufferedGeom;
 }
 
-function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
+function getGeomForTile(corners: TileHeights, zScale: number, biomeOffset: number): Geometry {
   const geom = new Geometry();
+  const offset = biomeOffset * 3; // NB. there are 3 materials per biome
 
   geom.vertices.push(
     new Vector3(0, 0, corners[0] * zScale), // 0
@@ -180,17 +161,19 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
 
   // 1 - 2
   // 0 - 3
+  const landMat = offset;
 
   if (corners[0] - corners[3] === 0) {
     // left handed
-    geom.faces.push(new Face3(3, 1, 0, undefined, undefined, 0));
-    geom.faces.push(new Face3(0, 2, 3, undefined, undefined, 0));
+    geom.faces.push(new Face3(3, 1, 0, undefined, undefined, landMat));
+    geom.faces.push(new Face3(0, 2, 3, undefined, undefined, landMat));
   } else {
     // right handed
-    geom.faces.push(new Face3(1, 0, 2, undefined, undefined, 0));
-    geom.faces.push(new Face3(2, 3, 1, undefined, undefined, 0));
+    geom.faces.push(new Face3(1, 0, 2, undefined, undefined, landMat));
+    geom.faces.push(new Face3(2, 3, 1, undefined, undefined, landMat));
   }
 
+  const cliffMat = offset + 1;
   // add cliff around sides
   geom.vertices.push(
     new Vector3(0, 0, -1), // 4
@@ -199,17 +182,17 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
     new Vector3(1, 1, -1), // 7
   );
 
-  geom.faces.push(new Face3(4, 0, 5, undefined, undefined, 1));
-  geom.faces.push(new Face3(0, 1, 5, undefined, undefined, 1));
+  geom.faces.push(new Face3(4, 0, 5, undefined, undefined, cliffMat));
+  geom.faces.push(new Face3(0, 1, 5, undefined, undefined, cliffMat));
 
-  geom.faces.push(new Face3(2, 4, 6, undefined, undefined, 1));
-  geom.faces.push(new Face3(4, 2, 0, undefined, undefined, 1));
+  geom.faces.push(new Face3(2, 4, 6, undefined, undefined, cliffMat));
+  geom.faces.push(new Face3(4, 2, 0, undefined, undefined, cliffMat));
 
-  geom.faces.push(new Face3(3, 2, 6, undefined, undefined, 1));
-  geom.faces.push(new Face3(6, 7, 3, undefined, undefined, 1));
+  geom.faces.push(new Face3(3, 2, 6, undefined, undefined, cliffMat));
+  geom.faces.push(new Face3(6, 7, 3, undefined, undefined, cliffMat));
 
-  geom.faces.push(new Face3(1, 3, 7, undefined, undefined, 1));
-  geom.faces.push(new Face3(5, 1, 7, undefined, undefined, 1));
+  geom.faces.push(new Face3(1, 3, 7, undefined, undefined, cliffMat));
+  geom.faces.push(new Face3(5, 1, 7, undefined, undefined, cliffMat));
 
   // set texture UV
   for (let i = 0; i < geom.faces.length; i += 2) {
@@ -219,8 +202,8 @@ function getGeomForTile(corners: TileHeights, zScale: number): Geometry {
   }
 
   // set a face at the bottom of the mesh
-  geom.faces.push(new Face3(7, 4, 5, undefined, undefined, 1));
-  geom.faces.push(new Face3(4, 7, 6, undefined, undefined, 1));
+  geom.faces.push(new Face3(7, 4, 5, undefined, undefined, cliffMat));
+  geom.faces.push(new Face3(4, 7, 6, undefined, undefined, cliffMat));
   geom.faceVertexUvs[0][geom.faces.length - 1] = [new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1)];
   geom.faceVertexUvs[0][geom.faces.length] = [new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1)];
 
@@ -354,4 +337,75 @@ function isOptsEqual(a: MeshOpts, b: MeshOpts): boolean {
     a.size === b.size &&
     a.chunkSize === b.chunkSize
   );
+}
+
+function getAllBiomeTextures(
+  biomeMap: Record<Biomes, BiomeColors>,
+  wireframe: boolean,
+): Record<Biomes, BiomeMaterials> {
+  return _.mapValues(biomeMap, (b) => {
+    return getBiomeTextures(b, wireframe);
+  });
+}
+
+export interface BiomeMaterials {
+  landMaterial: Material;
+  cliffMaterial: Material;
+  waterMaterial: Material;
+}
+
+function getBiomeTextures(biomeColors: BiomeColors, wireframe: boolean): BiomeMaterials {
+  const { landColor, edgeColor, waterColor, cliffColor } = biomeColors;
+  const tileTex = getTileTexture(landColor, edgeColor);
+
+  const landMaterial = new MeshPhongMaterial({
+    shininess: 0,
+    side: FrontSide,
+    map: tileTex,
+    flatShading: true,
+    wireframe,
+  });
+
+  const cliffMaterial = new MeshPhongMaterial({
+    color: cliffColor,
+    side: FrontSide,
+    flatShading: true,
+    shininess: 0,
+    wireframe,
+  });
+
+  const waterMaterial = new MeshPhongMaterial({
+    color: waterColor,
+    side: FrontSide,
+    flatShading: true,
+    transparent: true,
+    opacity: 0.8,
+    wireframe,
+  });
+
+  return {
+    landMaterial,
+    cliffMaterial,
+    waterMaterial,
+  };
+}
+
+function getBiomeMaterialsList(biomeMaterialMap: Record<Biomes, BiomeMaterials>): Material[] {
+  let materials: Material[] = [];
+  _.mapValues(biomeMaterialMap, (b) => {
+    materials = materials.concat(Object.values(b));
+  });
+  return materials;
+}
+
+function getBiomeOffset(biome: Biomes): number {
+  let n = 0;
+  for (const biome2 of Object.values(Biomes)) {
+    if (biome2 === biome) {
+      return n;
+    }
+    n++;
+  }
+  // TODO: FC what do?
+  return 0;
 }

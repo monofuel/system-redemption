@@ -13,7 +13,7 @@ export function buildMapEdit(mapEdit: Partial<MapEdit>): MapEdit {
   return {
     kind: 'mapEdit',
     edit: [0, 0, 0, 0],
-    biomes: [Biomes.grass, Biomes.grass, Biomes.grass, Biomes.grass, Biomes.grass],
+    biome: Biomes.grass,
     loc: '0:0',
     ...mapEdit,
   };
