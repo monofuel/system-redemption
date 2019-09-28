@@ -22,7 +22,10 @@ variable "tags" {
   default     = {}
 }
 
-
+variable "log_groups" {
+  description = "Log groups that will be created in CloudWatch Logs"
+  default     = []
+}
 variable "sr_main_sha" {
   description = "CI_COMMIT_SHA for sr_main image"
   default     = "latest"

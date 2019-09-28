@@ -43,8 +43,8 @@ resource "aws_security_group" "sr" {
 
   # HTTP access from the VPC
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -85,8 +85,8 @@ resource "aws_ecs_task_definition" "sr" {
     "cpu": 256,
     "portMappings": [
             {
-                "containerPort": 3000,
-                "hostPort": 3000,
+                "containerPort": 80,
+                "hostPort": 80,
                 "protocol": "tcp"
             }
         ],
@@ -97,12 +97,20 @@ resource "aws_ecs_task_definition" "sr" {
       },
       {
         "name": "PORT",
-        "value": "3000"
+        "value": "80"
       }
     ],
     "essential": true,
     "memory": 512,
-    "name": "sr"
+    "name": "sr",
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-region": "us-west-1",
+        "awslogs-group": "sr",
+        "awslogs-stream-prefix": "complete-ecs"
+      }
+    }
   }
 ]
 DEFINITION
@@ -135,6 +143,11 @@ data "aws_iam_policy_document" "instance_policy" {
       "${aws_cloudwatch_log_group.instance.arn}",
     ]
   }
+}
+
+resource "aws_cloudwatch_log_group" "sr" {
+  name              = "sr"
+  retention_in_days = 7
 }
 
 resource "aws_iam_policy" "instance_policy" {
@@ -183,8 +196,12 @@ resource "aws_ecs_service" "sr" {
   cluster       = "${aws_ecs_cluster.sr.id}"
   desired_count = 1
   launch_type = "EC2"
+  # iam_role        = "${aws_iam_role.svc.arn}"
 
   task_definition = "${aws_ecs_task_definition.sr.arn}"
+
+  deployment_maximum_percent = 100
+  deployment_minimum_healthy_percent = 0
 
 }
 
@@ -238,4 +255,35 @@ resource "linode_domain_record" "sr" {
   record_type = "A"
   target      = "${aws_instance.leader.public_ip}"
   ttl_sec     = 3600
+}
+
+resource "aws_iam_role" "svc" {
+  name = "${var.name}-ecs-role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2008-10-17",
+  "Statement": [
+	{
+	  "Sid": "",
+	  "Effect": "Allow",
+	  "Principal": {
+		"Service": "ecs.amazonaws.com"
+	  },
+	  "Action": "sts:AssumeRole"
+	}
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "svc" {
+  role       = "${aws_iam_role.svc.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
+}
+
+resource "aws_cloudwatch_log_group" "svc" {
+  count = "${length(var.log_groups)}"
+  name  = "${element(var.log_groups, count.index)}"
+  tags  = "${merge(var.tags, map("Name", format("%s", var.name)))}"
 }
