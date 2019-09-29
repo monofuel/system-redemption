@@ -1,5 +1,5 @@
-import { GameState } from "../store/game";
-import _ from "lodash";
+import { GameState } from '../store/game';
+import _ from 'lodash';
 import {
   NewFiniteMap,
   ServerEventKinds,
@@ -17,15 +17,11 @@ import {
   CreateMatchEvent,
   SetPath,
   DamageUnit,
-  DestroyUnit
-} from "../actions/game";
-import { unHash } from "../../services/hash";
-import {
-  getTileInDirection,
-  isMoveValid,
-  locDistance
-} from "../../services/pathfind";
-import { getTile } from "../../planet";
+  DestroyUnit,
+} from '../actions/game';
+import { unHash } from '../../services/hash';
+import { getTileInDirection, isMoveValid, locDistance } from '../../services/pathfind';
+import { getTile } from '../../planet';
 
 // TODO need to make more of these functions pure
 export type GameReducer = (state: GameState, event: any) => GameState;
@@ -45,7 +41,7 @@ export const gameReducer: GameReducerMap = {
   setPath: applySetPath,
   createMatch: applyCreateMatch,
   destroyUnit: applyDestroyUnit,
-  damageUnit: applyDamageUnit
+  damageUnit: applyDamageUnit,
 };
 
 export function applyNewMap(state: GameState, event: NewFiniteMap): GameState {
@@ -55,7 +51,7 @@ export function applyNewMap(state: GameState, event: NewFiniteMap): GameState {
   }
   return {
     ...state,
-    planet: _.cloneDeep(event.map)
+    planet: _.cloneDeep(event.map),
   };
 }
 
@@ -73,12 +69,16 @@ export function applyMapEdit(state: GameState, event: MapEdit): GameState {
   const tileX = x % map.chunkSize;
   const tileY = y % map.chunkSize;
   const newTile = chunk.grid[tileY][tileX];
+  if (event.biome) {
+    chunk.biomes[tileX][tileY] = event.biome;
+  }
   for (let i = 0; i < newTile.length; i++) {
     newTile[i] += event.edit[i];
     if (newTile[i] <= 0) {
       newTile[i] = 0;
     }
   }
+
   return state;
 }
 
@@ -112,7 +112,7 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
     throw new Error(`unit can't move`);
   }
   if (unit.moveCooldown !== 0) {
-    throw new Error("unit movement still cooling down");
+    throw new Error('unit movement still cooling down');
   }
 
   const nextLoc = getTileInDirection(unit.loc, event.dir);
@@ -126,7 +126,7 @@ export function applyMoveUnit(state: GameState, event: MoveUnit) {
 
   const valid = isMoveValid(state.planet!, prev, next, event.dir);
   if (!valid) {
-    throw new Error("movement is not valid");
+    throw new Error('movement is not valid');
   }
 
   delete state.cache.unitLocations[unit.loc];
@@ -156,7 +156,7 @@ export function applyAssertFail(state: GameState, event: AssertFail) {
   }
   if (!e) {
     console.error(JSON.stringify(event.event));
-    throw new Error("AssertFail event did not fail");
+    throw new Error('AssertFail event did not fail');
   }
   return state;
 }
@@ -214,18 +214,14 @@ export function applySetDestination(state: GameState, event: SetDestination) {
 export function applySetPath(state: GameState, event: SetPath) {
   const { unit, unitDef } = getUnitInfo(state, event.uuid);
   if (unit.destination !== event.dest) {
-    throw new Error(
-      `destination does not match for unit ${event.uuid}, ${
-        unit.destination
-      }, ${event.dest}`
-    );
+    throw new Error(`destination does not match for unit ${event.uuid}, ${unit.destination}, ${event.dest}`);
   }
   unit.path = event.path;
   return state;
 }
 export function applyCreateMatch(state: GameState, event: CreateMatchEvent) {
   state.match = {
-    id: event.id
+    id: event.id,
   };
   return state;
 }
@@ -241,18 +237,13 @@ export function applyDamageUnit(state: GameState, event: DamageUnit) {
   unit.health! -= event.amount;
 
   if (event.source) {
-    const { unit: attacker, unitDef: attackerDef } = getUnitInfo(
-      state,
-      event.source
-    );
+    const { unit: attacker, unitDef: attackerDef } = getUnitInfo(state, event.source);
     if (!attackerDef.attack) {
       throw new Error(`unit cannot attack ${event.source}`);
     }
     const dist = locDistance(unit.loc, attacker.loc);
     if (attackerDef.attack.range < dist) {
-      throw new Error(
-        `attacking unit not in range ${event.source}, ${event.uuid}`
-      );
+      throw new Error(`attacking unit not in range ${event.source}, ${event.uuid}`);
     }
     if (attacker.attackCooldown && attacker.attackCooldown > 0) {
       throw new Error(`attacking unit still on cooldown ${event.source}`);
