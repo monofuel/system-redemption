@@ -57,6 +57,8 @@ standalone_coverage:
     - docker
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   stage: test
+  only:
+    - master
   script:
     - yarn install --build-from-source --frozen-lockfile
     - yarn coverage
