@@ -4,40 +4,41 @@ import { GameColors, UnitType, ModelType } from '../../types/SR';
 import { ServerEvent } from '../../events/actions/game';
 import { FrontendEvent, EditorSelection, frontendEventList } from '../../events/actions/frontend';
 import { GameState } from '../../events/store/game';
+import { getFlatMap } from '../../planet/tiles';
+import _ from 'lodash';
 
 const tankUUID = 'e3798619-9d8b-422e-b61c-ed84a1272577';
 
 const log: (ServerEvent | FrontendEvent)[] = [
   {
     kind: 'newFiniteMap',
-    map: {
-      name: 'foobar',
-      version: 1,
-      tps: 2,
-      landColor: 4215094,
-      edgeColor: 7311936,
-      cliffColor: 3550758,
-      waterColor: 5484770,
-      sunColor: 13421772,
-      zScale: 0.2,
-      size: 1,
-      chunkSize: 4,
-      waterHeight: 1.8,
-      grid: [
-        [
-          {
-            x: 0,
-            y: 0,
-            grid: [
-              [[1, 1, 1, 1], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-            ],
-          },
+    map: _.merge(
+      {
+        name: 'foobar',
+        version: 1,
+        tps: 2,
+        sunColor: 13421772,
+        zScale: 0.2,
+        size: 1,
+        chunkSize: 4,
+        waterHeight: 1.8,
+        grid: [
+          [
+            {
+              x: 0,
+              y: 0,
+              grid: [
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+              ],
+            },
+          ],
         ],
-      ] as any,
-    },
+      },
+      getFlatMap('foobar', 1, 4, 0),
+    ),
   },
   {
     kind: 'defineUnit',
@@ -62,13 +63,6 @@ const log: (ServerEvent | FrontendEvent)[] = [
     user: GameColors.blue,
     unitType: UnitType.tank,
   },
-
-  {
-    kind: 'mapEdit',
-    edit: [1, 1, 1, 1],
-    loc: '0:0',
-  },
-
   {
     kind: 'editorMode',
     selection: EditorSelection.newUnit,

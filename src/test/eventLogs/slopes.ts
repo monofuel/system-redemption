@@ -1,38 +1,39 @@
 import { UnitType, ModelType, GameColors } from '../../types/SR';
 import { ServerEvent } from '../../events/actions/game';
 import { FrontendEvent, EditorSelection, frontendEventList } from '../../events/actions/frontend';
+import { getFlatMap } from '../../planet/tiles';
+import _ from 'lodash';
 
 const log: (ServerEvent | FrontendEvent)[] = [
   {
     kind: 'newFiniteMap',
-    map: {
-      name: 'foobar',
-      version: 1,
-      tps: 2,
-      landColor: 4215094,
-      edgeColor: 7311936,
-      cliffColor: 3550758,
-      waterColor: 5484770,
-      sunColor: 13421772,
-      zScale: 0.1,
-      size: 1,
-      chunkSize: 4,
-      waterHeight: 1.8,
-      grid: [
-        [
-          {
-            x: 0,
-            y: 0,
-            grid: [
-              [[1, 1, 1, 1], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-            ],
-          },
+    map: _.merge(
+      {
+        name: 'foobar',
+        version: 1,
+        tps: 2,
+        sunColor: 13421772,
+        zScale: 0.1,
+        size: 1,
+        chunkSize: 4,
+        waterHeight: 1.8,
+        grid: [
+          [
+            {
+              x: 0,
+              y: 0,
+              grid: [
+                [[1, 1, 1, 1], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+                [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+              ],
+            },
+          ],
         ],
-      ] as any,
-    },
+      },
+      getFlatMap('foobar', 1, 4, 0),
+    ),
   },
   {
     kind: 'defineUnit',

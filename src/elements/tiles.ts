@@ -1,16 +1,9 @@
-import {
-  CanvasTexture,
-  DirectionalLight,
-  Group,
-  HemisphereLight,
-  Vector3,
-  Mesh
-} from "three";
-import { getTileGeom, getPlanetObject } from "../mesh/tiles";
-import { testTiles, testTilesMap } from "../planet/tiles";
-import { Direction, FiniteMap } from "../types/SR";
-import { toHexColor } from "../util";
-import { ThreeSceneElement } from "./threeScene";
+import { CanvasTexture, DirectionalLight, Group, HemisphereLight, Vector3, Mesh } from 'three';
+import { getTileGeom, getPlanetObject } from '../mesh/tiles';
+import { testTiles, testTilesMap } from '../planet/tiles';
+import { Direction, FiniteMap, Biomes } from '../types/SR';
+import { toHexColor } from '../util';
+import { ThreeSceneElement } from './threeScene';
 
 interface ChunkTestOpts {
   landColor: number;
@@ -43,7 +36,7 @@ export class TileTestElement extends ThreeSceneElement {
     sunColor: 0xcccccc,
     wireframe: false,
     zScale: 0.5,
-    rpm: 6
+    rpm: 6,
   };
 
   private canvas: HTMLCanvasElement;
@@ -60,14 +53,14 @@ export class TileTestElement extends ThreeSceneElement {
 
     this.scene.add(sun);
 
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     this.canvas = canvas;
     canvas.height = 32;
     canvas.width = 32;
-    canvas.style.position = "absolute";
-    canvas.style.top = "0";
-    canvas.style.left = "0";
-    const ctx = canvas.getContext("2d")!;
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    const ctx = canvas.getContext('2d')!;
     ctx.fillStyle = toHexColor(this.opts.edgeColor);
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = toHexColor(this.opts.landColor);
@@ -77,33 +70,39 @@ export class TileTestElement extends ThreeSceneElement {
 
     this.loadChunk();
 
-    this.dat!.add(this.opts, "rpm", 0, 10);
-    this.dat!.add(this.opts, "zScale", 0, 1).onFinishChange(() => {
+    this.dat!.add(this.opts, 'rpm', 0, 10);
+    this.dat!.add(this.opts, 'zScale', 0, 1).onFinishChange(() => {
       this.loadChunk();
     });
-    this.dat!.add(this.opts, "wireframe").onFinishChange(() => {
+    this.dat!.add(this.opts, 'wireframe').onFinishChange(() => {
       this.loadChunk();
     });
   }
 
   private loadChunk() {
-    const chunkName = "chunk-1";
+    const chunkName = 'chunk-1';
 
     const tileTex = new CanvasTexture(this.canvas);
     const chunkObj = new Group();
     const gameMap: FiniteMap = {
       ...testTilesMap,
       waterHeight: this.opts.waterHeight,
-      landColor: this.opts.landColor,
-      cliffColor: this.opts.cliffColor,
-      waterColor: this.opts.waterColor,
+      biomeColors: {
+        ...testTilesMap.biomeColors,
+        [Biomes.grass]: {
+          landColor: this.opts.landColor,
+          edgeColor: this.opts.edgeColor,
+          cliffColor: this.opts.cliffColor,
+          waterColor: this.opts.waterColor,
+        },
+      },
       sunColor: this.opts.sunColor,
-      zScale: this.opts.zScale
+      zScale: this.opts.zScale,
     };
     const chunkMesh = getPlanetObject({
       gameMap,
       cache: false,
-      wireframe: this.opts.wireframe
+      wireframe: this.opts.wireframe,
     });
 
     (chunkMesh.children[0] as Mesh).geometry.center();
@@ -121,16 +120,13 @@ export class TileTestElement extends ThreeSceneElement {
     // HACK this listener leaks on seed changes
 
     this.addUpdateLoop(
-      "rotation",
+      'rotation',
       (delta: number) => {
         const rps = this.opts.rpm / 60;
-        chunkObj.rotateOnAxis(
-          new Vector3(0, 1, 0),
-          (Math.PI / (500 / delta)) * rps
-        );
+        chunkObj.rotateOnAxis(new Vector3(0, 1, 0), (Math.PI / (500 / delta)) * rps);
         return false;
       },
-      40
+      40,
     );
   }
 }

@@ -1,17 +1,15 @@
-import { ServerEvent } from "../../events/actions/game";
-import { FrontendEvent } from "../../events/actions/frontend";
+import { ServerEvent } from '../../events/actions/game';
+import { FrontendEvent } from '../../events/actions/frontend';
+import { getFlatMap } from '../../planet/tiles';
 
 export const damageTestLog: (ServerEvent | FrontendEvent)[] = [
   {
-    kind: "newFiniteMap",
+    kind: 'newFiniteMap',
     map: {
-      name: "foobar",
+      ...getFlatMap('foobar', 1, 3, 0),
+      name: 'foobar',
       version: 1,
       tps: 2,
-      landColor: 4215094,
-      edgeColor: 7311936,
-      cliffColor: 3550758,
-      waterColor: 5484770,
       sunColor: 13421772,
       zScale: 0.2,
       size: 1,
@@ -20,143 +18,144 @@ export const damageTestLog: (ServerEvent | FrontendEvent)[] = [
       grid: [
         [
           {
+            biomes: getFlatMap('foobar', 1, 3, 0).grid[0][0].biomes,
             x: 0,
             y: 0,
             grid: [
               [[1, 1, 1, 1], [2, 2, 2, 2], [2, 2, 2, 2]],
               [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
-              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]]
-            ]
-          }
-        ]
-      ]
-    }
+              [[2, 2, 2, 2], [2, 2, 2, 2], [2, 2, 2, 2]],
+            ],
+          },
+        ],
+      ],
+    },
   },
   {
-    kind: "defineUnit",
+    kind: 'defineUnit',
     unit: {
-      type: "tank",
+      type: 'tank',
       size: 1,
       buildTime: 10,
       cost: 100,
       maxHealth: 200,
-      layer: "ground",
+      layer: 'ground',
       graphical: {
-        model: "LightTankLvl1"
+        model: 'LightTankLvl1',
       },
       move: {
-        cooldown: 1
-      }
-    }
+        cooldown: 1,
+      },
+    },
   },
   {
-    kind: "defineUnit",
+    kind: 'defineUnit',
     unit: {
-      type: "ltank2",
+      type: 'ltank2',
       size: 1,
       buildTime: 10,
       cost: 100,
       maxHealth: 200,
-      layer: "ground",
+      layer: 'ground',
       graphical: {
-        model: "LightTankLvl2"
+        model: 'LightTankLvl2',
       },
       move: {
-        cooldown: 2
-      }
-    }
+        cooldown: 2,
+      },
+    },
   },
   {
-    kind: "defineUnit",
+    kind: 'defineUnit',
     unit: {
-      type: "ltank3",
+      type: 'ltank3',
       size: 1,
       buildTime: 10,
       cost: 100,
       maxHealth: 200,
-      layer: "ground",
+      layer: 'ground',
       graphical: {
-        model: "LightTankLvl3"
+        model: 'LightTankLvl3',
       },
       move: {
-        cooldown: 3
-      }
-    }
+        cooldown: 3,
+      },
+    },
   },
   {
-    kind: "defineUnit",
+    kind: 'defineUnit',
     unit: {
-      type: "htank3",
+      type: 'htank3',
       size: 1,
       buildTime: 10,
       cost: 100,
       maxHealth: 200,
-      layer: "ground",
+      layer: 'ground',
       graphical: {
-        model: "HeavyTankLvl3"
+        model: 'HeavyTankLvl3',
       },
       move: {
-        cooldown: 3
-      }
-    }
+        cooldown: 3,
+      },
+    },
   },
   {
-    kind: "editorMode",
-    selection: "newUnit",
-    user: "red",
-    unitType: "ltank3"
+    kind: 'editorMode',
+    selection: 'newUnit',
+    user: 'red',
+    unitType: 'ltank3',
   },
   {
-    kind: "newUnit",
+    kind: 'newUnit',
     unit: {
-      uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-      type: "ltank3",
-      facing: "E",
+      uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+      type: 'ltank3',
+      facing: 'E',
       size: 1,
-      loc: "1:1",
-      color: "red",
-      map: "test",
-      moveCooldown: 0
-    }
+      loc: '1:1',
+      color: 'red',
+      map: 'test',
+      moveCooldown: 0,
+    },
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 10
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 10,
   },
   {
-    kind: "damageUnit",
-    uuid: "1d5a8002-6c64-480e-b3f3-d14fd0517a9a",
-    amount: 1000
-  }
+    kind: 'damageUnit',
+    uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
+    amount: 1000,
+  },
 ] as any;
