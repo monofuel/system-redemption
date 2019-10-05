@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import { loadAsyncElements, loadElements } from './elements';
 import { info } from './logging';
 

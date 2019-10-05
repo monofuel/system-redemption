@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import { initWeb } from './http';
 import { error } from './logging';
 

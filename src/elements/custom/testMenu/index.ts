@@ -3,7 +3,6 @@ import { LitElement, html } from 'lit-element';
 
 export class TestMenuElement extends LitElement {
   render() {
-    console.log('foo');
     return html`
     <aside class="menu"></aside>
     <ul class="menu-list">

@@ -10,10 +10,14 @@
     ]
   },
   "scripts": {
-    "server": "ts-node src/server.ts",
+    "server": "node build/server/server.js",
+    "server:ts": "ts-node src/server.ts",
+    "server:nodemon": "BASE_DIR='./' nodemon build/server/server.js",
     "build": "concurrently 'yarn build:client' 'yarn build:server'",
     "build:client": "webpack --debug",
-    "build:server": "tsc",
+    "build:server": "yarn build:swagger; tsc; yarn build:static",
+    "build:swagger": "tsoa swagger && tsoa routes",
+    "build:static": "node build/server/static/index.js",
     "watch": "concurrently 'yarn watch:client' 'yarn watch:server'",
     "watch:client": "webpack --debug -w",
     "watch:server": "tsc -w",
@@ -59,7 +63,7 @@
     "mocha": "^6.2.0",
     "ncp": "^2.0.0",
     "node-sass": "^4.11.0",
-    "nodemon": "^1.18.9",
+    "nodemon": "^1.19.3",
     "sass-loader": "^8.0.0",
     "sinon": "^7.4.2",
     "style-loader": "^1.0.0",
@@ -76,6 +80,7 @@
     "zip-dir": "^1.0.2"
   },
   "dependencies": {
+    "bootstrap": "^4.3.1",
     "bulma": "^0.7.4",
     "convict": "^5.1.0",
     "express": "^4.16.4",
@@ -83,7 +88,9 @@
     "html-loader": "^0.5.5",
     "lit-element": "^2.2.1",
     "lodash": "^4.17.11",
+    "source-map-support": "^0.5.13",
     "three": "^0.99.0",
+    "tsoa": "^2.5.3",
     "uuid": "^3.3.2"
   }
 }

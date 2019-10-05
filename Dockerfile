@@ -1,4 +1,4 @@
-FROM node:8-alpine as builder
+FROM node:10-alpine as builder
 # HACK update node version
 
 RUN mkdir /sr
@@ -31,7 +31,7 @@ ADD . /sr
 RUN yarn prepare:client
 RUN yarn build
 
-FROM node:8-alpine
+FROM node:10-alpine
 
 RUN mkdir /sr
 ADD ./package.json /sr

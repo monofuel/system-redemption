@@ -7,6 +7,7 @@ import { UITestElement } from './uiTest';
 import { LoadingBarElement } from './loadingBar';
 import { TestMenuElement } from './testMenu';
 import { LitElement } from 'lit-element';
+import { MapEditorControlsElement } from './mapEditorControls';
 
 const events: { [key: string]: new () => CustomElement | LitElement } = {
   'log-editor': LogEditorElement,
@@ -16,6 +17,7 @@ const events: { [key: string]: new () => CustomElement | LitElement } = {
   'ui-test': UITestElement,
   'loading-bar': LoadingBarElement,
   'test-menu': TestMenuElement,
+  'map-editor-controls': MapEditorControlsElement,
 };
 
 export default events;

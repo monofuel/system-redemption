@@ -1,0 +1,18 @@
+{
+  "swagger": {
+    "outputDirectory": "./src/controllers/gen",
+    "entryFile": "./src/server.ts",
+    "host": "localhost:3000",
+    "basePath": "/",
+    "noImplicitAdditionalProperties": "silently-remove-extras",
+    "yaml": false,
+    "specVersion": 3
+  },
+  "routes": {
+    "basePath": "/",
+    "entryFile": "./src/server.ts",
+    "routesDir": "./src/controllers/gen",
+    "middleware": "express",
+    "controllerPathGlobs": ["./src/controllers/*"]
+  }
+}

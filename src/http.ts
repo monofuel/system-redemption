@@ -3,9 +3,11 @@ import http from 'http';
 import path from 'path';
 import * as ws from 'ws';
 import ExpressWS from 'express-ws';
+import * as bodyParser from 'body-parser';
 import { info } from './logging';
 import { parseQueryOpts, newGameMatch, getMatch } from './matchMaker';
 import config from './config';
+import { RegisterRoutes } from './controllers/gen/routes';
 
 const hostname = config.get('ip');
 const port = config.get('port');
@@ -18,6 +20,10 @@ export async function initWeb() {
 
   const app = express();
   ExpressWS(app);
+
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
+
   app.use(express.static(path.join(basePath, 'public')));
   app.use('/scripts/static/', express.static(path.join(basePath, 'build/client'), { maxAge: 1000 * 60 * 60 }));
   app.use('/scripts/', express.static(path.join(basePath, 'build/client')));
@@ -35,6 +41,8 @@ export async function initWeb() {
       newGameMatch(w);
     }
   });
+
+  RegisterRoutes(app);
 
   return new Promise((resolve, reject) => {
     server = app.listen(port, hostname, (err?: Error) => {

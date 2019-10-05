@@ -6,3 +6,5 @@ yarn-error.log
 
 log/
 retry/
+src/controllers/gen
+public/gen
