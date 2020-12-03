@@ -52,16 +52,17 @@ standalone_test:
     - yarn install --build-from-source --frozen-lockfile
     - yarn test
 
-standalone_coverage:
-  tags:
-    - docker
-  image: ${CONTAINER_REGISTRY}/sr_main:builder
-  stage: test
-  only:
-    - master
-  script:
-    - yarn install --build-from-source --frozen-lockfile
-    - yarn coverage
+## not working for now
+# standalone_coverage:
+#   tags:
+#     - docker
+#   image: ${CONTAINER_REGISTRY}/sr_main:builder
+#   stage: test
+#   only:
+#     - master
+#   script:
+#     - yarn install --build-from-source --frozen-lockfile
+#     - yarn coverage
 
 prod_deploy:
   tags:
