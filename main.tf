@@ -11,7 +11,7 @@ terraform {
 
 provider "aws" {
 	profile = "default"
-	region = "${var.aws_region}"
+	region = var.aws_region
 }
 
 resource "aws_vpc" "sr" {
@@ -19,7 +19,7 @@ resource "aws_vpc" "sr" {
 }
 
 resource "aws_subnet" "main" {
-  vpc_id     = "${aws_vpc.sr.id}"
+  vpc_id     = aws_vpc.sr.id
   cidr_block = "10.5.1.0/24"
 
   tags = {
@@ -28,20 +28,20 @@ resource "aws_subnet" "main" {
 }
 
 resource "aws_internet_gateway" "sr" {
-  vpc_id = "${aws_vpc.sr.id}"
+  vpc_id = aws_vpc.sr.id
 }
 
 # Grant the VPC internet access on its main route table
 resource "aws_route" "internet_access" {
-  route_table_id         = "${aws_vpc.sr.main_route_table_id}"
+  route_table_id         = aws_vpc.sr.main_route_table_id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = "${aws_internet_gateway.sr.id}"
+  gateway_id             = aws_internet_gateway.sr.id
 }
 
 resource "aws_security_group" "sr" {
     name = "sr"
     description = "Allows all traffic"
-    vpc_id = "${aws_vpc.sr.id}"
+    vpc_id = aws_vpc.sr.id
 
   # HTTP access from the VPC
   ingress {
@@ -142,7 +142,7 @@ data "aws_iam_policy_document" "instance_policy" {
     ]
 
     resources = [
-      "${aws_cloudwatch_log_group.instance.arn}",
+      aws_cloudwatch_log_group.instance.arn,
     ]
   }
 }
@@ -155,7 +155,7 @@ resource "aws_cloudwatch_log_group" "sr" {
 resource "aws_iam_policy" "instance_policy" {
   name   = "${var.name}-ecs-instance"
   path   = "/"
-  policy = "${data.aws_iam_policy_document.instance_policy.json}"
+  policy = data.aws_iam_policy_document.instance_policy.json
 }
 
 resource "aws_iam_role" "instance" {
@@ -179,28 +179,28 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_policy" {
-  role       = "${aws_iam_role.instance.name}"
+  role       = aws_iam_role.instance.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
 }
 
 resource "aws_iam_role_policy_attachment" "instance_policy" {
-  role       = "${aws_iam_role.instance.name}"
-  policy_arn = "${aws_iam_policy.instance_policy.arn}"
+  role       = aws_iam_role.instance.name
+  policy_arn = aws_iam_policy.instance_policy.arn
 }
 
 resource "aws_iam_instance_profile" "instance" {
   name = "${var.name}-instance-profile"
-  role = "${aws_iam_role.instance.name}"
+  role = aws_iam_role.instance.name
 }
 
 resource "aws_ecs_service" "sr" {
   name          = "sr"
-  cluster       = "${aws_ecs_cluster.sr.id}"
+  cluster       = aws_ecs_cluster.sr.id
   desired_count = 1
   launch_type = "EC2"
   # iam_role        = "${aws_iam_role.svc.arn}"
 
-  task_definition = "${aws_ecs_task_definition.sr.arn}"
+  task_definition = aws_ecs_task_definition.sr.arn
 
   deployment_maximum_percent = 100
   deployment_minimum_healthy_percent = 0
@@ -208,17 +208,17 @@ resource "aws_ecs_service" "sr" {
 }
 
 data "template_file" "user_data" {
-  template = "${file("${path.module}/user_data.sh")}"
+  template = file("${path.module}/user_data.sh")
 
   vars = {
-    ecs_cluster                 = "${aws_ecs_cluster.sr.id}"
-    log_group                   = "${aws_cloudwatch_log_group.instance.name}"
+    ecs_cluster                 = aws_ecs_cluster.sr.id
+    log_group                   = aws_cloudwatch_log_group.instance.name
   }
 }
 
 resource "aws_cloudwatch_log_group" "instance" {
-  name = "${var.instance_log_group != "" ? var.instance_log_group : format("%s-instance", var.name)}"
-  tags = "${merge(var.tags, map("Name", format("%s", var.name)))}"
+  name = var.instance_log_group != "" ? var.instance_log_group : format("%s-instance", var.name)
+  tags = merge(var.tags, map("Name", format("%s", var.name)))
 }
 
 resource "aws_instance" "leader" {
@@ -226,23 +226,23 @@ resource "aws_instance" "leader" {
   instance_type = "t2.small"
   key_name = "sr_key"
 
-  vpc_security_group_ids = ["${aws_security_group.sr.id}"]
-  subnet_id = "${aws_subnet.main.id}"
-  iam_instance_profile = "${aws_iam_instance_profile.instance.name}"
+  vpc_security_group_ids = [aws_security_group.sr.id]
+  subnet_id = aws_subnet.main.id
+  iam_instance_profile = aws_iam_instance_profile.instance.name
 
-  user_data            = "${data.template_file.user_data.rendered}"
+  user_data            = data.template_file.user_data.rendered
 
 
 }
 
 resource "aws_eip" "sr-ip" {
-  instance = "${aws_instance.leader.id}"
+  instance = aws_instance.leader.id
   vpc      = true
 }
 
 resource "aws_key_pair" "sr" {
 	key_name = "sr_key"
-  public_key = "${var.public_key}"
+  public_key = var.public_key
 }
 
 resource "linode_domain" "monofuel-dev" {
@@ -252,18 +252,18 @@ resource "linode_domain" "monofuel-dev" {
 }
 
 resource "linode_domain_record" "sr" {
-  domain_id   = "${linode_domain.monofuel-dev.id}"
+  domain_id   = linode_domain.monofuel-dev.id
   name        = "sr"
   record_type = "A"
-  target      = "${aws_instance.leader.public_ip}"
+  target      = aws_instance.leader.public_ip
   ttl_sec     = 3600
 }
 
 resource "linode_domain_record" "srcf" {
-  domain_id   = "${linode_domain.monofuel-dev.id}"
+  domain_id   = linode_domain.monofuel-dev.id
   name        = "srcf"
   record_type = "CNAME"
-  target      = "${aws_cloudfront_distribution.sr_distribution.domain_name}"
+  target      = aws_cloudfront_distribution.sr_distribution.domain_name
   ttl_sec     = 3600
 }
 
@@ -288,14 +288,14 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "svc" {
-  role       = "${aws_iam_role.svc.name}"
+  role       = aws_iam_role.svc.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole"
 }
 
 resource "aws_cloudwatch_log_group" "svc" {
-  count = "${length(var.log_groups)}"
-  name  = "${element(var.log_groups, count.index)}"
-  tags  = "${merge(var.tags, map("Name", format("%s", var.name)))}"
+  count = length(var.log_groups)
+  name  = element(var.log_groups, count.index)
+  tags  = merge(var.tags, map("Name", format("%s", var.name)))
 }
 
 
