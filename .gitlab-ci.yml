@@ -68,7 +68,7 @@ prod_deploy:
   tags:
     - docker
   image:
-    name: hashicorp/terraform
+    name: hashicorp/terraform:0.12.29
     entrypoint: ['']
   stage: deploy
   only:
