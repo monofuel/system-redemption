@@ -28,8 +28,8 @@ standalone_build:
       - rts-assets/
       - ShaderParticleEngine
       #- node_modules/
-  tags:
-    - docker
+  # tags:
+  #   - docker
   stage: build
   script:
     - docker info
@@ -44,8 +44,8 @@ standalone_build:
     - docker push ${CONTAINER_REGISTRY}/sr_main:builder
 
 standalone_test:
-  tags:
-    - docker
+  # tags:
+  #   - docker
   stage: test
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
@@ -65,8 +65,8 @@ standalone_test:
 #     - yarn coverage
 
 prod_deploy:
-  tags:
-    - docker
+  # tags:
+  #   - docker
   image:
     name: hashicorp/terraform:0.12.29
     entrypoint: ['']
