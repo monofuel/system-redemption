@@ -36,7 +36,7 @@ export async function initWeb() {
     }
   });
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     server = app.listen(port, hostname, (err?: Error) => {
       if (err) {
         return reject(err);
@@ -52,7 +52,7 @@ export function getURL() {
 }
 
 export async function shutdownWeb() {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     server.close((err?: Error) => {
       if (err) {
         return reject(err);

@@ -1,8 +1,8 @@
-FROM node:12-alpine as builder
+FROM node:14-alpine as builder
 
 RUN mkdir /sr
-ADD ./package.json /sr
-ADD ./yarn.lock /sr
+
+# nb. I forgot what all these deps were for, should document
 RUN apk --no-cache add \
         python \
         make \
@@ -20,17 +20,20 @@ RUN apk --no-cache add \
         cairo \
         pango \
         giflib
-# hack - cache node_modules in CI and include it in the container to improve performance
-# disabled for now as it had issues in prod
+# TODO - cache node_modules in CI and include it in the container to improve performance
 # ADD ./node_modules /sr/node_modules
+
 WORKDIR /sr
+ADD ./package.json /sr
+ADD ./yarn.lock /sr
+
 RUN yarn install --build-from-source --frozen-lockfile  && yarn cache clean
 ADD . /sr
 
 RUN yarn prepare:client
 RUN yarn build
 
-FROM node:12-alpine
+FROM node:14-alpine
 
 RUN mkdir /sr
 ADD ./package.json /sr

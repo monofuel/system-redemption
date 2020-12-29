@@ -28,3 +28,40 @@ now on AWS ECS with 50% more uptime or something!
 
 - https://bulma.io/documentation/overview/start/
 - https://jenil.github.io/bulmaswatch/solar/
+
+
+## Dev Dependencies
+
+Dev dependencies are used in the build process, and for webpack building the frontend js bundle
+
+- `fortawesome/fontawesome-free` 
+  - used for symbols / buttons
+- chai
+  - can migrate to jest https://jestjs.io/docs/en/migration-guide
+  - familiar from previous jobs
+- convict
+  - server config management
+- dat.gui
+  - dev tools
+- express
+  - used for HTTP
+- express-ws
+  - used for connection to server
+- jsdom
+  - used for jest testing
+- jszip
+  - used in build process to create asset bundle
+- lodash
+  - useful functions
+- ncp
+  - copy directories in build process
+- three
+  - 3D js library
+- uuid
+  - generate server uuids
+- TODO document rest
+
+
+# Dependencies
+
+used for server-side runtime dependencies
