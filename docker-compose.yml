@@ -14,6 +14,19 @@ services:
       - '3000:3000'
     environment:
       IP_ADDRESS: 0.0.0.0
+  dev:
+    build:
+      context: .
+      target: builder
+    restart: always
+    command: ash -c 'yarn install --build-from-source --frozen-lockfile && yarn watch'
+    volumes:
+      - ./:/sr
+      - ./node_modules
+    ports:
+      - '3000:3000'
+    environment:
+      IP_ADDRESS: 0.0.0.0
   deploy:
     image: hashicorp/terraform:0.13.5
     entrypoint: /bin/ash
