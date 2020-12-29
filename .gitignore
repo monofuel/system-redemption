@@ -4,5 +4,7 @@ build
 yarn-error.log
 .vagrant
 
+.secrets.sh
+
 log/
 retry/
