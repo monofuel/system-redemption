@@ -43,10 +43,6 @@ Dev dependencies are used in the build process, and for webpack building the fro
   - server config management
 - dat.gui
   - dev tools
-- express
-  - used for HTTP
-- express-ws
-  - used for connection to server
 - jsdom
   - used for jest testing
 - jszip
@@ -57,11 +53,16 @@ Dev dependencies are used in the build process, and for webpack building the fro
   - copy directories in build process
 - three
   - 3D js library
-- uuid
-  - generate server uuids
 - TODO document rest
 
 
 # Dependencies
 
 used for server-side runtime dependencies
+
+- express
+  - used for HTTP
+- express-ws
+  - used for connection to server
+- uuid
+  - generate server uuids

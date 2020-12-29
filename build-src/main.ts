@@ -5,7 +5,7 @@ import JSZip from "jszip";
 const zipdir = require("zip-dir");
 
 async function copyDir(source: string, destination: string, options: Options) {
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     ncp(source, destination, options, (err: Error) => {
       if (err) {
         reject(err);
@@ -113,7 +113,7 @@ async function packageAssets() {
 
   const folders = [/gltf/];
 
-  await new Promise((resolve, reject) => {
+  await new Promise<void>((resolve, reject) => {
     zipdir(
       "./rts-assets/",
       {
