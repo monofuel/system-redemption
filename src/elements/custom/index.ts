@@ -7,6 +7,8 @@ import { UITestElement } from './uiTest';
 import { LoadingBarElement } from './loadingBar';
 import { TestMenuElement } from './testMenu';
 import { LitElement } from 'lit-element';
+import { PlanefrontUITestElement } from './planefront/ui';
+import { DPadElement } from './dpad';
 
 const events: { [key: string]: new () => CustomElement | LitElement } = {
   'log-editor': LogEditorElement,
@@ -16,6 +18,8 @@ const events: { [key: string]: new () => CustomElement | LitElement } = {
   'ui-test': UITestElement,
   'loading-bar': LoadingBarElement,
   'test-menu': TestMenuElement,
+  'planefront-test-menu': PlanefrontUITestElement,
+  'd-pad': DPadElement,
 };
 
 export default events;
