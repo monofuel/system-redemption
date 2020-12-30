@@ -11,6 +11,7 @@
   },
   "scripts": {
     "server": "ts-node src/server.ts",
+    "server:watch": "nodemon build/server/server.js",
     "build": "concurrently 'yarn build:client' 'yarn build:server'",
     "build:client": "webpack --debug",
     "build:server": "tsc",
@@ -63,6 +64,7 @@
     "madge": "^3.4.2",
     "ncp": "^2.0.0",
     "node-sass": "^4.11.0",
+    "nodemon": "^2.0.6",
     "sass-loader": "^8.0.0",
     "style-loader": "^1.0.0",
     "three": "^0.99.0",

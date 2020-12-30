@@ -19,12 +19,14 @@ services:
       context: .
       target: builder
     restart: always
-    command: ash -c 'yarn install --build-from-source --frozen-lockfile && yarn watch'
+    # NB. run `yarn watch` locally to update code
+    command: ash -c 'yarn install --build-from-source --frozen-lockfile && yarn server:watch'
     volumes:
       - ./:/sr
-      - ./node_modules
+      - /sr/node_modules
     ports:
       - '3000:3000'
+      # TODO debugger
     environment:
       IP_ADDRESS: 0.0.0.0
   deploy:
