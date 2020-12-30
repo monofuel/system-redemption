@@ -25,6 +25,7 @@ const config = convict({
     doc: 'project root directory (may be different for js and ts files)',
     default: path.join(__dirname, '../'),
     env: 'BASE_DIR',
+    arg: 'baseDir'
   },
 });
 

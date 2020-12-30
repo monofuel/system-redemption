@@ -11,7 +11,7 @@
   },
   "scripts": {
     "server": "ts-node src/server.ts",
-    "server:watch": "nodemon build/server/server.js",
+    "server:watch": "nodemon build/server/server.js --baseDir .",
     "build": "concurrently 'yarn build:client' 'yarn build:server'",
     "build:client": "webpack --debug",
     "build:server": "tsc",
