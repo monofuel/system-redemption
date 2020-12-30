@@ -49,7 +49,7 @@ standalone_test:
   stage: test
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
-    - yarn install --build-from-source --frozen-lockfile
+    # - yarn install --build-from-source --frozen-lockfile
     - yarn test
 
 ## not working for now
