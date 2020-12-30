@@ -27,7 +27,7 @@ WORKDIR /sr
 ADD ./package.json /sr
 ADD ./yarn.lock /sr
 
-RUN yarn install --build-from-source --frozen-lockfile  && yarn cache clean
+RUN yarn install --frozen-lockfile  && yarn cache clean
 ADD . /sr
 
 RUN yarn prepare:client

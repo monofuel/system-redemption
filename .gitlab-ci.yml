@@ -10,12 +10,6 @@ variables:
 services:
   - docker:dind
 
-#before_script:
-#  - docker info
-# - ls rts-assets/
-# - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN ${CONTAINER_REGISTRY}
-# TODO pull docker image for caching and use cache-from
-
 stages:
   - build
   - test
@@ -49,10 +43,11 @@ standalone_test:
   stage: test
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
-    # - yarn install --build-from-source --frozen-lockfile
+    # TODO should be already in docker image, not sure why
+    - yarn install --build-from-source --frozen-lockfile
     - yarn test
 
-## not working for now
+## TODO not working for now
 # standalone_coverage:
 #   tags:
 #     - docker
