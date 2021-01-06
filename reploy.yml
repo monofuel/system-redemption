@@ -3,8 +3,7 @@ cache:
     path: node_modules
 services:
   backend:
-    runtime: node
-    # TODO use gitlab image?
+    image: registry.gitlab.com/monofuel34089/system-redemption/sr_main:builder
     port: 3000
     build:
       - yarn install --frozen-lockfile --prefer-offline
