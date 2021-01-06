@@ -25,7 +25,6 @@ now on AWS ECS with 50% more uptime or something!
 - check in vscode plugin recommendations
 - work out generating public/ files?
 
-
 ## UI
 
 - https://bulma.io/documentation/overview/start/
