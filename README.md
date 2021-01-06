@@ -20,9 +20,11 @@ now on AWS ECS with 50% more uptime or something!
 - `yarn server`
   - start local server at http://localhost:3000
 
-## Recommended VSCode Plugins
+# TODO
 
-- tslint
+- check in vscode plugin recommendations
+- work out generating public/ files?
+
 
 ## UI
 
