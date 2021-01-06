@@ -7,7 +7,9 @@ services:
       # copy existing node_modules from image to current dir
       - cp -r /sr/node_modules .
       - yarn install --frozen-lockfile --prefer-offline
-      - yarn build
+      - yarn prepare:client
+      - yarn build:server
+      - yarn build:client
     serve:
       - yarn run server
     health: /
