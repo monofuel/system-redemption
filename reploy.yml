@@ -1,13 +1,12 @@
-# cache:
-#   - file: yarn.lock
-#     path: node_modules
+cache:
+  - file: yarn.lock
+    path: node_modules
 services:
   backend:
     image: registry.gitlab.com/monofuel34089/system-redemption/sr_main:builder
     port: 3000
     build:
-      # node_modules is already in image
-      #- yarn install --frozen-lockfile --prefer-offline
+      - yarn install --frozen-lockfile --prefer-offline
       - yarn build
     serve:
       - yarn run server
