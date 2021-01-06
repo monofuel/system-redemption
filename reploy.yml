@@ -6,6 +6,10 @@ services:
       - ls -la /sr/
       # copy existing node_modules from image to current dir
       - cp -r /sr/node_modules .
+      # copy over submodules
+      - cp -r /sr/ShaderParticleEngine .
+      - cp -r /sr/rts-assets .
+      - cp -r /sr/bulmaswatch .
       - yarn install --frozen-lockfile --prefer-offline
       - yarn prepare:client
       - yarn build:server
