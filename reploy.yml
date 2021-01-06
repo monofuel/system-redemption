@@ -1,6 +1,6 @@
-cache:
-  - file: yarn.lock
-    path: node_modules
+# cache:
+#   - file: yarn.lock
+#     path: node_modules
 services:
   backend:
     image: registry.gitlab.com/monofuel34089/system-redemption/sr_main:builder
