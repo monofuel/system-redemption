@@ -1,11 +1,13 @@
-cache:
-    - path: node_modules
+# cache:
+#     - path: node_modules
 services:
   backend:
     runtime: node
+    # TODO use gitlab image?
     port: 3000
     build:
       - yarn install --frozen-lockfile
       - yarn build
     serve:
       - yarn run server
+    health: /
