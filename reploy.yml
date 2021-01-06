@@ -2,7 +2,6 @@ services:
   backend:
     runtime: node
     port: 3000
-    path: backend
     build:
       - yarn install --frozen-lockfile
       - yarn build
