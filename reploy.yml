@@ -6,7 +6,8 @@ services:
     image: registry.gitlab.com/monofuel34089/system-redemption/sr_main:builder
     port: 3000
     build:
-      - yarn install --frozen-lockfile --prefer-offline
+      # node_modules is already in image
+      #- yarn install --frozen-lockfile --prefer-offline
       - yarn build
     serve:
       - yarn run server
