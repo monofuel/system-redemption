@@ -4,6 +4,7 @@ services:
     port: 3000
     build:
       - ls -la /sr/
+      - ls
       # copy existing node_modules from image to current dir
       - cp -r /sr/node_modules .
       # copy over submodules
