@@ -15,6 +15,7 @@ services:
     environment:
       IP_ADDRESS: 0.0.0.0
   dev:
+    image: registry.gitlab.com/monofuel34089/system-redemption/sr_main:builder
     build:
       context: .
       target: builder

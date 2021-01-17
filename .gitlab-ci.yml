@@ -41,12 +41,11 @@ standalone_test:
   # tags:
   #   - docker
   stage: test
-  image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
-    # TODO should be already in docker image, not sure why
-    #- yarn install --build-from-source --frozen-lockfile
-    - yarn lint
-    - yarn test
+    - docker pull ${CONTAINER_REGISTRY}/sr_main:latest || true
+    - docker pull ${CONTAINER_REGISTRY}/sr_main:builder || true
+    - docker-compose run dev yarn lint
+    - docker-compose run dev yarn test
 
 ## TODO not working for now
 # standalone_coverage:
