@@ -31,7 +31,7 @@ services:
     environment:
       IP_ADDRESS: 0.0.0.0
   deploy:
-    image: hashicorp/terraform:0.13.5
+    image: hashicorp/terraform:0.14.4
     entrypoint: /bin/ash
     volumes:
       - ./:/sr
