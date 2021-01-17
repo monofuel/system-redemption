@@ -79,7 +79,8 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, As
     let current = 0;
 
     const manager = new LoadingManager();
-
+    
+    // @ts-ignore
     const zipLoader = new THREE.ZipLoader();
     const zip = await zipLoader.load(ASSET_ZIP);
     manager.setURLModifier(zip.urlResolver);

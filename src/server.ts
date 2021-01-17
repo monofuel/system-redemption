@@ -6,6 +6,7 @@ async function init() {
     error('unhandled rejection', { err: JSON.stringify(err) });
   });
 
+  // @ts-ignore
   global.window = {};
   await initWeb();
 }
