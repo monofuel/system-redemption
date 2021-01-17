@@ -22,7 +22,7 @@ export class DPadElement extends CustomElement {
 
     // attach default handlers
     for (const d in DPAD_DIR) {
-      this.setHandler(d, () => {
+      this.setHandler(d as any, () => {
         console.log(`dpad dir ${d}`)
       })
     }
