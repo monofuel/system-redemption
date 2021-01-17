@@ -2,10 +2,11 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
-    node: true
+    node: true,
+    jest: true
   },
   extends: [
-    'standard'
+    'eslint:recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -16,5 +17,6 @@ module.exports = {
     '@typescript-eslint'
   ],
   rules: {
+    'no-unused-vars': 0 // TODO warn
   }
 }

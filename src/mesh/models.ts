@@ -1,3 +1,4 @@
+/* global THREE */
 import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color, Vector3 } from "three";
 import { GameColors, ModelType } from "../types/SR";
 
@@ -78,7 +79,7 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, As
     let current = 0;
 
     const manager = new LoadingManager();
-    // @ts-ignore
+
     const zipLoader = new THREE.ZipLoader();
     const zip = await zipLoader.load(ASSET_ZIP);
     manager.setURLModifier(zip.urlResolver);

@@ -162,6 +162,7 @@ export class MapEditorElement extends PlanetElement {
           }
           return;
         case EditorSelection.removeUnit:
+          // eslint-disable-next-line
           const uuid = this.getUnitAtMouse(ev);
           if (uuid) {
             this.ctx.post({
@@ -169,6 +170,7 @@ export class MapEditorElement extends PlanetElement {
               uuid
             });
           }
+          // eslint-disable-next-line
         case EditorSelection.clear:
         default:
           return;

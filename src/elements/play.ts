@@ -1,3 +1,5 @@
+
+/* global THREE */
 import { PlanetElement } from "./planet";
 import { OrbitControls, MOUSE, Vector2, Vector3 } from "three";
 import { onTick, UpdateLoop } from "../events/serverContext";

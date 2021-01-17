@@ -3,4 +3,6 @@ declare module "*.html" {
   export default content;
 }
 
-type ValueOf<T> = T[keyof T];
+// type ValueOf<T> = T[keyof T];
+
+/* global THREE */

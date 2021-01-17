@@ -1,7 +1,7 @@
 import fs, { Stats } from "fs";
 import { ncp, Options } from "ncp";
 import JSZip from "jszip";
-// @ts-ignore
+
 const zipdir = require("zip-dir");
 
 async function copyDir(source: string, destination: string, options: Options) {

@@ -105,6 +105,7 @@ export class LandControlsElement extends CustomElement {
   private updatePlaceUnit() {}
 
   private getButtons() {
+    // eslint-disable-next-line
     const buttons: NodeListOf<HTMLSpanElement> = document.querySelectorAll(
       "land-controls .button"
     );

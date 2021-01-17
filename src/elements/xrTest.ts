@@ -1,3 +1,4 @@
+/* global THREE */
 import { ThreeSceneElement } from "./threeScene";
 import {
   DirectionalLight,
@@ -10,7 +11,6 @@ import {
 import { PlanetElement } from "./planet";
 
 export async function getXRTestElement() {
-  // @ts-ignore
   if (!THREE.WebXRUtils) {
     console.log("three.xr.js not detected, skipping");
     return undefined;
@@ -40,7 +40,6 @@ export async function getXRTestElement() {
         AR_AUTOSTART: false
       };
 
-      // @ts-ignore
       this.renderer.xr = new THREE.WebXRManager(
         options,
         displays,
@@ -51,19 +50,17 @@ export async function getXRTestElement() {
       );
 
       // Listen when a session is started or stopped
-      // @ts-ignore
       this.renderer.xr.addEventListener(
         "sessionStarted",
         this.sessionStarted.bind(this)
       );
-      // @ts-ignore
+
       this.renderer.xr.addEventListener(
         "sessionEnded",
         this.sessionEnded.bind(this)
       );
 
       // Auto start if only has one AR display supported
-      // @ts-ignore
       if (!this.renderer.xr.autoStarted) {
         // Add as many buttons as there are displays that can be started
         this.addEnterButtons();
@@ -94,7 +91,6 @@ export async function getXRTestElement() {
       s.classList.add("ui-button");
       s.innerText = "Enter VR";
       s.onclick = () => {
-        // @ts-ignore
         this.renderer.xr.startPresenting();
 
         // NB. the vr camera seems to stay at 0,0, so move the map over.
@@ -104,25 +100,23 @@ export async function getXRTestElement() {
         }
         mapObj.position.set(-1, -1, -1);
       };
-      // @ts-ignore
       s.ontouchend = s.onclick;
       d.appendChild(s);
       this.uiWrapper.appendChild(d);
       this.vrButton = d;
     }
 
-    addARButton() {
+    addARButton(display: any) {
       const d = document.createElement("div");
       d.classList.add("ui-leftbar");
       const s = document.createElement("span");
       s.classList.add("ui-button");
       s.innerText = "Enter AR";
       s.onclick = () => {
-        // @ts-ignore
+
         this.renderer.xr.startSession(display, "ar", true);
       };
-      // @ts-ignore
-      s.ontouchend = s.onclick;
+            s.ontouchend = s.onclick;
       d.appendChild(s);
       this.uiWrapper.appendChild(d);
       this.arButton = d;
@@ -141,7 +135,7 @@ export async function getXRTestElement() {
         if (display.supportedRealities.ar) {
           console.log("DETECTED AR");
           if (!this.arButton) {
-            this.addARButton();
+            this.addARButton(display);
           }
         }
       }
@@ -151,7 +145,7 @@ export async function getXRTestElement() {
 
 async function getDisplays(): Promise<any> {
   return new Promise(resolve => {
-    // @ts-ignore
+
     return THREE.WebXRUtils.getDisplays().then(resolve);
   });
 }

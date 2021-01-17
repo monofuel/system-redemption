@@ -50,9 +50,9 @@ export function updateGraphicalComponent(
     comp.speTime! += delta;
     if (comp.speTime > 1000) {
       comp.mesh.remove(comp.speGroup.mesh);
-      // @ts-ignore
+
       for (const emitter of comp.speGroup.emitters) {
-        // @ts-ignore
+
         comp.speGroup.removeEmitter(emitter);
       }
       comp.speGroup.dispose();

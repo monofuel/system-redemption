@@ -140,7 +140,6 @@ export class ThreeSceneElement extends HTMLElement {
   }
 
   protected render() {
-    // @ts-ignore
     if (this.renderer.xr && this.renderer.xr.sessionActive) {
       return;
     }

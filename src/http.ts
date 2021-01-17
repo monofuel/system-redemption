@@ -22,7 +22,6 @@ export async function initWeb() {
   app.use('/scripts/static/', express.static(path.join(basePath, 'build/client'), { maxAge: 1000 * 60 * 60 }));
   app.use('/scripts/', express.static(path.join(basePath, 'build/client')));
 
-  // @ts-ignore
   app.ws('/ws', (w: ws, req: Request) => {
     console.log('new socket');
     console.log(req.url);
