@@ -50,7 +50,6 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^4.1.0",
-    "convict": "^5.1.0",
     "coveralls": "^3.0.6",
     "css-loader": "^3.2.0",
     "dat.gui": "^0.7.3",
@@ -87,6 +86,7 @@
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
     "lodash": "^4.17.11",
+    "convict": "^5.1.0",
     "uuid": "^3.3.2"
   }
 }
