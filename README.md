@@ -4,6 +4,8 @@
 
 now on AWS ECS with 50% more uptime or something!
 
+Umbrella project for html5 game experiments
+
 ## Setup
 
 - run `yarn build` then `yarn server`
