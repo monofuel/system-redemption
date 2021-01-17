@@ -1,3 +1,26 @@
 .dpad {
     
 }
+
+$nudge: 1.3em;
+
+#up {
+    position: relative;
+    bottom: $nudge;
+}
+
+#down {
+    position: relative;
+    top: $nudge;
+    left: -$nudge;
+}
+
+#left {
+    position: relative;
+    right: 0;
+}
+
+#right {
+    position: relative;
+    left: -$nudge;
+}
