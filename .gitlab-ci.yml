@@ -44,7 +44,7 @@ standalone_test:
   image: ${CONTAINER_REGISTRY}/sr_main:builder
   script:
     # TODO should be already in docker image, not sure why
-    - yarn install --build-from-source --frozen-lockfile
+    #- yarn install --build-from-source --frozen-lockfile
     - yarn lint
     - yarn test
 
