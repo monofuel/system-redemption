@@ -45,6 +45,7 @@ standalone_test:
   script:
     # TODO should be already in docker image, not sure why
     - yarn install --build-from-source --frozen-lockfile
+    - yarn lint
     - yarn test
 
 ## TODO not working for now
