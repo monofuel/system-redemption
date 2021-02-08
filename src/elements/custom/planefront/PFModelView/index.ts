@@ -20,6 +20,9 @@ export class PFModelViewElement extends ThreeSceneElement {
         sun.lookAt(0, 0, 0);
         this.scene.add(sun);
 
+        this.scene.add(new AxesHelper());
+        this.scene.add(new PlaneHelper(new Plane(new Vector3(0, 1, 0)), 3));
+
         const controls = new OrbitControls(this.camera, this);
         controls.target.set(0, 0, 0);
         controls.update();
@@ -44,9 +47,6 @@ export class PFModelViewElement extends ThreeSceneElement {
         const assets = await loadAssets((current: number, total: number) => {
             // console.log(`ASSETS: ${current}/${total}`);
         });
-
-        this.scene.add(new AxesHelper());
-        this.scene.add(new PlaneHelper(new Plane(new Vector3(0, 1, 0)), 3));
 
         if (this.mesh) {
             this.scene.remove(this.mesh)
