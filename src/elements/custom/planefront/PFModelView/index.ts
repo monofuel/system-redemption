@@ -1,11 +1,13 @@
-import { HemisphereLight, AxesHelper, PlaneHelper, Plane, Vector3, DirectionalLight, OrbitControls } from "three";
+import { HemisphereLight, AxesHelper, PlaneHelper, Plane, Vector3, DirectionalLight, OrbitControls, Mesh } from "three";
 import { basicModel, loadAssets } from "../../../../mesh/models";
+import { ModelType } from "../../../../types/SR";
 import { ThreeSceneElement } from "../../../threeScene";
 
 export class PFModelViewElement extends ThreeSceneElement {
+    selected: ModelType = ModelType.tree_1;
+    mesh?: Mesh;
     constructor() {
         super();
-        console.log('foobar')
 
         this.camera.position.set(7, 5, -7);
         this.camera.lookAt(0, 0, 0);
@@ -22,10 +24,23 @@ export class PFModelViewElement extends ThreeSceneElement {
         controls.target.set(0, 0, 0);
         controls.update();
 
+        if (this.dat) {
+            this.dat.add(this, 'selected', [
+                ModelType.tree_1,
+                ModelType.rock,
+                ModelType.iron_rock,
+                ModelType.gold_rock,
+                ModelType.green_guy,
+                ModelType.berry_bush,
+                ModelType.grass,
+            ]).onFinishChange(() => this.loadModel())
+        }
+
         this.loadModel();
     }
 
     async loadModel() {
+        console.log("loading: " + this.selected);
         const assets = await loadAssets((current: number, total: number) => {
             // console.log(`ASSETS: ${current}/${total}`);
         });
@@ -33,7 +48,11 @@ export class PFModelViewElement extends ThreeSceneElement {
         this.scene.add(new AxesHelper());
         this.scene.add(new PlaneHelper(new Plane(new Vector3(0, 1, 0)), 3));
 
-        const mesh = basicModel(assets.tree_1);
-        this.scene.add(mesh);
+        if (this.mesh) {
+            this.scene.remove(this.mesh)
+        }
+
+        this.mesh = basicModel(assets[this.selected]);
+        this.scene.add(this.mesh);
     }
 }
