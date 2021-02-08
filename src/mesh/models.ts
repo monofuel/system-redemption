@@ -70,6 +70,30 @@ const assetsPaths: Record<ModelType, BasicAssetPath | SkinnedAssetPath> = {
     tree_1: {
         type: 'basic',
         model: 'gltf/planefront/tree_1.gltf'
+    },
+     berry_bush: {
+        type: 'basic',
+        model: 'gltf/planefront/berry_bush.gltf'
+    },
+     gold_rock: {
+        type: 'basic',
+        model: 'gltf/planefront/gold_rock.gltf'
+    },
+     grass: {
+        type: 'basic',
+        model: 'gltf/planefront/grass.gltf'
+    },
+     green_guy: {
+        type: 'basic',
+        model: 'gltf/planefront/green_guy.gltf'
+    },
+    iron_rock: {
+        type: 'basic',
+        model: 'gltf/planefront/iron_rock.gltf'
+    },
+    rock: {
+        type: 'basic',
+        model: 'gltf/planefront/rock.gltf'
     }
 }
 
