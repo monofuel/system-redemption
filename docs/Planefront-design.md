@@ -68,6 +68,7 @@ train skills and craft items, explore and modify the land, with a player driven 
 - land ownership
   - can claim land for a clan
 - economy
+  - price items in terms of effort?
   - game currency (gold?)
     - faucets
       - ???

@@ -10,8 +10,9 @@ import { LitElement } from 'lit-element';
 import { PlanefrontUITestElement } from './planefront/ui';
 import {DualfrontUITestElement } from './dualfront/test/'
 import { DPadElement } from './dpad';
+import { PFModelViewElement } from './planefront/PFModelView';
 
-const events: { [key: string]: new () => CustomElement | LitElement } = {
+const events: { [key: string]: new () => CustomElement | LitElement | HTMLElement } = {
   'log-editor': LogEditorElement,
   'land-controls': LandControlsElement,
   'log-viewer': LogViewerElement,
@@ -22,6 +23,7 @@ const events: { [key: string]: new () => CustomElement | LitElement } = {
   'planefront-test-menu': PlanefrontUITestElement,
   'dualfront-ui-test': DualfrontUITestElement,
   'd-pad': DPadElement,
+  'pf-model-view': PFModelViewElement,
 };
 
 export default events;

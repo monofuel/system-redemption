@@ -4,6 +4,9 @@ export enum ModelType {
   LightTankLvl2 = 'LightTankLvl2',
   LightTankLvl3 = 'LightTankLvl3',
   HeavyTankLvl3 = 'HeavyTankLvl3',
+
+  // planefront model types
+  tree_1 = 'tree_1'
 }
 
 export enum GameStage {

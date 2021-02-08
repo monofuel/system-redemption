@@ -9,7 +9,7 @@ import {
   TileHeights,
   LocHash
 } from "../../types/SR";
-import { Asset, coloredModel } from "../../mesh/models";
+import { SkinnedAsset, coloredModel } from "../../mesh/models";
 import { getTile } from "../../planet";
 import _ from "lodash";
 import { getHilightMesh } from "../../mesh/hilight";
@@ -187,7 +187,7 @@ export function hilightGraphicalComp(
 }
 
 function assetForEntity(
-  assets: Record<ModelType, Asset>,
+  assets: Record<ModelType, SkinnedAsset>,
   modelType: ModelType,
   color: GameColors
 ): Mesh {

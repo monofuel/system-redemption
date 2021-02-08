@@ -5,13 +5,21 @@ import { GameColors, ModelType } from "../types/SR";
 // NB. has to switch to /scripts/assets.zip to cache them locally
 const ASSET_ZIP = '/scripts/static/assets.zip';
 
-interface AssetPath {
+interface BasicAssetPath {
+    type: 'basic';
+    model: string;
+}
+
+interface SkinnedAssetPath {
+    type: 'skinned';
     model: string;
     skins: Record<GameColors, string>;
 }
 
-const assetsPaths: Record<ModelType, AssetPath> = {
+// TODO split assets based on project
+const assetsPaths: Record<ModelType, BasicAssetPath | SkinnedAssetPath> = {
     LightTankLvl1: {
+        type: 'skinned',
         model: 'gltf/tanks/LightTankLvl1/LightTankLvl1Blue.gltf',
         skins: {
             blue: 'gltf/tanks/LightTankLvl1/LightTankLvl1BlueAlbedoAO.png',
@@ -23,6 +31,7 @@ const assetsPaths: Record<ModelType, AssetPath> = {
         }
     },
     LightTankLvl2: {
+        type: 'skinned',
         model: 'gltf/tanks/LightTankLvl2/LightTankLvl2Blue.gltf',
         skins: {
             blue: 'gltf/tanks/LightTankLvl2/LightTankLvl2BlueAlbedoAO.png',
@@ -34,6 +43,7 @@ const assetsPaths: Record<ModelType, AssetPath> = {
         }
     },
     LightTankLvl3: {
+        type: 'skinned',
         model: 'gltf/tanks/LightTankLvl3/LightTankLvl3Blue.gltf',
         skins: {
             blue: 'gltf/tanks/LightTankLvl3/LightTankLvl3BlueAlbedoAO.png',
@@ -45,6 +55,7 @@ const assetsPaths: Record<ModelType, AssetPath> = {
         }
     },
     HeavyTankLvl3: {
+        type: 'skinned',
         model: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3Blue.gltf',
         skins: {
             blue: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3BlueAlbedoAO.png',
@@ -54,26 +65,35 @@ const assetsPaths: Record<ModelType, AssetPath> = {
             white: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3WhiteAlbedoAO.png',
             yellow: 'gltf/tanks/HeavyTankLvl3/HeavyTankLvl3YellowAlbedoAO.png',
         }
+    },
+    // Planefront
+    tree_1: {
+        type: 'basic',
+        model: 'gltf/planefront/tree_1.gltf'
     }
 }
 
-export interface Asset {
+export interface BasicAsset { // so basic
     model: Mesh;
+}
+
+export interface SkinnedAsset extends BasicAsset {
     skins: Record<GameColors, Texture>;
 }
+
 export type OnProgress = (current: number, total: number) => void;
 
-let fetch: Promise<Record<ModelType, Asset>> | null = null;
+let fetch: Promise<Record<ModelType, SkinnedAsset>> | null = null;
 
 // NB only the first caller gets onProgress
-export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelType, Asset>> {
+export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelType, SkinnedAsset>> {
     if (!fetch) {
         fetch = fetchAssets(onProgress);
     }
     return fetch;
 }
 
-async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, Asset>> {
+async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, SkinnedAsset>> {
 
     const total = Object.keys(ModelType).length * (Object.keys(GameColors).length + 1);
     let current = 0;
@@ -120,27 +140,33 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, As
         return mesh;
     }
 
-    const results: Partial<Record<ModelType, Asset>> = {};
+    const results: Partial<Record<ModelType, BasicAsset | SkinnedAsset>> = {};
 
     for (const key of Object.keys(assetsPaths)) {
         const type: ModelType = key as any;
         const paths = assetsPaths[type];
-        results[type] = {
-            model: await loadModel(paths.model),
-            skins: {
-                blue: await loadTexture(paths.skins.blue),
-                green: await loadTexture(paths.skins.green),
-                grey: await loadTexture(paths.skins.grey),
-                red: await loadTexture(paths.skins.red),
-                white: await loadTexture(paths.skins.white),
-                yellow: await loadTexture(paths.skins.yellow),
-            }
-        } as Asset;
+        if (paths.type === 'skinned') {
+            results[type] = {
+                model: await loadModel(paths.model),
+                skins: {
+                    blue: await loadTexture(paths.skins.blue),
+                    green: await loadTexture(paths.skins.green),
+                    grey: await loadTexture(paths.skins.grey),
+                    red: await loadTexture(paths.skins.red),
+                    white: await loadTexture(paths.skins.white),
+                    yellow: await loadTexture(paths.skins.yellow),
+                }
+            } as SkinnedAsset;
+        } else {
+             results[type] = {
+                model: await loadModel(paths.model),
+            } as BasicAsset;
+        }
     }
     return results as any;
 }
 
-export function coloredModel(asset: Asset, color: GameColors): Mesh {
+export function coloredModel(asset: SkinnedAsset, color: GameColors): Mesh {
 
     // TODO medium and heavy tanks have treads, which need to be handled differently
     const result = asset.model.clone();
@@ -157,6 +183,13 @@ export function coloredModel(asset: Asset, color: GameColors): Mesh {
             obj.material = mat;
         }
     });
+    result.up = new Vector3(0, 1, 0);
+    return result;
+}
+
+export function basicModel(asset: BasicAsset): Mesh {
+        // TODO medium and heavy tanks have treads, which need to be handled differently
+    const result = asset.model.clone();
     result.up = new Vector3(0, 1, 0);
     return result;
 }
