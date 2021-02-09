@@ -1,5 +1,6 @@
 /* global THREE */
-import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color, Vector3 } from "three";
+import { LoadingManager, GLTFLoader, TextureLoader, Scene, Texture, GLTF, Object3D, MeshStandardMaterial, Mesh, Color, Vector3, AxesHelper } from "three";
+import { ThreeSceneElement } from "../elements/threeScene";
 import { GameColors, ModelType } from "../types/SR";
 
 // NB. has to switch to /scripts/assets.zip to cache them locally
@@ -98,10 +99,13 @@ const assetsPaths: Record<ModelType, BasicAssetPath | SkinnedAssetPath> = {
 }
 
 export interface BasicAsset { // so basic
+     type: 'basic';
     model: Mesh;
 }
 
-export interface SkinnedAsset extends BasicAsset {
+export interface SkinnedAsset {
+     type: 'skinned';
+    model: Mesh;
     skins: Record<GameColors, Texture>;
 }
 
@@ -110,7 +114,7 @@ export type OnProgress = (current: number, total: number) => void;
 let fetch: Promise<Record<ModelType, SkinnedAsset>> | null = null;
 
 // NB only the first caller gets onProgress
-export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelType, SkinnedAsset>> {
+export async function loadAssets(onProgress: OnProgress): Promise<Record<ModelType, BasicAsset | SkinnedAsset>> {
     if (!fetch) {
         fetch = fetchAssets(onProgress);
     }
@@ -130,7 +134,7 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, Sk
     manager.setURLModifier(zip.urlResolver);
 
     const gtlfLoader = new GLTFLoader(manager);
-    const texLoader = new TextureLoader(manager);
+    // const texLoader = new TextureLoader(manager);
 
     function findAsset(path: string | RegExp): string {
         const results: string[] = zip.find(path);
@@ -171,6 +175,7 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, Sk
         const paths = assetsPaths[type];
         if (paths.type === 'skinned') {
             results[type] = {
+                type: "skinned",
                 model: await loadModel(paths.model),
                 skins: {
                     blue: await loadTexture(paths.skins.blue),
@@ -180,39 +185,42 @@ async function fetchAssets(onProgress: OnProgress): Promise<Record<ModelType, Sk
                     white: await loadTexture(paths.skins.white),
                     yellow: await loadTexture(paths.skins.yellow),
                 }
-            } as SkinnedAsset;
+            };
         } else {
              results[type] = {
+                 type: 'basic',
                 model: await loadModel(paths.model),
-            } as BasicAsset;
+            };
         }
     }
     return results as any;
 }
 
-export function coloredModel(asset: SkinnedAsset, color: GameColors): Mesh {
+export function coloredModel(asset: SkinnedAsset | BasicAsset, color: GameColors): Mesh {
 
     // TODO medium and heavy tanks have treads, which need to be handled differently
     const result = asset.model.clone();
-    const mat = (result.material as MeshStandardMaterial).clone();
-    const normals = mat.normalMap as Texture;
-    const tex = asset.skins[color];
-    const bak = tex.image;
-    // HACK need to figure out exactly what fields are needed for mapping to be correct?
-    tex.copy(normals);
-    tex.image = bak;
-    mat.map = tex;
-    result.traverse((obj) => {
-        if (obj instanceof Mesh) {
-            obj.material = mat;
-        }
-    });
+    if (asset.type === 'skinned') {
+        const mat = (result.material as MeshStandardMaterial).clone();
+        const normals = mat.normalMap as Texture;
+        const tex = asset.skins[color];
+        const bak = tex.image;
+        // HACK need to figure out exactly what fields are needed for mapping to be correct?
+        tex.copy(normals);
+        tex.image = bak;
+        mat.map = tex;
+        result.traverse((obj) => {
+            if (obj instanceof Mesh) {
+                obj.material = mat;
+            }
+        });
+    }
+    result.add(new AxesHelper())
     result.up = new Vector3(0, 1, 0);
     return result;
 }
 
 export function basicModel(asset: BasicAsset): Mesh {
-        // TODO medium and heavy tanks have treads, which need to be handled differently
     const result = asset.model.clone();
     result.up = new Vector3(0, 1, 0);
     return result;

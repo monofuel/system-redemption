@@ -5,7 +5,7 @@ import { getParentContext, RollingStats } from ".";
 import { info } from "../logging";
 import { EventContextElement } from "./eventContext";
 import "./styles/threeScene.scss";
-import { SkinnedAsset, loadAssets } from "../mesh/models";
+import { SkinnedAsset, loadAssets, BasicAsset } from "../mesh/models";
 import { ModelType } from "../types/SR";
 import { UpdateLoop } from "../events/serverContext";
 import { LoadingBarElement } from "./custom/loadingBar";
@@ -32,7 +32,7 @@ export class ThreeSceneElement extends HTMLElement {
   protected afterRender?: () => void;
 
   // assets is null until onAssetsLoaded is called
-  public assets!: Record<ModelType, SkinnedAsset>;
+  public assets!: Record<ModelType, SkinnedAsset | BasicAsset>;
   public onAssetsLoaded?: () => void;
 
   constructor(ctx?: EventContextElement, useDatGui: boolean = true) {

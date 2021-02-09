@@ -10,11 +10,11 @@ import _ from "lodash";
 import { PlanetElement } from "../../../planet";
 import { EditorMode, EditorSelection, frontendEventList } from "../../../../events/actions/frontend";
 import { TileHeights } from "../../../../types/SR";
-import { newTank } from "../../../../unit";
+import { newTank, newTree } from "../../../../unit";
 import { info } from "../../../../logging";
 import { ServerEvent } from "../../../../events/actions/game";
 import { getFlatMap } from "../../../../planet/tiles";
-import { defaultUnitDefinitions } from "../../../../test/eventLogs/units";
+import { defaultEntityDefinitions } from "../../../../test/planefront/units";
 
 
 export class PFMapEditorElement extends PlanetElement {
@@ -23,7 +23,7 @@ export class PFMapEditorElement extends PlanetElement {
   constructor() {
     super();
 
-    const localLogStr = localStorage.getItem("default-eventlog");
+    const localLogStr = localStorage.getItem("default-pf-eventlog");
 
     if (localLogStr) {
       try {
@@ -148,8 +148,7 @@ export class PFMapEditorElement extends PlanetElement {
             this.ctx.post({
               kind: "newEntity",
               unit: {
-                  // TODO change this
-                ...newTank(),
+                ...newTree(),
                 type: editorMode.entityType!,
                 color: editorMode.user!,
                 loc: hilight.loc
@@ -195,7 +194,7 @@ export class PFMapEditorElement extends PlanetElement {
     const logStr = JSON.stringify(
       log.filter(e => !frontendEventList.includes(e.kind))
     );
-    localStorage.setItem("default-eventlog", logStr);
+    localStorage.setItem("default-pf-eventlog", logStr);
   }
 
   public onEditorModeChange(event: EditorMode) {}
@@ -212,7 +211,6 @@ export function getDefaultEditorMap(
       kind: "newFiniteMap",
       map
     },
-    // TODO update for PF
-    ...defaultUnitDefinitions
+    ...defaultEntityDefinitions
   ];
 }

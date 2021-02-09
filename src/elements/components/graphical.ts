@@ -9,7 +9,7 @@ import {
   TileHeights,
   LocHash
 } from "../../types/SR";
-import { SkinnedAsset, coloredModel } from "../../mesh/models";
+import { SkinnedAsset, coloredModel, BasicAsset } from "../../mesh/models";
 import { getTile } from "../../planet";
 import _ from "lodash";
 import { getHilightMesh } from "../../mesh/hilight";
@@ -187,7 +187,7 @@ export function hilightGraphicalComp(
 }
 
 function assetForEntity(
-  assets: Record<ModelType, SkinnedAsset>,
+  assets: Record<ModelType, SkinnedAsset | BasicAsset>,
   modelType: ModelType,
   color: GameColors
 ): Mesh {
@@ -213,7 +213,9 @@ function placeOnMap(
 ) {
   obj.position.copy(vecForTile(map, loc, min));
   if (orient) {
-    // orientToNormal(normal, obj);
+    const tile = getTile(map, loc);
+    const normal = getTileNormal(tile, map.zScale)
+    orientToNormal(normal, obj);
   }
 }
 

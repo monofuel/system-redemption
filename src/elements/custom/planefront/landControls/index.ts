@@ -3,7 +3,7 @@ import { getParentContext } from "../../..";
 import { EditorSelection } from "../../../../events/actions/frontend";
 import { EntityType } from "../../../../types/planefront";
 import { EventContextElement } from "../../../eventContext";
-import { getDefaultEditorMap } from "../../../mapEditor";
+import { getDefaultEditorMap } from "../editor";
 import { CustomElement } from "../../CustomElement";
 import templateStr from "./index.html";
 
@@ -24,7 +24,6 @@ export class PFLandControlsElement extends CustomElement {
     this.ctx = getParentContext(this);
     this.getButtons();
     const gameState = this.ctx.frontendContext.state;
-
     this.entitySelect = document.getElementById("entity-select") as HTMLSelectElement;
     
     for (const entity of Object.values(EntityType)) {
@@ -103,9 +102,10 @@ export class PFLandControlsElement extends CustomElement {
   private updatePlaceUnit() {}
 
   private getButtons() {
+    // TODO improve this query to be generic for this element
     // eslint-disable-next-line
     const buttons: NodeListOf<HTMLSpanElement> = document.querySelectorAll(
-      "land-controls .button"
+      "pf-land-controls .button"
     );
     for (const button of buttons) {
       this.buttonMap[button.id] = button;

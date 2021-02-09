@@ -85,7 +85,7 @@ export interface FiniteMap {
 }
 
 export interface EntityDefinition {
-  type: UnitType;
+  type: UnitType | EntityType;
   size: 1 | 2 | 3;
   buildTime: number;
   cost: number;
