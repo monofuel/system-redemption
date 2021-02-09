@@ -61,17 +61,17 @@ const log: (ServerEvent | FrontendEvent)[] = [
     kind: 'editorMode',
     selection: EditorSelection.raiselower,
     user: GameColors.blue,
-    unitType: UnitType.tank,
+    entityType: UnitType.tank,
   },
   {
     kind: 'editorMode',
-    selection: EditorSelection.newUnit,
+    selection: EditorSelection.newEntity,
     user: GameColors.blue,
-    unitType: UnitType.tank,
+    entityType: UnitType.tank,
   },
 
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'e3798619-9d8b-422e-b61c-ed84a1272577',
       type: UnitType.tank,

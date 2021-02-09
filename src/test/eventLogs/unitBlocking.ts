@@ -103,12 +103,12 @@ export const unitBlockingTestLog: (ServerEvent | FrontendEvent)[] = [
   },
   {
     kind: 'editorMode',
-    selection: 'newUnit',
+    selection: 'newEntity',
     user: 'blue',
     unitType: 'tank',
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '0caa58ac-bc75-4c09-a58a-861ec8e3a8af',
       type: 'tank',
@@ -121,7 +121,7 @@ export const unitBlockingTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '68d28c38-867f-4fda-90a9-5d810b20887e',
       type: 'tank',
@@ -134,7 +134,7 @@ export const unitBlockingTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'b4e87182-8711-448b-bb69-34125c924f97',
       type: 'tank',
@@ -147,7 +147,7 @@ export const unitBlockingTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '8f1d6919-ad36-47f9-ba5c-134e89506c7e',
       type: 'tank',

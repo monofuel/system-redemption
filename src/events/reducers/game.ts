@@ -6,7 +6,7 @@ import {
   ServerEvents,
   MapEdit,
   WaterChange,
-  NewUnit,
+  newEntity,
   MoveUnit,
   Assertion,
   AssertFail,
@@ -30,7 +30,7 @@ export const gameReducer: GameReducerMap = {
   newFiniteMap: applyNewMap,
   mapEdit: applyMapEdit,
   waterChange: applyWaterChange,
-  newUnit: applyNewUnit,
+  newEntity: applynewEntity,
   moveUnit: applyMoveUnit,
   defineUnit: applyUnitDefinition,
   gameStageChange: applyGameStageChange,
@@ -91,7 +91,7 @@ export function applyWaterChange(state: GameState, event: WaterChange) {
   return state;
 }
 
-export function applyNewUnit(state: GameState, event: NewUnit) {
+export function applynewEntity(state: GameState, event: newEntity) {
   const unitDef = state.unitDefinitions[event.unit.type];
   if (!unitDef) {
     throw new Error(`missing unit definition ${unitDef}`);

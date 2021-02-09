@@ -2,7 +2,7 @@ import { Component } from ".";
 import { ThreeSceneElement } from "../threeScene";
 import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4 } from "three";
 import {
-  Unit,
+  Entity,
   GameColors,
   ModelType,
   FiniteMap,
@@ -125,7 +125,7 @@ export function getMap(sceneElement: ThreeSceneElement): Object3D {
 
 export function unitGraphicalComp(
   sceneElement: ThreeSceneElement,
-  unit: Unit
+  unit: Entity
 ): GraphicalComponent {
   const unitDef = sceneElement.ctx.gameContext.state.unitDefinitions[unit.type];
   if (!unitDef) {

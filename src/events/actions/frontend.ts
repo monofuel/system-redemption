@@ -1,3 +1,4 @@
+import { EntityType } from "../../types/planefront";
 import { UnitType, GameColors, LocHash } from "../../types/SR";
 
 export enum EditorSelection {
@@ -5,14 +6,14 @@ export enum EditorSelection {
     clear = 'clear',
     lowerWater = 'lowerWater',
     raiseWater = 'raiseWater',
-    newUnit = 'newUnit',
+    newEntity = 'newEntity',
     removeUnit = 'removeUnit'
 }
 export interface EditorMode {
     kind: 'editorMode';
     selection: EditorSelection;
     user?: GameColors;
-    unitType?: UnitType;
+    entityType?: UnitType | EntityType;
 }
 
 export interface ToggleLogViewer {

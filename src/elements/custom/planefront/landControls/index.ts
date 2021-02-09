@@ -1,10 +1,11 @@
-import { getParentContext } from "../..";
-import { EventContextElement } from "../../eventContext";
 import _ from "lodash";
-import { getDefaultEditorMap } from "../../mapEditor";
+import { getParentContext } from "../../..";
+import { EditorSelection } from "../../../../events/actions/frontend";
+import { EntityType } from "../../../../types/planefront";
+import { EventContextElement } from "../../../eventContext";
+import { getDefaultEditorMap } from "../../../mapEditor";
+import { CustomElement } from "../../CustomElement";
 import templateStr from "./index.html";
-import { CustomElement } from "../CustomElement";
-import { EditorSelection } from "../../../events/actions/frontend";
 
 const holdingButtons = [
   "raiselower",
@@ -13,33 +14,31 @@ const holdingButtons = [
   "removeUnit"
 ];
 
-export class LandControlsElement extends CustomElement {
+export class PFLandControlsElement extends CustomElement {
   private buttonMap: { [key: string]: Element } = {};
   private ctx: EventContextElement;
-  private unitSelect: HTMLSelectElement;
-  private userSelect: HTMLSelectElement;
+  private entitySelect: HTMLSelectElement;
+
   constructor() {
     super(templateStr);
     this.ctx = getParentContext(this);
     this.getButtons();
-    this.unitSelect = document.getElementById("unit-select") as any;
     const gameState = this.ctx.frontendContext.state;
-    this.unitSelect.onchange = e => {
+
+    this.entitySelect = document.getElementById("entity-select") as HTMLSelectElement;
+    
+    for (const entity of Object.values(EntityType)) {
+      const option = document.createElement('option');
+      option.text = entity;
+      option.value = entity;
+      this.entitySelect.appendChild(option);
+    }
+    
+    this.entitySelect.onchange = e => {
       if (gameState.editorMode) {
         this.ctx.post({
           ...gameState.editorMode,
-          user: this.userSelect.value as any,
-          entityType: this.unitSelect.value as any
-        });
-      }
-    };
-    this.userSelect = document.getElementById("user-select") as any;
-    this.userSelect.onchange = e => {
-      if (gameState.editorMode) {
-        this.ctx.post({
-          ...gameState.editorMode,
-          user: this.userSelect.value as any,
-          entityType: this.unitSelect.value as any
+          entityType: this.entitySelect.value as EntityType
         });
       }
     };
@@ -96,8 +95,7 @@ export class LandControlsElement extends CustomElement {
       this.ctx.post({
         kind: "editorMode",
         selection,
-        user: this.userSelect.value as any,
-        entityType: this.unitSelect.value as any
+        entityType: this.entitySelect.value as EntityType
       });
     }
   }

@@ -36,7 +36,7 @@ export const unitMoveTestLog: ServerEvent[] = [
   },
   ...defaultUnitDefinitions,
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       ...tank,
       loc: '0:5',

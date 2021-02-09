@@ -11,6 +11,8 @@ import { PlanefrontUITestElement } from './planefront/ui';
 import {DualfrontUITestElement } from './dualfront/test/'
 import { DPadElement } from './dpad';
 import { PFModelViewElement } from './planefront/PFModelView';
+import { PFMapEditorElement } from './planefront/editor';
+import { PFLandControlsElement } from './planefront/landControls';
 
 const events: { [key: string]: new () => CustomElement | LitElement | HTMLElement } = {
   'log-editor': LogEditorElement,
@@ -24,6 +26,8 @@ const events: { [key: string]: new () => CustomElement | LitElement | HTMLElemen
   'dualfront-ui-test': DualfrontUITestElement,
   'd-pad': DPadElement,
   'pf-model-view': PFModelViewElement,
+  'pf-map-editor': PFMapEditorElement,
+  'pf-land-controls': PFLandControlsElement,
 };
 
 export default events;
