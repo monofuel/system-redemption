@@ -15,6 +15,7 @@ import _ from "lodash";
 import { getHilightMesh } from "../../mesh/hilight";
 import { unHash } from "../../services/hash";
 import { SPEGroup } from "../../mesh/particles";
+import { EntityType } from "../../types/planefront";
 
 export enum GraphicalType {
   unit = "unit",
@@ -86,20 +87,39 @@ export function updateGraphicalComponent(
       }
     }
     if (!comp.nextLoc) {
-      placeOnMap(planet, comp.mesh, comp.prevLoc, true);
+      placeOnMap(planet, comp.mesh, comp.prevLoc, false);
     }
-    switch (facing) {
-      case "N":
-        comp.mesh.rotation.y = 0;
-        break;
-      case "S":
-        comp.mesh.rotation.y = -Math.PI;
-        break;
-      case "E":
-        comp.mesh.rotation.y = Math.PI / 2;
-        break;
-      case "W":
-        comp.mesh.rotation.y = -Math.PI / 2;
+    // TODO fix this
+    // for some reason, planefront models (made in magicavoxel) don't have correct rotation
+    // they show up correctly in the model viewer, but not in the game for some reason?
+    if (Object.values(EntityType).includes(unitDef.type as any)) {
+      switch (facing) {
+        case "N":
+          comp.mesh.rotation.x = 0;
+          break;
+        case "S":
+          comp.mesh.rotation.x = -Math.PI;
+          break;
+        case "E":
+          comp.mesh.rotation.x = Math.PI / 2;
+          break;
+        case "W":
+          comp.mesh.rotation.x = -Math.PI / 2;
+      }
+    } else {
+      switch (facing) {
+        case "N":
+          comp.mesh.rotation.y = 0;
+          break;
+        case "S":
+          comp.mesh.rotation.y = -Math.PI;
+          break;
+        case "E":
+          comp.mesh.rotation.y = Math.PI / 2;
+          break;
+        case "W":
+          comp.mesh.rotation.y = -Math.PI / 2;
+      }
     }
   } else if (comp.type === GraphicalType.hilight) {
     const loc = sceneElement.ctx.frontendContext.state.hilight!.loc;
