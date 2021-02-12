@@ -16,6 +16,7 @@ import { ServerEvent } from "../../../../events/actions/game";
 import { getFlatMap } from "../../../../planet/tiles";
 import { defaultEntityDefinitions } from "../../../../test/planefront/units";
 import { getTileInDirection } from "../../../../services/pathfind";
+import { undo } from "../../../../events/commands/game";
 
 // TODO refactor this with the normal map editor
 export class PFMapEditorElement extends PlanetElement {
@@ -41,6 +42,18 @@ export class PFMapEditorElement extends PlanetElement {
     }
 
     this.ctx.onGameEvent = this.onGameEvent.bind(this);
+    
+    document.addEventListener('keyup', (e: KeyboardEvent) => {
+      // ctrl-z
+      if (e.key === 'z' && e.ctrlKey && this.ctx.events.length > 0) {
+        // TODO only filter ServerEvents? (or do we want to undo frontend events too)
+        // TODO could be useful to recurse through event state and skip events that aren't implemented for undo
+        const lastEvent = this.ctx.events[this.ctx.events.length - 1].event as any; 
+        for (const event of undo(lastEvent)) {
+          this.ctx.post(event);
+        }
+      }
+    })
 
     // this.camera.position.set(20, 20, 20);
     this.camera.lookAt(0, 0, 0);
