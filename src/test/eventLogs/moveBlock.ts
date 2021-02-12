@@ -62,12 +62,14 @@ const log: (ServerEvent | FrontendEvent)[] = [
     selection: EditorSelection.raiselower,
     user: GameColors.blue,
     entityType: UnitType.tank,
+    smoothMode: false,
   },
   {
     kind: 'editorMode',
     selection: EditorSelection.newEntity,
     user: GameColors.blue,
     entityType: UnitType.tank,
+    smoothMode: false,
   },
 
   {
@@ -87,6 +89,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
   {
     kind: 'editorMode',
     selection: EditorSelection.raiselower,
+    smoothMode: false,
   },
 
   {

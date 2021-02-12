@@ -209,6 +209,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     selection: EditorSelection.newEntity,
     user: GameColors.red,
     entityType: UnitType.tank,
+    smoothMode: false,
   },
   {
     kind: 'newEntity',
@@ -240,6 +241,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     kind: 'editorMode',
     selection: EditorSelection.newEntity,
     user: GameColors.white,
+    smoothMode: false,
     entityType: UnitType.tank,
   },
   {

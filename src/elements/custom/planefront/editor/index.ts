@@ -129,13 +129,7 @@ export class PFMapEditorElement extends PlanetElement {
               }
             }
 
-            const start = Date.now();
-            const perfFn = () => {
-              this.ctx.gameQueue.removeListener("mapEdit", perfFn);
-              const end = Date.now();
-              info("map edit delta", { delta: end - start });
-            };
-            this.ctx.gameQueue.addListener("mapEdit", perfFn);
+
             this.ctx.post({
               kind: "mapEdit",
               edit: editType,

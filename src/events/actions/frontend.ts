@@ -12,6 +12,7 @@ export enum EditorSelection {
 export interface EditorMode {
     kind: 'editorMode';
     selection: EditorSelection;
+    smoothMode: boolean;
     user?: GameColors;
     entityType?: UnitType | EntityType;
 }

@@ -91,7 +91,7 @@ export function updateGraphicalComponent(
     }
     // TODO fix this
     // for some reason, planefront models (made in magicavoxel) don't have correct rotation
-    // they show up correctly in the model viewer, but not in the game for some reason?
+    // they show up correctly in the model viewer (/planefront/model.html), but not in the game for some reason?
     if (Object.values(EntityType).includes(unitDef.type as any)) {
       switch (facing) {
         case "N":

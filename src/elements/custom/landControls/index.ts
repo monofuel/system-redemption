@@ -13,6 +13,7 @@ const holdingButtons = [
   "removeUnit"
 ];
 
+// TODO refactor this with the planefront editor
 export class LandControlsElement extends CustomElement {
   private buttonMap: { [key: string]: Element } = {};
   private ctx: EventContextElement;
@@ -96,6 +97,7 @@ export class LandControlsElement extends CustomElement {
       this.ctx.post({
         kind: "editorMode",
         selection,
+        smoothMode: false,
         user: this.userSelect.value as any,
         entityType: this.unitSelect.value as any
       });
