@@ -133,6 +133,7 @@ export class PFMapEditorElement extends PlanetElement {
 
             // look at tiles and their matching edges, and raise them
             if (editorMode.smoothMode) {
+              // adjust the edges
               if (editType[0] != 0 || editType[1] != 0) {
                 const s = getTileInDirection(loc, 'S');
                 this.ctx.post({
@@ -141,7 +142,6 @@ export class PFMapEditorElement extends PlanetElement {
                   loc: s
                 });
               }
-
               if (editType[2] != 0 || editType[3] != 0) {
                 const n = getTileInDirection(loc, 'N');
                 this.ctx.post({
@@ -150,7 +150,6 @@ export class PFMapEditorElement extends PlanetElement {
                   loc: n
                 });
               }
-
               if (editType[1] != 0 || editType[3] != 0) {      
                 const e = getTileInDirection(loc, 'E');
                 this.ctx.post({
@@ -159,13 +158,46 @@ export class PFMapEditorElement extends PlanetElement {
                   loc: e
                 });
               }
-
               if (editType[0] != 0 || editType[2] != 0) {
                 const w = getTileInDirection(loc, 'W');
                 this.ctx.post({
                   kind: "mapEdit",
                   edit: [0,editType[0],0,editType[2]],
                   loc: w
+                });
+              }
+
+              // adjust the corners
+              if (editType[0] != 0) {
+                const c = getTileInDirection(getTileInDirection(loc, 'S'),'W');
+                 this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [0,0,0,editType[0]],
+                  loc: c
+                });
+              }
+              if (editType[1] != 0) {
+                const c = getTileInDirection(getTileInDirection(loc, 'S'),'E');
+                 this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [0,0,editType[1],0],
+                  loc: c
+                });
+              }
+              if (editType[2] != 0) {
+                const c = getTileInDirection(getTileInDirection(loc, 'N'),'W');
+                 this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [0,editType[2],0,0],
+                  loc: c
+                });
+              }
+              if (editType[3] != 0) {
+                const c = getTileInDirection(getTileInDirection(loc, 'N'),'E');
+                 this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [editType[3],0,0,0],
+                  loc: c
                 });
               }
             }
