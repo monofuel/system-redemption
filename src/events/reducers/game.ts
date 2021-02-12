@@ -30,7 +30,7 @@ export const gameReducer: GameReducerMap = {
   newFiniteMap: applyNewMap,
   mapEdit: applyMapEdit,
   waterChange: applyWaterChange,
-  newEntity: applynewEntity,
+  newEntity: applyNewEntity,
   moveUnit: applyMoveUnit,
   defineUnit: applyUnitDefinition,
   gameStageChange: applyGameStageChange,
@@ -91,7 +91,7 @@ export function applyWaterChange(state: GameState, event: WaterChange) {
   return state;
 }
 
-export function applynewEntity(state: GameState, event: newEntity) {
+export function applyNewEntity(state: GameState, event: newEntity) {
   const unitDef = state.unitDefinitions[event.unit.type];
   if (!unitDef) {
     throw new Error(`missing unit definition ${unitDef}`);

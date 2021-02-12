@@ -15,8 +15,9 @@ import { info } from "../../../../logging";
 import { ServerEvent } from "../../../../events/actions/game";
 import { getFlatMap } from "../../../../planet/tiles";
 import { defaultEntityDefinitions } from "../../../../test/planefront/units";
+import { getTileInDirection } from "../../../../services/pathfind";
 
-
+// TODO refactor this with the normal map editor
 export class PFMapEditorElement extends PlanetElement {
   private controls: OrbitControls;
   protected usePlanetCache: boolean = true;
@@ -96,6 +97,7 @@ export class PFMapEditorElement extends PlanetElement {
       switch (editorMode.selection) {
         case EditorSelection.raiselower:
           if (hilight && hilight.loc && hilight.corner) {
+            const loc = hilight.loc;
             const editType: TileHeights = [0, 0, 0, 0];
 
             // TODO
@@ -129,11 +131,49 @@ export class PFMapEditorElement extends PlanetElement {
               }
             }
 
+            // look at tiles and their matching edges, and raise them
+            if (editorMode.smoothMode) {
+              if (editType[0] != 0 || editType[1] != 0) {
+                const s = getTileInDirection(loc, 'S');
+                this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [0,0,editType[0],editType[1]],
+                  loc: s
+                });
+              }
 
+              if (editType[2] != 0 || editType[3] != 0) {
+                const n = getTileInDirection(loc, 'N');
+                this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [editType[2],editType[3],0,0],
+                  loc: n
+                });
+              }
+
+              if (editType[1] != 0 || editType[3] != 0) {      
+                const e = getTileInDirection(loc, 'E');
+                this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [editType[1],0,editType[3],0],
+                  loc: e
+                });
+              }
+
+              if (editType[0] != 0 || editType[2] != 0) {
+                const w = getTileInDirection(loc, 'W');
+                this.ctx.post({
+                  kind: "mapEdit",
+                  edit: [0,editType[0],0,editType[2]],
+                  loc: w
+                });
+              }
+            }
+            
             this.ctx.post({
               kind: "mapEdit",
               edit: editType,
-              loc: hilight.loc
+              loc
             });
           }
           return;
