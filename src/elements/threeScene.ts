@@ -48,6 +48,10 @@ export class ThreeSceneElement extends HTMLElement {
     this.renderer.setSize(height, width);
     this.scene = new Scene();
     const aspectRatio = this.offsetWidth / this.offsetHeight;
+    // TODO adjust far plane
+    // 20 - 40 seems OK for gameplay?
+    // larger numbers good for editor
+
     this.camera = new PerspectiveCamera(45, aspectRatio, 1, 500);
     this.camera.position.set(0, 50, 100);
     this.camera.lookAt(0, 0, 0);

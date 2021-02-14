@@ -1,11 +1,12 @@
 import _ from "lodash";
 import { getParentContext } from "../../..";
-import { EditorSelection } from "../../../../events/actions/frontend";
+import { EditorSelection, frontendEventList } from "../../../../events/actions/frontend";
 import { EntityType } from "../../../../types/planefront";
 import { EventContextElement } from "../../../eventContext";
 import { getDefaultEditorMap } from "../editor";
 import { CustomElement } from "../../CustomElement";
 import templateStr from "./index.html";
+import planefrontTestMap from "../../../../test/eventLogs/planefrontTestMap.json";
 
 const holdingButtons = [
   "raiselower",
@@ -78,6 +79,10 @@ export class PFLandControlsElement extends CustomElement {
         Number(chunkSizeInput.value)
       );
       this.ctx.loadLog(log);
+    } else if (id === 'demo-map') {
+      const log = planefrontTestMap.filter((e: any) => !frontendEventList.includes(e.kind))
+      this.ctx.loadLog(log);
+    
     } else if (["raiseWater", "lowerWater"].includes(id)) {
       this.ctx.post({
         kind: "waterChange",
