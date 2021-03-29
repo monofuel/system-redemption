@@ -1,9 +1,10 @@
-import { FiniteMap, Unit, UnitType, UnitDefinition, LocHash, GameStage } from "../../types/SR";
+import { EntityType } from "../../types/planefront";
+import { FiniteMap, Entity, UnitType, EntityDefinition, LocHash, GameStage } from "../../types/SR";
 
 export interface GameState {
   planet?: FiniteMap;
-  units: { [key: string]: Unit };
-  unitDefinitions: Partial<Record<UnitType, UnitDefinition>>;
+  units: { [key: string]: Entity };
+  unitDefinitions: Partial<Record<UnitType | EntityType, EntityDefinition>>;
   stage: {
     tick: number;
     mode: GameStage;

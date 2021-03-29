@@ -5,7 +5,7 @@ import { getParentContext, RollingStats } from ".";
 import { info } from "../logging";
 import { EventContextElement } from "./eventContext";
 import "./styles/threeScene.scss";
-import { SkinnedAsset, loadAssets } from "../mesh/models";
+import { SkinnedAsset, loadAssets, BasicAsset } from "../mesh/models";
 import { ModelType } from "../types/SR";
 import { UpdateLoop } from "../events/serverContext";
 import { LoadingBarElement } from "./custom/loadingBar";
@@ -32,7 +32,7 @@ export class ThreeSceneElement extends HTMLElement {
   protected afterRender?: () => void;
 
   // assets is null until onAssetsLoaded is called
-  public assets!: Record<ModelType, SkinnedAsset>;
+  public assets!: Record<ModelType, SkinnedAsset | BasicAsset>;
   public onAssetsLoaded?: () => void;
 
   constructor(ctx?: EventContextElement, useDatGui: boolean = true) {
@@ -48,6 +48,10 @@ export class ThreeSceneElement extends HTMLElement {
     this.renderer.setSize(height, width);
     this.scene = new Scene();
     const aspectRatio = this.offsetWidth / this.offsetHeight;
+    // TODO adjust far plane
+    // 20 - 40 seems OK for gameplay?
+    // larger numbers good for editor
+
     this.camera = new PerspectiveCamera(45, aspectRatio, 1, 500);
     this.camera.position.set(0, 50, 100);
     this.camera.lookAt(0, 0, 0);

@@ -9,6 +9,7 @@ import { damageTestLog } from './damage';
 import { unitBlockingTestLog } from './unitBlocking';
 import { attackRangeTestLog } from './attackRange';
 import { biomesTestLog } from './biomes';
+import planefrontTestMap from './planefrontTestMap.json';
 
 export const logs = {
   planetEditTestLog,
@@ -22,4 +23,5 @@ export const logs = {
   selectionTestLog,
   moveBlockTestLog,
   biomesTestLog,
+  planefrontTestMap,
 };

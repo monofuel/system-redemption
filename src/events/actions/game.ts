@@ -1,4 +1,4 @@
-import { FiniteMap, TileHeights, LocHash, Unit, UnitDefinition, GameStage, Direction, Biomes } from '../../types/SR';
+import { FiniteMap, TileHeights, LocHash, Entity, EntityDefinition, GameStage, Direction, Biomes } from '../../types/SR';
 import { GameState } from '../store/game';
 
 export interface NewFiniteMap {
@@ -24,14 +24,14 @@ export interface WaterChange {
   amount: number;
 }
 
-export interface NewUnit {
-  kind: 'newUnit';
-  unit: Unit;
+export interface newEntity {
+  kind: 'newEntity';
+  unit: Entity;
 }
 
 export interface DefineUnit {
   kind: 'defineUnit';
-  unit: UnitDefinition;
+  unit: EntityDefinition;
 }
 
 export interface MoveUnit {
@@ -95,7 +95,7 @@ export interface ServerEvents {
   newFiniteMap: NewFiniteMap;
   mapEdit: MapEdit;
   waterChange: WaterChange;
-  newUnit: NewUnit;
+  newEntity: newEntity;
   moveUnit: MoveUnit;
   assertion: Assertion;
   defineUnit: DefineUnit;

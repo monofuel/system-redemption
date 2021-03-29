@@ -2,19 +2,20 @@ import { Component } from ".";
 import { ThreeSceneElement } from "../threeScene";
 import { Mesh, Vector3, Object3D, Geometry, Face3, Matrix4 } from "three";
 import {
-  Unit,
+  Entity,
   GameColors,
   ModelType,
   FiniteMap,
   TileHeights,
   LocHash
 } from "../../types/SR";
-import { SkinnedAsset, coloredModel } from "../../mesh/models";
+import { SkinnedAsset, coloredModel, BasicAsset } from "../../mesh/models";
 import { getTile } from "../../planet";
 import _ from "lodash";
 import { getHilightMesh } from "../../mesh/hilight";
 import { unHash } from "../../services/hash";
 import { SPEGroup } from "../../mesh/particles";
+import { EntityType } from "../../types/planefront";
 
 export enum GraphicalType {
   unit = "unit",
@@ -86,20 +87,39 @@ export function updateGraphicalComponent(
       }
     }
     if (!comp.nextLoc) {
-      placeOnMap(planet, comp.mesh, comp.prevLoc, true);
+      placeOnMap(planet, comp.mesh, comp.prevLoc, false);
     }
-    switch (facing) {
-      case "N":
-        comp.mesh.rotation.y = 0;
-        break;
-      case "S":
-        comp.mesh.rotation.y = -Math.PI;
-        break;
-      case "E":
-        comp.mesh.rotation.y = Math.PI / 2;
-        break;
-      case "W":
-        comp.mesh.rotation.y = -Math.PI / 2;
+    // TODO fix this
+    // for some reason, planefront models (made in magicavoxel) don't have correct rotation
+    // they show up correctly in the model viewer (/planefront/model.html), but not in the game for some reason?
+    if (Object.values(EntityType).includes(unitDef.type as any)) {
+      switch (facing) {
+        case "N":
+          comp.mesh.rotation.x = 0;
+          break;
+        case "S":
+          comp.mesh.rotation.x = -Math.PI;
+          break;
+        case "E":
+          comp.mesh.rotation.x = Math.PI / 2;
+          break;
+        case "W":
+          comp.mesh.rotation.x = -Math.PI / 2;
+      }
+    } else {
+      switch (facing) {
+        case "N":
+          comp.mesh.rotation.y = 0;
+          break;
+        case "S":
+          comp.mesh.rotation.y = -Math.PI;
+          break;
+        case "E":
+          comp.mesh.rotation.y = Math.PI / 2;
+          break;
+        case "W":
+          comp.mesh.rotation.y = -Math.PI / 2;
+      }
     }
   } else if (comp.type === GraphicalType.hilight) {
     const loc = sceneElement.ctx.frontendContext.state.hilight!.loc;
@@ -125,7 +145,7 @@ export function getMap(sceneElement: ThreeSceneElement): Object3D {
 
 export function unitGraphicalComp(
   sceneElement: ThreeSceneElement,
-  unit: Unit
+  unit: Entity
 ): GraphicalComponent {
   const unitDef = sceneElement.ctx.gameContext.state.unitDefinitions[unit.type];
   if (!unitDef) {
@@ -187,7 +207,7 @@ export function hilightGraphicalComp(
 }
 
 function assetForEntity(
-  assets: Record<ModelType, SkinnedAsset>,
+  assets: Record<ModelType, SkinnedAsset | BasicAsset>,
   modelType: ModelType,
   color: GameColors
 ): Mesh {
@@ -213,7 +233,9 @@ function placeOnMap(
 ) {
   obj.position.copy(vecForTile(map, loc, min));
   if (orient) {
-    // orientToNormal(normal, obj);
+    const tile = getTile(map, loc);
+    const normal = getTileNormal(tile, map.zScale)
+    orientToNormal(normal, obj);
   }
 }
 

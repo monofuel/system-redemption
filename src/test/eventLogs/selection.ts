@@ -54,7 +54,7 @@ export const selectionTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'f392cc3f-c4a0-423f-841e-8d6fd27924f8',
       type: UnitType.tank,
@@ -102,12 +102,12 @@ export const selectionTestLog: (ServerEvent | FrontendEvent)[] = [
   },
   {
     kind: 'editorMode',
-    selection: EditorSelection.newUnit,
+    selection: EditorSelection.newEntity,
     user: GameColors.blue,
     unitType: UnitType.tank,
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '2c3b08b5-ae90-482f-8fbd-36a100b3e55d',
       type: 'tank',
@@ -124,7 +124,7 @@ export const selectionTestLog: (ServerEvent | FrontendEvent)[] = [
     loc: '1:0',
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '4b91dfd4-fb7a-4550-8ab8-ad189db7ed4e',
       type: 'tank',
@@ -138,7 +138,7 @@ export const selectionTestLog: (ServerEvent | FrontendEvent)[] = [
   },
 
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'ebd6b81f-b6f9-44e7-bf08-aad041964080',
       type: 'tank',
@@ -152,7 +152,7 @@ export const selectionTestLog: (ServerEvent | FrontendEvent)[] = [
   },
 
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '02a3f8af-6bcb-4b86-850b-3671d9c48de2',
       type: 'tank',

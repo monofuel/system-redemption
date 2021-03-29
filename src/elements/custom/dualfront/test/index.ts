@@ -112,13 +112,13 @@ export class DualfrontUITestElement extends LitElement {
       "moveEvent",
       (e: MoveEvent, oldState: GameState, newState: GameState) => {
         const oldUnit = oldState.units.find(u => u.id === e.unit);
-        const newUnit = newState.units.find(u => u.id === e.unit);
+        const newEntity = newState.units.find(u => u.id === e.unit);
         const obj = this.scene.children.find(obj => obj.userData.id === e.unit);
         if (!obj) {
           return;
         }
-        if (newUnit && oldUnit) {
-          let angle = Math.atan2(oldUnit.y - newUnit.y, oldUnit.x - newUnit.x);
+        if (newEntity && oldUnit) {
+          let angle = Math.atan2(oldUnit.y - newEntity.y, oldUnit.x - newEntity.x);
           angle += Math.PI / 2;
 
           obj.rotation.z = angle;

@@ -129,7 +129,7 @@ export const attackRangeTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'd0f49e80-84d5-4da8-85a4-7d350fb8399a',
       type: 'tank',
@@ -142,7 +142,7 @@ export const attackRangeTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'd8f70167-74fe-401a-bfc0-c3275dafcbd7',
       type: 'tank',
@@ -155,7 +155,7 @@ export const attackRangeTestLog: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '5a626e3f-f4d2-4fff-a5fe-b6be470ffde3',
       type: 'tank',

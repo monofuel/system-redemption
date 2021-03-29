@@ -21,6 +21,7 @@ import {
   EditorMode
 } from "../events/actions/frontend";
 import { ServerEvent } from "../events/actions/game";
+import { EntityType } from "../types/planefront";
 
 export class MapEditorElement extends PlanetElement {
   private controls: OrbitControls;
@@ -71,7 +72,7 @@ export class MapEditorElement extends PlanetElement {
       const mode = this.ctx.frontendContext.state.editorMode;
 
       if (
-        ![EditorSelection.raiselower, EditorSelection.newUnit].includes(
+        ![EditorSelection.raiselower, EditorSelection.newEntity].includes(
           mode.selection
         )
       ) {
@@ -148,13 +149,13 @@ export class MapEditorElement extends PlanetElement {
             });
           }
           return;
-        case EditorSelection.newUnit:
+        case EditorSelection.newEntity:
           if (hilight && hilight.loc) {
             this.ctx.post({
-              kind: "newUnit",
+              kind: "newEntity",
               unit: {
                 ...newTank(),
-                type: editorMode.unitType!,
+                type: editorMode.entityType as EntityType,
                 color: editorMode.user!,
                 loc: hilight.loc
               }

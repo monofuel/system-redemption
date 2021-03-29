@@ -1,10 +1,12 @@
-import { getParentContext } from "../..";
-import { EventContextElement } from "../../eventContext";
 import _ from "lodash";
-import { getDefaultEditorMap } from "../../mapEditor";
+import { getParentContext } from "../../..";
+import { EditorSelection, frontendEventList } from "../../../../events/actions/frontend";
+import { EntityType } from "../../../../types/planefront";
+import { EventContextElement } from "../../../eventContext";
+import { getDefaultEditorMap } from "../editor";
+import { CustomElement } from "../../CustomElement";
 import templateStr from "./index.html";
-import { CustomElement } from "../CustomElement";
-import { EditorSelection } from "../../../events/actions/frontend";
+import planefrontTestMap from "../../../../test/eventLogs/planefrontTestMap.json";
 
 const holdingButtons = [
   "raiselower",
@@ -13,37 +15,26 @@ const holdingButtons = [
   "removeUnit"
 ];
 
-// TODO refactor this with the planefront editor
-export class LandControlsElement extends CustomElement {
+export class PFLandControlsElement extends CustomElement {
   private buttonMap: { [key: string]: Element } = {};
   private ctx: EventContextElement;
-  private unitSelect: HTMLSelectElement;
-  private userSelect: HTMLSelectElement;
+  private entitySelect: HTMLSelectElement;
+  private smoothCheck: HTMLInputElement;
+  private selection: EditorSelection = EditorSelection.clear;
+
   constructor() {
     super(templateStr);
     this.ctx = getParentContext(this);
-    this.getButtons();
-    this.unitSelect = document.getElementById("unit-select") as any;
-    const gameState = this.ctx.frontendContext.state;
-    this.unitSelect.onchange = e => {
-      if (gameState.editorMode) {
-        this.ctx.post({
-          ...gameState.editorMode,
-          user: this.userSelect.value as any,
-          entityType: this.unitSelect.value as any
-        });
-      }
-    };
-    this.userSelect = document.getElementById("user-select") as any;
-    this.userSelect.onchange = e => {
-      if (gameState.editorMode) {
-        this.ctx.post({
-          ...gameState.editorMode,
-          user: this.userSelect.value as any,
-          entityType: this.unitSelect.value as any
-        });
-      }
-    };
+    this.entitySelect = document.getElementById("entity-select") as HTMLSelectElement;
+    this.smoothCheck = document.getElementById("smooth-check") as HTMLInputElement;
+
+    this.smoothCheck.onchange = () => {
+      this.updateState();
+    }
+
+    this.setupButtons();
+    this.setupUnitDropdown();
+    this.updateState();
   }
 
   public onButtonPress(id: string) {
@@ -52,7 +43,7 @@ export class LandControlsElement extends CustomElement {
     if (!id) {
       return;
     }
-    const selection: EditorSelection = id as any;
+    this.selection = id as any;
     for (const button of Object.values(this.buttonMap)) {
       button.classList.remove(activeClass);
     }
@@ -88,32 +79,53 @@ export class LandControlsElement extends CustomElement {
         Number(chunkSizeInput.value)
       );
       this.ctx.loadLog(log);
+    } else if (id === 'demo-map') {
+      const log = planefrontTestMap.filter((e: any) => !frontendEventList.includes(e.kind))
+      this.ctx.loadLog(log);
+    
     } else if (["raiseWater", "lowerWater"].includes(id)) {
       this.ctx.post({
         kind: "waterChange",
         amount: id === "raiseWater" ? 0.2 : -0.2
       });
     } else {
-      this.ctx.post({
-        kind: "editorMode",
-        selection,
-        smoothMode: false,
-        user: this.userSelect.value as any,
-        entityType: this.unitSelect.value as any
-      });
+      this.updateState();
     }
   }
 
-  private updatePlaceUnit() {}
+  private updateState() {
+     this.ctx.post({
+        kind: "editorMode",
+        selection: this.selection,
+        smoothMode: this.smoothCheck.checked,
+        entityType: this.entitySelect.value as EntityType,
+      });
+  }
 
-  private getButtons() {
+  private setupButtons() {
+    // TODO improve this query to be generic for this element
     // eslint-disable-next-line
     const buttons: NodeListOf<HTMLSpanElement> = document.querySelectorAll(
-      "land-controls .button"
+      "pf-land-controls .button"
     );
     for (const button of buttons) {
       this.buttonMap[button.id] = button;
       button.onmouseup = this.onButtonPress.bind(this, button.id);
     }
+  }
+
+  private setupUnitDropdown() {
+    const gameState = this.ctx.frontendContext.state;
+
+    for (const entity of Object.values(EntityType)) {
+      const option = document.createElement('option');
+      option.text = entity;
+      option.value = entity;
+      this.entitySelect.appendChild(option);
+    }
+    
+    this.entitySelect.onchange = e => {
+      this.updateState();
+    };
   }
 }

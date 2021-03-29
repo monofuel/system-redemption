@@ -357,7 +357,7 @@ const xrTestLog: any[] = [
   {
     event: {
       kind: "editorMode",
-      selection: "newUnit",
+      selection: "newEntity",
       user: "blue",
       unitType: "tank"
     },
@@ -366,7 +366,7 @@ const xrTestLog: any[] = [
   },
   {
     event: {
-      kind: "newUnit",
+      kind: "newEntity",
       unit: {
         uuid: "a9cf0354-9615-4fdc-b6f7-83a5a5134b91",
         type: "tank",
@@ -385,7 +385,7 @@ const xrTestLog: any[] = [
   {
     event: {
       kind: "editorMode",
-      selection: "newUnit",
+      selection: "newEntity",
       user: "red",
       unitType: "tank"
     },
@@ -394,7 +394,7 @@ const xrTestLog: any[] = [
   },
   {
     event: {
-      kind: "newUnit",
+      kind: "newEntity",
       unit: {
         uuid: "1af26dab-6bdd-4aa2-9704-c2b9bb8b6bb9",
         type: "tank",
@@ -413,7 +413,7 @@ const xrTestLog: any[] = [
   {
     event: {
       kind: "editorMode",
-      selection: "newUnit",
+      selection: "newEntity",
       user: "white",
       unitType: "tank"
     },
@@ -422,7 +422,7 @@ const xrTestLog: any[] = [
   },
   {
     event: {
-      kind: "newUnit",
+      kind: "newEntity",
       unit: {
         uuid: "5852b123-929b-42a2-900a-3e7fd713cf4b",
         type: "tank",

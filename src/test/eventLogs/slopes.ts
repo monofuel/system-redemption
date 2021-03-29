@@ -153,7 +153,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     loc: '2:3',
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '161f4b26-343c-4f0c-989e-4010f4334c4c',
       type: UnitType.tank,
@@ -166,7 +166,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'b01b6189-0df2-431f-9cf6-57f8bfa0080e',
       type: UnitType.tank,
@@ -179,7 +179,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '8cf61bf2-b565-414e-a058-5ad398a8d0e3',
       type: UnitType.tank,
@@ -192,7 +192,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '45ebe4f9-e771-4a81-a5cb-c140f60c32d0',
       type: UnitType.tank,
@@ -206,12 +206,13 @@ const log: (ServerEvent | FrontendEvent)[] = [
   },
   {
     kind: 'editorMode',
-    selection: EditorSelection.newUnit,
+    selection: EditorSelection.newEntity,
     user: GameColors.red,
-    unitType: UnitType.tank,
+    entityType: UnitType.tank,
+    smoothMode: false,
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '38c5122f-98f8-4a9f-ad3e-50afb856de23',
       type: UnitType.tank,
@@ -224,7 +225,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'c0a9252d-b98d-4c1a-a645-02de2c3a1e58',
       type: UnitType.tank,
@@ -238,12 +239,13 @@ const log: (ServerEvent | FrontendEvent)[] = [
   },
   {
     kind: 'editorMode',
-    selection: EditorSelection.newUnit,
+    selection: EditorSelection.newEntity,
     user: GameColors.white,
-    unitType: UnitType.tank,
+    smoothMode: false,
+    entityType: UnitType.tank,
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '812b56de-e51b-4c73-a26c-28c4f487ee8d',
       type: UnitType.tank,
@@ -256,7 +258,7 @@ const log: (ServerEvent | FrontendEvent)[] = [
     },
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: 'ce57bd19-5e69-42e2-89a7-f42bce1ada62',
       type: UnitType.tank,

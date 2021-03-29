@@ -1,7 +1,7 @@
 import { ThreeSceneElement } from './threeScene';
 import { EventContextElement } from './eventContext';
 import { HemisphereLight, DirectionalLight, Vector2, Raycaster, Vector3, Group, Mesh } from 'three';
-import { Unit, LocHash } from '../types/SR';
+import { Entity, LocHash } from '../types/SR';
 import { info } from '../logging';
 import { getPlanetObject, invalidateChunkCache, clearChunkCache } from '../mesh/tiles';
 import { ECS } from './components';
@@ -126,7 +126,7 @@ export class PlanetElement extends ThreeSceneElement {
           comp.mesh.add(mesh);
         }
       });
-      this.ctx.gameQueue.addListener('newUnit', (event) => {
+      this.ctx.gameQueue.addListener('newEntity', (event) => {
         this.addUnit(this.ctx.gameContext.state.units[event.unit.uuid]);
       });
       for (const unit of Object.values(this.ctx.gameContext.state.units)) {
@@ -219,7 +219,7 @@ export class PlanetElement extends ThreeSceneElement {
     this.ctx.post(newState);
   }
 
-  private addUnit(unit: Unit) {
+  private addUnit(unit: Entity) {
     const comp = unitGraphicalComp(this, unit);
     this.ecs.addGraphicalComponent(comp);
   }

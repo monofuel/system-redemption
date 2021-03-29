@@ -19,6 +19,7 @@ describe('test event system', () => {
     const expectedEvent: EditorMode = {
       kind: 'editorMode',
       selection: EditorSelection.raiselower,
+      smoothMode: false,
     };
     let callCount = 0;
     const eventLog: FrontendEvent[] = [];

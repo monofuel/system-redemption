@@ -1,3 +1,5 @@
+import { EntityType } from "./planefront";
+
 export type LocHash = string;
 export enum ModelType {
   LightTankLvl1 = 'LightTankLvl1',
@@ -82,8 +84,8 @@ export interface FiniteMap {
   grid: PlanetTiles[][];
 }
 
-export interface UnitDefinition {
-  type: UnitType;
+export interface EntityDefinition {
+  type: UnitType | EntityType;
   size: 1 | 2 | 3;
   buildTime: number;
   cost: number;
@@ -109,10 +111,10 @@ export interface UnitDefinition {
   };
 }
 
-export interface Unit {
+export interface Entity {
   uuid: string;
-  color: GameColors;
-  type: UnitType;
+  color?: GameColors;
+  type: UnitType | EntityType;
   facing: Direction;
   size: 1 | 2 | 3;
   loc: LocHash;

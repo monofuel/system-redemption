@@ -101,12 +101,12 @@ export const damageTestLog: (ServerEvent | FrontendEvent)[] = [
   },
   {
     kind: 'editorMode',
-    selection: 'newUnit',
+    selection: 'newEntity',
     user: 'red',
     unitType: 'ltank3',
   },
   {
-    kind: 'newUnit',
+    kind: 'newEntity',
     unit: {
       uuid: '1d5a8002-6c64-480e-b3f3-d14fd0517a9a',
       type: 'ltank3',

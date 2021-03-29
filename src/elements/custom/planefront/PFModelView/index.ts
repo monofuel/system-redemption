@@ -52,7 +52,7 @@ export class PFModelViewElement extends ThreeSceneElement {
             this.scene.remove(this.mesh)
         }
 
-        this.mesh = basicModel(assets[this.selected]);
+        this.mesh = basicModel(assets[this.selected] as any);
         this.scene.add(this.mesh);
     }
 }
