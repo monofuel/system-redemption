@@ -13,7 +13,7 @@ services:
 stages:
   - build
   - test
-  - deploy
+  # - deploy
 
 standalone_build:
   cache:
@@ -47,7 +47,6 @@ standalone_test:
     - docker pull ${CONTAINER_REGISTRY}/sr_main:builder || true
     - docker-compose run dev yarn lint
     - docker-compose run dev yarn test
-
 ## TODO not working for now
 # standalone_coverage:
 #   tags:
@@ -60,16 +59,16 @@ standalone_test:
 #     - yarn install --build-from-source --frozen-lockfile
 #     - yarn coverage
 
-prod_deploy:
-  # tags:
-  #   - docker
-  image:
-    name: hashicorp/terraform:0.14.4
-    entrypoint: ['']
-  stage: deploy
-  only:
-    - master
-  script:
-    - terraform init
-    - export TF_VAR_sr_main_sha=${CI_COMMIT_SHA}
-    - terraform apply -auto-approve
+# prod_deploy:
+#   # tags:
+#   #   - docker
+#   image:
+#     name: hashicorp/terraform:0.14.4
+#     entrypoint: ['']
+#   stage: deploy
+#   only:
+#     - master
+#   script:
+#     - terraform init
+#     - export TF_VAR_sr_main_sha=${CI_COMMIT_SHA}
+#     - terraform apply -auto-approve
