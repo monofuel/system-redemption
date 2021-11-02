@@ -2,8 +2,6 @@
 
 [![Coverage Status](https://coveralls.io/repos/gitlab/monofuel34089/system-redemption/badge.svg?branch=master)](https://coveralls.io/gitlab/monofuel34089/system-redemption?branch=master)
 
-now on AWS ECS with 50% more uptime or something!
-
 Umbrella project for html5 game experiments
 
 ## Setup
@@ -32,12 +30,11 @@ Umbrella project for html5 game experiments
 - https://bulma.io/documentation/overview/start/
 - https://jenil.github.io/bulmaswatch/solar/
 
-
 ## Dev Dependencies
 
 Dev dependencies are used in the build process, and for webpack building the frontend js bundle
 
-- `fortawesome/fontawesome-free` 
+- `fortawesome/fontawesome-free`
   - used for symbols / buttons
 - chai
   - can migrate to jest https://jestjs.io/docs/en/migration-guide
@@ -57,7 +54,6 @@ Dev dependencies are used in the build process, and for webpack building the fro
 - three
   - 3D js library
 - TODO document rest
-
 
 # Dependencies
 

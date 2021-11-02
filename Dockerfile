@@ -1,25 +1,28 @@
-FROM node:14-alpine as builder
+FROM node:16-alpine as builder
 
 RUN mkdir /sr
 
 # nb. I forgot what all these deps were for, should document
-RUN apk --no-cache add \
-        python \
-        make \
-        g++ \
-        build-base \
-        cairo-dev \
-        jpeg-dev \
-        pango-dev \
-        giflib-dev \
-        pixman-dev \
-        pangomm-dev \
-        libjpeg-turbo-dev \
-        freetype-dev \
-        pixman \
-        cairo \
-        pango \
-        giflib
+# RUN apk --no-cache add \
+#         python \
+#         make \
+#         g++ \
+#         build-base \
+#         cairo-dev \
+#         jpeg-dev \
+#         pango-dev \
+#         giflib-dev \
+#         pixman-dev \
+#         pangomm-dev \
+#         libjpeg-turbo-dev \
+#         freetype-dev \
+#         pixman \
+#         cairo \
+#         pango \
+#         giflib
+
+RUN apk update && apk --no-cache add build-base
+
 # TODO - cache node_modules in CI and include it in the container to improve performance
 # ADD ./node_modules /sr/node_modules
 
@@ -33,7 +36,7 @@ ADD . /sr
 RUN yarn prepare:client
 RUN yarn build
 
-FROM node:14-alpine
+FROM node:16-alpine
 
 RUN mkdir /sr
 ADD ./package.json /sr
