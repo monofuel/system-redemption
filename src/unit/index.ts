@@ -1,5 +1,5 @@
 import { Unit, UnitType } from "../types/SR";
-import uuid from 'uuid';
+import * as  uuid from 'uuid';
 import { randomColor } from "../elements/components/graphical";
 
 export function newTank(): Unit {

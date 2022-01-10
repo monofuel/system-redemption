@@ -4,6 +4,13 @@
 
 Umbrella project for html5 game experiments
 
+![Replay tests](/docs/screenshots/replay-tests.PNG?raw=true "Replay tests")
+
+## TODO
+
+- update three.js
+- split event source stuff to library?
+
 ## Setup
 
 - run `yarn build` then `yarn server`

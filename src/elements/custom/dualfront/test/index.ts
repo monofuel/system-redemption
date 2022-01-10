@@ -12,7 +12,7 @@ import {
 } from "../../../../events/actions/dualfront";
 import { gameReducer } from "../../../../events/reducers/dualfront";
 import { createNewMapEvent, unitStats } from "../../../../events/util/dualfront";
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { getUnitObj } from "../../../../mesh/dualfront";
 import { attackUnit } from "../../../../events/commands/dualfront";
 import { GameState, newGameState, UnitType, GameUnit } from "../../../../events/store/dualfront";

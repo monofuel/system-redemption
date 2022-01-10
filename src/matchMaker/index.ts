@@ -80,7 +80,7 @@ class GameMatch {
       _.remove(this.clients, client);
     });
     ws.addEventListener("message", e => {
-      const payload: ServerEvent[] = JSON.parse(e.data);
+      const payload: ServerEvent[] = JSON.parse(String(e.data));
       for (const event of payload) {
         this.ctx.queue.post(event);
       }

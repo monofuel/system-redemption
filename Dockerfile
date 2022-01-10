@@ -2,26 +2,25 @@ FROM node:16-alpine as builder
 
 RUN mkdir /sr
 
-# nb. I forgot what all these deps were for, should document
-# RUN apk --no-cache add \
-#         python \
-#         make \
-#         g++ \
-#         build-base \
-#         cairo-dev \
-#         jpeg-dev \
-#         pango-dev \
-#         giflib-dev \
-#         pixman-dev \
-#         pangomm-dev \
-#         libjpeg-turbo-dev \
-#         freetype-dev \
-#         pixman \
-#         cairo \
-#         pango \
-#         giflib
-
-RUN apk update && apk --no-cache add build-base
+# nb. many of these deps are for the `canvas` package
+RUN apk update && apk --no-cache add \
+    python3 \
+    build-base \
+    make \
+    g++ \
+    build-base \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev \
+    pixman-dev \
+    pangomm-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    pixman \
+    cairo \
+    pango \
+    giflib
 
 # TODO - cache node_modules in CI and include it in the container to improve performance
 # ADD ./node_modules /sr/node_modules

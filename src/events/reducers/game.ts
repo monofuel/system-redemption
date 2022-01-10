@@ -147,7 +147,7 @@ export function applyAssertion(state: GameState, event: Assertion) {
 }
 
 export function applyAssertFail(state: GameState, event: AssertFail) {
-  let e: Error | undefined;
+  let e: unknown;
   try {
     const reducer: GameReducer = gameReducer[event.event.kind];
     reducer(state, event.event);

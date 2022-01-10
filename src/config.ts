@@ -1,6 +1,8 @@
 import convict from 'convict';
 import path from 'path';
 
+convict.addFormat(require('convict-format-with-validator').ipaddress);
+
 const config = convict({
   env: {
     doc: 'The application environment.',

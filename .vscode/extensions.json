@@ -3,7 +3,6 @@
         "ms-azuretools.vscode-docker",
         "eamodio.gitlens",
         "github.vscode-pull-request-github",
-        "coenraads.bracket-pair-colorizer-2",
         "gruntfuggly.todo-tree"
     ]
 }

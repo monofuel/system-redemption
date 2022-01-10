@@ -6,7 +6,7 @@ const zipdir = require("zip-dir");
 
 async function copyDir(source: string, destination: string, options: Options) {
   await new Promise<void>((resolve, reject) => {
-    ncp(source, destination, options, (err: Error) => {
+    ncp(source, destination, options, (err) => {
       if (err) {
         reject(err);
         return;
